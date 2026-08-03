@@ -1,6 +1,7 @@
 import React from "react";
 import { X, Tv, Film, Play, Star, Sparkles, Volume2, Maximize2 } from "lucide-react";
 import { Movie, VideoClip } from "../types";
+import { getYouTubeEmbedUrl } from "../utils/videoUtils";
 
 interface HdStreamPlayerModalProps {
   movie: Movie | null;
@@ -54,10 +55,10 @@ export const HdStreamPlayerModal: React.FC<HdStreamPlayerModalProps> = ({
         {/* Video Player Box */}
         <div className="relative aspect-video w-full bg-black">
           <iframe
-            src={activeClip.videoUrl}
+            src={getYouTubeEmbedUrl(activeClip.videoUrl, true, false)}
             title={activeClip.title}
             className="w-full h-full border-0"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
             allowFullScreen
           />
         </div>

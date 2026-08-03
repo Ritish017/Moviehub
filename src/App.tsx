@@ -13,6 +13,7 @@ import { AmbientBackground } from "./components/ui/AmbientBackground";
 import { CommandPalette } from "./components/ui/CommandPalette";
 import { DedicatedMovieView } from "./features/movies/DedicatedMovieView";
 import { TrailerHubView } from "./features/trailers/TrailerHubView";
+import { SearchEngine } from "./features/search/SearchEngine";
 import { INDIAN_MOVIES_DATABASE } from "./data/indianMovies";
 import { Movie, VideoClip, UserProfile, LanguageType } from "./types";
 import { Film, Tv, BarChart3, Sparkles, Play, ShieldAlert, Heart } from "lucide-react";
@@ -107,7 +108,7 @@ export default function App() {
         userName={userProfile.name}
       />
 
-      {/* Main View Area: Full-Screen Movie Route vs Tab Views */}
+      {/* Main View Area: Dedicated Movie View vs Search Engine vs Tab Views */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 pb-20 relative z-10">
         
         {viewingMovie ? (
@@ -120,73 +121,85 @@ export default function App() {
           />
         ) : (
           <>
-            {/* TAB 1: EXPLORE MOVIES */}
-            {activeTab === "explore" && (
-              <div>
-                {!searchQuery && (
-                  <HeroBanner
-                    movie={heroMovie}
+            {/* Multi-Dimensional AI Search Engine Display when user types in search */}
+            {searchQuery ? (
+              <div className="my-8">
+                <SearchEngine
+                  movies={INDIAN_MOVIES_DATABASE}
+                  onSelectMovie={(movie) => setViewingMovie(movie)}
+                />
+              </div>
+            ) : (
+              <>
+                {/* TAB 1: EXPLORE MOVIES */}
+                {activeTab === "explore" && (
+                  <div>
+                    <HeroBanner
+                      movie={heroMovie}
+                      onSelectMovie={(movie) => setViewingMovie(movie)}
+                      onOpenTrailer={handleOpenTrailer}
+                      isWatchlisted={userProfile.watchlist.includes(heroMovie.id)}
+                      onToggleWatchlist={handleToggleWatchlist}
+                    />
+
+                    <LiveApiDataExplorer
+                      onSelectMovie={(movie) => setViewingMovie(movie)}
+                      onOpenTrailer={handleOpenTrailer}
+                    />
+
+                    <MovieGrid
+                      movies={INDIAN_MOVIES_DATABASE}
+                      onSelectMovie={(movie) => setViewingMovie(movie)}
+                      onOpenTrailer={handleOpenTrailer}
+                      watchlist={userProfile.watchlist}
+                      onToggleWatchlist={handleToggleWatchlist}
+                      selectedLanguage={selectedLanguage}
+                      setSelectedLanguage={setSelectedLanguage}
+                    />
+                  </div>
+                )}
+
+                {/* TAB 2: LIVE FREE API ENGINE */}
+                {activeTab === "live-api" && (
+                  <LiveApiDataExplorer
                     onSelectMovie={(movie) => setViewingMovie(movie)}
                     onOpenTrailer={handleOpenTrailer}
                   />
                 )}
 
-                <LiveApiDataExplorer
-                  onSelectMovie={(movie) => setViewingMovie(movie)}
-                  onOpenTrailer={handleOpenTrailer}
-                />
+                {/* TAB 3: BOX OFFICE TELEMETRY */}
+                {activeTab === "analytics" && (
+                  <BoxOfficeAnalyticsDashboard />
+                )}
 
-                <MovieGrid
-                  movies={INDIAN_MOVIES_DATABASE}
-                  onSelectMovie={(movie) => setViewingMovie(movie)}
-                  onOpenTrailer={handleOpenTrailer}
-                  watchlist={userProfile.watchlist}
-                  onToggleWatchlist={handleToggleWatchlist}
-                  selectedLanguage={selectedLanguage}
-                  setSelectedLanguage={setSelectedLanguage}
-                />
-              </div>
-            )}
+                {/* TAB 4: HD STREAMING & TRAILER HUB */}
+                {activeTab === "streaming" && (
+                  <TrailerHubView
+                    movies={INDIAN_MOVIES_DATABASE}
+                    onOpenTrailer={handleOpenTrailer}
+                  />
+                )}
 
-            {/* TAB 2: LIVE FREE API ENGINE */}
-            {activeTab === "live-api" && (
-              <LiveApiDataExplorer
-                onSelectMovie={(movie) => setViewingMovie(movie)}
-                onOpenTrailer={handleOpenTrailer}
-              />
-            )}
+                {/* TAB 5: COMMUNITY FORUM */}
+                {activeTab === "community" && (
+                  <CommunityForum
+                    userRole={userProfile.role}
+                    userName={userProfile.name}
+                  />
+                )}
 
-            {/* TAB 3: BOX OFFICE TELEMETRY */}
-            {activeTab === "analytics" && (
-              <BoxOfficeAnalyticsDashboard />
-            )}
-
-            {/* TAB 4: HD STREAMING & TRAILER HUB */}
-            {activeTab === "streaming" && (
-              <TrailerHubView
-                movies={INDIAN_MOVIES_DATABASE}
-                onOpenTrailer={handleOpenTrailer}
-              />
-            )}
-
-            {/* TAB 5: COMMUNITY FORUM */}
-            {activeTab === "community" && (
-              <CommunityForum
-                userRole={userProfile.role}
-                userName={userProfile.name}
-              />
-            )}
-
-            {/* TAB 6: MY WORKSPACE & DASHBOARD */}
-            {activeTab === "dashboard" && (
-              <UserDashboard
-                userProfile={userProfile}
-                setUserProfile={setUserProfile}
-                moviesList={INDIAN_MOVIES_DATABASE}
-                onSelectMovie={(movie) => setViewingMovie(movie)}
-                onOpenTrailer={handleOpenTrailer}
-                onRemoveWatchlist={handleToggleWatchlist}
-              />
+                {/* TAB 6: MY WORKSPACE & DASHBOARD */}
+                {activeTab === "dashboard" && (
+                  <UserDashboard
+                    userProfile={userProfile}
+                    setUserProfile={setUserProfile}
+                    moviesList={INDIAN_MOVIES_DATABASE}
+                    onSelectMovie={(movie) => setViewingMovie(movie)}
+                    onOpenTrailer={handleOpenTrailer}
+                    onRemoveWatchlist={handleToggleWatchlist}
+                  />
+                )}
+              </>
             )}
           </>
         )}

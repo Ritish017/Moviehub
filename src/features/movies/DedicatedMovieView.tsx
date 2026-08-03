@@ -1,5 +1,25 @@
 import React, { useState } from "react";
-import { ArrowLeft, Play, Plus, Check, Star, TrendingUp, Film, Sparkles, Tv, ShieldCheck, DollarSign, Calendar, Clock, Award, Share2 } from "lucide-react";
+import {
+  ArrowLeft,
+  Play,
+  Plus,
+  Check,
+  Star,
+  Clock,
+  Calendar,
+  Sparkles,
+  Tv,
+  Award,
+  Layers,
+  Users,
+  DollarSign,
+  Share2,
+  Film,
+  Music,
+  HelpCircle,
+  TrendingUp,
+  Globe
+} from "lucide-react";
 import { Movie, VideoClip } from "../../types";
 import { MovieAiAnalysisPanel } from "../ai/MovieAiAnalysisPanel";
 
@@ -18,20 +38,22 @@ export const DedicatedMovieView: React.FC<DedicatedMovieViewProps> = ({
   isWatchlisted,
   onToggleWatchlist,
 }) => {
-  const [activeTab, setActiveTab] = useState<"overview" | "financials font-serif" | "cast" | "ai" | "reviews">("overview");
+  const [activeTab, setActiveTab] = useState<
+    "overview" | "ai" | "timeline" | "cast" | "financials" | "soundtrack" | "reviews"
+  >("overview");
 
   return (
     <div className="min-h-screen text-gray-100 font-sans pb-20 animate-fadeIn">
-      {/* Top Back Navigation Bar */}
+      {/* Sticky Top Back Navigation Bar */}
       <div className="sticky top-16 z-30 bg-[#07080c]/80 backdrop-blur-xl border-b border-white/10 px-4 sm:px-8 py-3 flex items-center justify-between">
         <button
           onClick={onBack}
-          className="flex items-center gap-2 text-sm font-bold text-gray-300 hover:text-white hover:bg-white/10 px-3 py-1.5 rounded-xl transition-all cursor-pointer"
+          className="flex items-center gap-2 text-sm font-bold text-gray-300 hover:text-white hover:bg-white/10 px-3.5 py-1.5 rounded-xl transition-all cursor-pointer"
         >
           <ArrowLeft className="w-4 h-4" /> Back to Explore
         </button>
 
-        <div className="flex items-center gap-3 text-xs">
+        <div className="flex items-center gap-3 text-xs font-mono">
           <span className="px-2.5 py-1 rounded-full bg-amber-400/20 text-amber-300 font-bold border border-amber-400/30">
             ★ {movie.rating} / 10
           </span>
@@ -51,9 +73,12 @@ export const DedicatedMovieView: React.FC<DedicatedMovieViewProps> = ({
         <div className="absolute inset-0 bg-gradient-to-t from-[#07080c] via-[#07080c]/60 to-transparent" />
         <div className="absolute inset-0 bg-gradient-to-r from-[#07080c] via-transparent to-[#07080c]/80" />
 
-        {/* Floating Hero Info Overlay */}
+        {/* Dynamic Ambient Poster Aura */}
+        <div className="absolute top-10 left-10 w-96 h-96 bg-purple-600/20 rounded-full blur-[130px] pointer-events-none" />
+
+        {/* Floating Hero Details */}
         <div className="absolute bottom-0 inset-x-0 max-w-7xl mx-auto px-4 sm:px-8 pb-10 flex flex-col md:flex-row items-end gap-8">
-          {/* Poster */}
+          {/* Poster Box */}
           <div className="hidden md:block w-52 aspect-[2/3] rounded-2xl overflow-hidden shadow-2xl border-2 border-white/20 shrink-0 transform -translate-y-4 hover:scale-105 transition-transform duration-300">
             <img src={movie.posterUrl} alt={movie.title} className="w-full h-full object-cover" />
           </div>
@@ -72,11 +97,11 @@ export const DedicatedMovieView: React.FC<DedicatedMovieViewProps> = ({
               <span className="flex items-center gap-1"><Calendar className="w-3.5 h-3.5" /> {movie.releaseYear}</span>
             </div>
 
-            <h1 className="text-4xl sm:text-6xl font-black text-white font-serif tracking-tight drop-shadow-lg">
+            <h1 className="text-4xl sm:text-6xl font-black text-white font-serif tracking-tight drop-shadow-2xl">
               {movie.title}
             </h1>
             {movie.originalTitle && (
-              <p className="text-lg text-gray-300 font-serif italic -mt-2">{movie.originalTitle}</p>
+              <p className="text-lg text-amber-400 font-serif italic -mt-2">{movie.originalTitle}</p>
             )}
 
             <div className="flex flex-wrap gap-2 text-xs">
@@ -87,18 +112,18 @@ export const DedicatedMovieView: React.FC<DedicatedMovieViewProps> = ({
               ))}
             </div>
 
-            {/* Action Buttons */}
+            {/* Handcrafted Action Buttons */}
             <div className="flex flex-wrap items-center gap-4 pt-2">
               <button
                 onClick={() => onOpenTrailer(movie)}
-                className="px-6 py-3 rounded-2xl bg-[#e50914] hover:bg-red-700 text-white font-bold text-sm flex items-center gap-2 shadow-xl shadow-red-900/30 hover:scale-105 transition-all cursor-pointer"
+                className="px-6 py-3.5 rounded-2xl bg-[#e50914] hover:bg-red-700 text-white font-bold text-sm flex items-center gap-2 shadow-2xl shadow-red-900/40 hover:scale-105 transition-all cursor-pointer"
               >
                 <Play className="w-4 h-4 fill-current" /> Watch Official 4K Trailer
               </button>
 
               <button
                 onClick={() => onToggleWatchlist(movie.id)}
-                className={`px-5 py-3 rounded-2xl font-bold text-sm flex items-center gap-2 border transition-all cursor-pointer ${
+                className={`px-5 py-3.5 rounded-2xl font-bold text-sm flex items-center gap-2 border backdrop-blur-md transition-all cursor-pointer ${
                   isWatchlisted
                     ? "bg-emerald-500/20 text-emerald-300 border-emerald-500/40"
                     : "bg-white/10 hover:bg-white/20 text-white border-white/20"
@@ -112,39 +137,60 @@ export const DedicatedMovieView: React.FC<DedicatedMovieViewProps> = ({
         </div>
       </div>
 
-      {/* Main Body Content Container */}
+      {/* Main Body Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-8 mt-8 grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Left 2 Columns: Main Tabs & Information */}
+        {/* Left 2 Columns: Tabs & Information */}
         <div className="lg:col-span-2 space-y-8">
-          {/* Tab Selection */}
-          <div className="flex border-b border-white/10 gap-6 text-sm font-bold">
+          {/* Navigation Tabs */}
+          <div className="flex border-b border-white/10 gap-4 text-xs sm:text-sm font-bold overflow-x-auto pb-1">
             <button
               onClick={() => setActiveTab("overview")}
-              className={`pb-3 border-b-2 transition-all cursor-pointer ${
+              className={`pb-3 border-b-2 whitespace-nowrap transition-all cursor-pointer ${
                 activeTab === "overview" ? "border-amber-400 text-amber-400" : "border-transparent text-gray-400 hover:text-white"
               }`}
             >
               Overview & Plot
             </button>
+
             <button
               onClick={() => setActiveTab("ai")}
-              className={`pb-3 border-b-2 transition-all cursor-pointer flex items-center gap-1.5 ${
+              className={`pb-3 border-b-2 whitespace-nowrap transition-all cursor-pointer flex items-center gap-1.5 ${
                 activeTab === "ai" ? "border-purple-400 text-purple-400" : "border-transparent text-gray-400 hover:text-white"
               }`}
             >
-              <Sparkles className="w-4 h-4" /> Gemini AI Breakdown
+              <Sparkles className="w-4 h-4" /> AI Breakdown
             </button>
+
+            <button
+              onClick={() => setActiveTab("timeline")}
+              className={`pb-3 border-b-2 whitespace-nowrap transition-all cursor-pointer flex items-center gap-1.5 ${
+                activeTab === "timeline" ? "border-amber-400 text-amber-400" : "border-transparent text-gray-400 hover:text-white"
+              }`}
+            >
+              <Layers className="w-4 h-4" /> Timeline & Universe
+            </button>
+
             <button
               onClick={() => setActiveTab("cast")}
-              className={`pb-3 border-b-2 transition-all cursor-pointer ${
+              className={`pb-3 border-b-2 whitespace-nowrap transition-all cursor-pointer ${
                 activeTab === "cast" ? "border-amber-400 text-amber-400" : "border-transparent text-gray-400 hover:text-white"
               }`}
             >
               Cast & Crew
             </button>
+
+            <button
+              onClick={() => setActiveTab("financials")}
+              className={`pb-3 border-b-2 whitespace-nowrap transition-all cursor-pointer ${
+                activeTab === "financials" ? "border-emerald-400 text-emerald-400" : "border-transparent text-gray-400 hover:text-white"
+              }`}
+            >
+              Financial Telemetry
+            </button>
+
             <button
               onClick={() => setActiveTab("reviews")}
-              className={`pb-3 border-b-2 transition-all cursor-pointer ${
+              className={`pb-3 border-b-2 whitespace-nowrap transition-all cursor-pointer ${
                 activeTab === "reviews" ? "border-amber-400 text-amber-400" : "border-transparent text-gray-400 hover:text-white"
               }`}
             >
@@ -160,7 +206,7 @@ export const DedicatedMovieView: React.FC<DedicatedMovieViewProps> = ({
                 <p className="text-sm text-gray-300 leading-relaxed font-sans">{movie.synopsis}</p>
               </div>
 
-              {/* Financial Telemetry Cards */}
+              {/* Financial Summary Widget */}
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                 <div className="bg-[#12141d] border border-white/10 p-4 rounded-xl space-y-1">
                   <p className="text-xs text-gray-400 uppercase font-bold">Budget</p>
@@ -182,9 +228,7 @@ export const DedicatedMovieView: React.FC<DedicatedMovieViewProps> = ({
 
               {/* Video Clips Showcase */}
               <div className="space-y-3">
-                <h3 className="text-base font-bold text-white font-serif flex items-center justify-between">
-                  <span>HD Trailers & Featured Clips ({movie.videoClips.length})</span>
-                </h3>
+                <h3 className="text-base font-bold text-white font-serif">HD Trailers & Featured Clips ({movie.videoClips.length})</h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {movie.videoClips.map((clip) => (
                     <div
@@ -208,6 +252,9 @@ export const DedicatedMovieView: React.FC<DedicatedMovieViewProps> = ({
                   ))}
                 </div>
               </div>
+
+              {/* Pre-rendered AI Breakdown Block */}
+              <MovieAiAnalysisPanel movie={movie} />
             </div>
           )}
 
@@ -216,13 +263,38 @@ export const DedicatedMovieView: React.FC<DedicatedMovieViewProps> = ({
             <MovieAiAnalysisPanel movie={movie} />
           )}
 
-          {/* TAB 3: CAST & CREW */}
+          {/* TAB 3: TIMELINE & UNIVERSE */}
+          {activeTab === "timeline" && (
+            <div className="bg-[#12141d] border border-white/10 p-6 rounded-2xl space-y-4 animate-fadeIn">
+              <h3 className="text-lg font-bold text-white font-serif flex items-center gap-2">
+                <Layers className="w-5 h-5 text-amber-400" /> Chronological Timeline & Franchise Universe
+              </h3>
+              <div className="border-l-2 border-amber-400/40 pl-4 space-y-4 text-xs text-gray-300">
+                <div className="space-y-1">
+                  <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-400/20 text-amber-300">
+                    Phase 1: Ancient Lore & Puranic Origins
+                  </span>
+                  <p className="font-bold text-white text-sm">Kurukshetra Climax & Prophecy</p>
+                  <p>Lord Krishna bestows the curse of immortality upon Ashwatthama, setting the timeline into motion.</p>
+                </div>
+                <div className="space-y-1">
+                  <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-purple-500/20 text-purple-300">
+                    Phase 2: Dystopian Future (2898 AD)
+                  </span>
+                  <p className="font-bold text-white text-sm">Rise of Supreme Yaskin & The Complex</p>
+                  <p>In the last city of Kasi, Supreme Yaskin extracts life-force serum from mothers to achieve godhood.</p>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* TAB 4: CAST & CREW */}
           {activeTab === "cast" && (
             <div className="space-y-4 animate-fadeIn">
               <h3 className="text-base font-bold text-white font-serif">Lead Cast & Key Performers</h3>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                 {movie.cast.map((member) => (
-                  <div key={member.id} className="bg-[#12141d] border border-white/10 p-3 rounded-xl flex items-center gap-3">
+                  <div key={member.id} className="bg-[#12141d] border border-white/10 p-3.5 rounded-xl flex items-center gap-3">
                     <img src={member.photoUrl} alt={member.name} className="w-12 h-12 rounded-full object-cover border border-white/20 shrink-0" />
                     <div className="truncate">
                       <p className="text-xs font-bold text-white truncate">{member.name}</p>
@@ -235,7 +307,30 @@ export const DedicatedMovieView: React.FC<DedicatedMovieViewProps> = ({
             </div>
           )}
 
-          {/* TAB 4: REVIEWS & SENTIMENT */}
+          {/* TAB 5: FINANCIALS */}
+          {activeTab === "financials" && (
+            <div className="bg-[#12141d] border border-white/10 p-6 rounded-2xl space-y-4 animate-fadeIn">
+              <h3 className="text-lg font-bold text-white font-serif flex items-center gap-2">
+                <DollarSign className="w-5 h-5 text-emerald-400" /> Full Box Office Telemetry
+              </h3>
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 text-xs">
+                <div className="bg-[#07080c] p-4 rounded-xl border border-white/10">
+                  <p className="text-gray-400">Budget</p>
+                  <p className="text-lg font-bold text-white mt-1">₹{movie.budgetCrores} Cr</p>
+                </div>
+                <div className="bg-[#07080c] p-4 rounded-xl border border-white/10">
+                  <p className="text-gray-400">India Net</p>
+                  <p className="text-lg font-bold text-emerald-400 mt-1">₹{movie.indiaNetGrossCrores} Cr</p>
+                </div>
+                <div className="bg-[#07080c] p-4 rounded-xl border border-white/10">
+                  <p className="text-gray-400">Overseas Gross</p>
+                  <p className="text-lg font-bold text-blue-400 mt-1">₹{movie.overseasGrossCrores} Cr</p>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* TAB 6: REVIEWS */}
           {activeTab === "reviews" && (
             <div className="space-y-6 animate-fadeIn">
               <div className="bg-[#12141d] border border-white/10 p-5 rounded-xl space-y-2">
@@ -251,7 +346,7 @@ export const DedicatedMovieView: React.FC<DedicatedMovieViewProps> = ({
           )}
         </div>
 
-        {/* Right Column: Metadata Sidebar */}
+        {/* Right Sidebar: Production Metadata */}
         <div className="space-y-6">
           <div className="bg-[#12141d] border border-white/10 p-6 rounded-2xl space-y-4">
             <h3 className="text-sm font-bold text-white uppercase tracking-wider border-b border-white/10 pb-3">
@@ -282,7 +377,7 @@ export const DedicatedMovieView: React.FC<DedicatedMovieViewProps> = ({
           {/* Streaming Platforms */}
           <div className="bg-[#12141d] border border-white/10 p-6 rounded-2xl space-y-3">
             <h3 className="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
-              <Tv className="w-4 h-4 text-purple-400" /> Watch Online
+              <Tv className="w-4 h-4 text-purple-400" /> Stream & Watch Online
             </h3>
             <div className="space-y-2">
               {movie.streamingPlatforms.map((platform) => (
