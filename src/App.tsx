@@ -16,6 +16,7 @@ import { CommandPalette } from "./components/ui/CommandPalette";
 import { DedicatedMovieView } from "./features/movies/DedicatedMovieView";
 import { TrailerHubView } from "./features/trailers/TrailerHubView";
 import { SearchEngine } from "./features/search/SearchEngine";
+import { HomepageAggregatorView } from "./features/homepage/HomepageAggregatorView";
 import { INDIAN_MOVIES_DATABASE } from "./data/indianMovies";
 import { Movie, VideoClip, UserProfile, LanguageType } from "./types";
 import { Film, Tv, BarChart3, Sparkles, Play, ShieldAlert, Heart } from "lucide-react";
@@ -138,32 +139,17 @@ export default function App() {
                 </div>
               ) : (
                 <>
-                  {/* TAB 1: EXPLORE MOVIES */}
+                  {/* TAB 1: HOMEPAGE 2.0 WORLD-CLASS CINEMA DISCOVERY */}
                   {activeTab === "explore" && (
-                    <div>
-                      <HeroBanner
-                        movie={heroMovie}
-                        onSelectMovie={(movie) => setViewingMovie(movie)}
-                        onOpenTrailer={handleOpenTrailer}
-                        isWatchlisted={userProfile.watchlist.includes(heroMovie.id)}
-                        onToggleWatchlist={handleToggleWatchlist}
-                      />
-
-                      <LiveApiDataExplorer
-                        onSelectMovie={(movie) => setViewingMovie(movie)}
-                        onOpenTrailer={handleOpenTrailer}
-                      />
-
-                      <MovieGrid
-                        movies={INDIAN_MOVIES_DATABASE}
-                        onSelectMovie={(movie) => setViewingMovie(movie)}
-                        onOpenTrailer={handleOpenTrailer}
-                        watchlist={userProfile.watchlist}
-                        onToggleWatchlist={handleToggleWatchlist}
-                        selectedLanguage={selectedLanguage}
-                        setSelectedLanguage={setSelectedLanguage}
-                      />
-                    </div>
+                    <HomepageAggregatorView
+                      movies={INDIAN_MOVIES_DATABASE}
+                      onSelectMovie={(movie) => setViewingMovie(movie)}
+                      onOpenTrailer={handleOpenTrailer}
+                      watchlist={userProfile.watchlist}
+                      onToggleWatchlist={handleToggleWatchlist}
+                      selectedLanguage={selectedLanguage}
+                      setSelectedLanguage={setSelectedLanguage}
+                    />
                   )}
 
                   {/* TAB 2: LIVE FREE API ENGINE */}

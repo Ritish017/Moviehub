@@ -44,12 +44,23 @@ export const HdStreamPlayerModal: React.FC<HdStreamPlayerModalProps> = ({
             </div>
           </div>
 
-          <button
-            onClick={onClose}
-            className="w-8 h-8 rounded-full bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white flex items-center justify-center transition-all cursor-pointer"
-          >
-            <X className="w-4 h-4" />
-          </button>
+          <div className="flex items-center gap-3">
+            <a
+              href={activeClip.videoUrl.startsWith("http") ? activeClip.videoUrl : `https://www.youtube.com/watch?v=${activeClip.videoUrl}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hidden xs:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-red-600/20 hover:bg-red-600/40 text-red-400 border border-red-500/30 text-xs font-bold transition-all"
+            >
+              Watch on YouTube ↗
+            </a>
+
+            <button
+              onClick={onClose}
+              className="w-8 h-8 rounded-full bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white flex items-center justify-center transition-all cursor-pointer"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
         </div>
 
         {/* Video Player Box */}
