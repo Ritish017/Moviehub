@@ -110,6 +110,80 @@ Return JSON matching this exact structure:
   }
 });
 
+// API Endpoint 1B: Movie AI Deep Analysis (Ending Explained, Symbolism & Character Arcs)
+app.post("/api/gemini/analyze-movie-deep", async (req, res) => {
+  try {
+    const { movieTitle, director, synopsis } = req.body;
+    const apiKey = process.env.GEMINI_API_KEY;
+
+    if (!apiKey) {
+      return res.json({
+        success: true,
+        isMock: true,
+        deepAnalysis: {
+          endingExplained: `The climax of ${movieTitle} ties together its mythological and futuristic threads, symbolizing the triumph of eternal dharma over dystopian tyranny.`,
+          hiddenDetails: [
+            "Symbolic visual motifs linking ancient Sanskrit prophecies with dystopian cyberpunk architecture.",
+            "Subtle character wardrobe color shifts indicating emotional transformations across the narrative arc.",
+            "Nods to classical literature and regional folklore embedded within background set designs."
+          ],
+          themesAndSymbolism: [
+            "Rebirth & Avatar Mythology",
+            "Human Resilience vs Technological Tyranny",
+            "Dharma & Moral Responsibility Across Generations"
+          ],
+          characterRelationships: [
+            { characters: "Protagonist & Mentor", dynamic: "Reluctant allegiance evolving into reverence." },
+            { characters: "Antagonist & Domain", dynamic: "Absolutist control tested by prophetic resistance." }
+          ],
+          directorSignature: `${director || 'The Director'} employs wide IMAX compositions, dynamic camera choreography, and soaring orchestral leitmotifs.`,
+          visualStyleAnalysis: "High contrast lighting, desaturated dystopian palettes contrasted with golden divine aura.",
+          funFactsAndTrivia: [
+            "Custom vehicles built specifically for production with real functioning engines.",
+            "Over 2,500 VFX artists across 5 countries worked on sequence rendering."
+          ]
+        }
+      });
+    }
+
+    const ai = getGenAI();
+    const prompt = `Provide an in-depth thematic, symbolic, and narrative analysis for the film "${movieTitle}".
+Director: ${director || 'N/A'}
+Synopsis: ${synopsis || 'N/A'}
+
+Return JSON matching this exact structure:
+{
+  "endingExplained": "Comprehensive explanation of the movie ending, plot resolution, and emotional climax",
+  "hiddenDetails": ["Easter egg or subtle detail 1", "Detail 2", "Detail 3"],
+  "themesAndSymbolism": ["Theme 1", "Theme 2", "Theme 3"],
+  "characterRelationships": [
+    { "characters": "Character A & Character B", "dynamic": "Description of relationship dynamic" }
+  ],
+  "directorSignature": "Analysis of director techniques, shot selection, and directorial fingerprint",
+  "visualStyleAnalysis": "Color grading, lighting, camera motion, and visual grandiosity analysis",
+  "funFactsAndTrivia": ["Trivia 1", "Trivia 2"]
+}`;
+
+    const response = await ai.models.generateContent({
+      model: "gemini-3.6-flash",
+      contents: prompt,
+      config: { responseMimeType: "application/json" },
+    });
+
+    const jsonOutput = JSON.parse(response.text || "{}");
+    res.json({
+      success: true,
+      deepAnalysis: jsonOutput,
+    });
+  } catch (error: any) {
+    console.error("Gemini Deep Analysis Error:", error);
+    res.status(500).json({
+      success: false,
+      error: error?.message || "Failed to generate deep AI movie analysis",
+    });
+  }
+});
+
 // API Endpoint 2: AI Personalized Movie Recommendations
 app.post("/api/gemini/recommendations", async (req, res) => {
   try {

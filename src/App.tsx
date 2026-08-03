@@ -9,6 +9,10 @@ import { UserDashboard } from "./components/UserDashboard";
 import { LiveApiDataExplorer } from "./components/LiveApiDataExplorer";
 import { AiCinemaAssistantModal } from "./components/AiCinemaAssistantModal";
 import { HdStreamPlayerModal } from "./components/HdStreamPlayerModal";
+import { AmbientBackground } from "./components/ui/AmbientBackground";
+import { CommandPalette } from "./components/ui/CommandPalette";
+import { DedicatedMovieView } from "./features/movies/DedicatedMovieView";
+import { TrailerHubView } from "./features/trailers/TrailerHubView";
 import { INDIAN_MOVIES_DATABASE } from "./data/indianMovies";
 import { Movie, VideoClip, UserProfile, LanguageType } from "./types";
 import { Film, Tv, BarChart3, Sparkles, Play, ShieldAlert, Heart } from "lucide-react";
@@ -21,11 +25,13 @@ export default function App() {
   const [selectedLanguage, setSelectedLanguage] = useState<LanguageType>("All");
   const [searchQuery, setSearchQuery] = useState<string>("");
 
-  // Modals & Active View state
+  // Modals, Full Page & Active View state
   const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
+  const [viewingMovie, setViewingMovie] = useState<Movie | null>(null);
   const [streamingMovie, setStreamingMovie] = useState<Movie | null>(null);
   const [streamingClip, setStreamingClip] = useState<VideoClip | undefined>(undefined);
   const [isAiAssistantOpen, setIsAiAssistantOpen] = useState(false);
+  const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
 
   // User Profile state
   const [userProfile, setUserProfile] = useState<UserProfile>({
@@ -80,138 +86,109 @@ export default function App() {
   const heroMovie = INDIAN_MOVIES_DATABASE[0]; // Kalki 2898 AD
 
   return (
-    <div className="min-h-screen bg-[#0a0b10] text-gray-100 flex flex-col font-sans selection:bg-[#e50914] selection:text-white">
+    <div className="min-h-screen bg-[#07080c] text-gray-100 flex flex-col font-sans selection:bg-[#e50914] selection:text-white relative overflow-x-hidden">
       
+      {/* Ambient Poster Aura Background */}
+      <AmbientBackground backdropUrl={(viewingMovie || selectedMovie || heroMovie)?.backdropUrl} />
+
       {/* Top Navbar */}
       <Navbar
         activeTab={activeTab}
-        setActiveTab={setActiveTab}
+        setActiveTab={(tab) => { setViewingMovie(null); setActiveTab(tab); }}
         selectedLanguage={selectedLanguage}
         setSelectedLanguage={setSelectedLanguage}
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}
         moviesList={INDIAN_MOVIES_DATABASE}
-        onSelectMovie={setSelectedMovie}
+        onSelectMovie={(movie) => setViewingMovie(movie)}
         onOpenAiAssistant={() => setIsAiAssistantOpen(true)}
+        onOpenCommandPalette={() => setIsCommandPaletteOpen(true)}
         userRole={userProfile.role}
         userName={userProfile.name}
       />
 
-      {/* Main Content Area */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 pb-20">
+      {/* Main View Area: Full-Screen Movie Route vs Tab Views */}
+      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 pb-20 relative z-10">
         
-        {/* TAB 1: EXPLORE MOVIES */}
-        {activeTab === "explore" && (
-          <div>
-            {!searchQuery && (
-              <HeroBanner
-                movie={heroMovie}
-                onSelectMovie={setSelectedMovie}
+        {viewingMovie ? (
+          <DedicatedMovieView
+            movie={viewingMovie}
+            onBack={() => setViewingMovie(null)}
+            onOpenTrailer={handleOpenTrailer}
+            isWatchlisted={userProfile.watchlist.includes(viewingMovie.id)}
+            onToggleWatchlist={handleToggleWatchlist}
+          />
+        ) : (
+          <>
+            {/* TAB 1: EXPLORE MOVIES */}
+            {activeTab === "explore" && (
+              <div>
+                {!searchQuery && (
+                  <HeroBanner
+                    movie={heroMovie}
+                    onSelectMovie={(movie) => setViewingMovie(movie)}
+                    onOpenTrailer={handleOpenTrailer}
+                  />
+                )}
+
+                <LiveApiDataExplorer
+                  onSelectMovie={(movie) => setViewingMovie(movie)}
+                  onOpenTrailer={handleOpenTrailer}
+                />
+
+                <MovieGrid
+                  movies={INDIAN_MOVIES_DATABASE}
+                  onSelectMovie={(movie) => setViewingMovie(movie)}
+                  onOpenTrailer={handleOpenTrailer}
+                  watchlist={userProfile.watchlist}
+                  onToggleWatchlist={handleToggleWatchlist}
+                  selectedLanguage={selectedLanguage}
+                  setSelectedLanguage={setSelectedLanguage}
+                />
+              </div>
+            )}
+
+            {/* TAB 2: LIVE FREE API ENGINE */}
+            {activeTab === "live-api" && (
+              <LiveApiDataExplorer
+                onSelectMovie={(movie) => setViewingMovie(movie)}
                 onOpenTrailer={handleOpenTrailer}
               />
             )}
 
-            <LiveApiDataExplorer
-              onSelectMovie={setSelectedMovie}
-              onOpenTrailer={handleOpenTrailer}
-            />
+            {/* TAB 3: BOX OFFICE TELEMETRY */}
+            {activeTab === "analytics" && (
+              <BoxOfficeAnalyticsDashboard />
+            )}
 
-            <MovieGrid
-              movies={INDIAN_MOVIES_DATABASE}
-              onSelectMovie={setSelectedMovie}
-              onOpenTrailer={handleOpenTrailer}
-              watchlist={userProfile.watchlist}
-              onToggleWatchlist={handleToggleWatchlist}
-              selectedLanguage={selectedLanguage}
-              setSelectedLanguage={setSelectedLanguage}
-            />
-          </div>
-        )}
+            {/* TAB 4: HD STREAMING & TRAILER HUB */}
+            {activeTab === "streaming" && (
+              <TrailerHubView
+                movies={INDIAN_MOVIES_DATABASE}
+                onOpenTrailer={handleOpenTrailer}
+              />
+            )}
 
-        {/* TAB 2: LIVE FREE API ENGINE */}
-        {activeTab === "live-api" && (
-          <LiveApiDataExplorer
-            onSelectMovie={setSelectedMovie}
-            onOpenTrailer={handleOpenTrailer}
-          />
-        )}
+            {/* TAB 5: COMMUNITY FORUM */}
+            {activeTab === "community" && (
+              <CommunityForum
+                userRole={userProfile.role}
+                userName={userProfile.name}
+              />
+            )}
 
-        {/* TAB 2: BOX OFFICE TELEMETRY */}
-        {activeTab === "analytics" && (
-          <BoxOfficeAnalyticsDashboard />
-        )}
-
-        {/* TAB 3: HD STREAMING SHOWCASE */}
-        {activeTab === "streaming" && (
-          <div className="space-y-8 my-8 animate-fadeIn">
-            <div className="bg-gradient-to-r from-purple-900/30 via-indigo-900/30 to-[#12141d] border border-purple-500/30 p-6 sm:p-10 rounded-3xl shadow-2xl">
-              <span className="px-3 py-1 rounded-full text-xs font-bold bg-purple-500/20 text-purple-300 border border-purple-500/30 uppercase">
-                HD Footage & Song Studio
-              </span>
-              <h1 className="text-3xl sm:text-5xl font-black text-white font-serif mt-2">
-                High-Definition Indian Cinema Footage Player
-              </h1>
-              <p className="text-xs sm:text-sm text-gray-300 mt-2 max-w-2xl">
-                Experience official 1080p / 4K trailers, lyrical video songs, behind the scenes, and director commentary clips across all major Indian film industries.
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {INDIAN_MOVIES_DATABASE.map((movie) => (
-                <div
-                  key={movie.id}
-                  className="bg-[#12141d] border border-white/10 rounded-2xl overflow-hidden hover:border-purple-500/50 transition-all shadow-xl group"
-                >
-                  <div className="relative aspect-video w-full bg-black overflow-hidden cursor-pointer" onClick={() => handleOpenTrailer(movie)}>
-                    <img src={movie.backdropUrl} alt={movie.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                    <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
-                      <div className="w-12 h-12 rounded-full bg-[#e50914] text-white flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
-                        <Play className="w-5 h-5 fill-current ml-0.5" />
-                      </div>
-                    </div>
-                    <span className="absolute top-3 left-3 px-2 py-0.5 rounded text-[10px] font-bold bg-black/70 text-amber-300 backdrop-blur-md">
-                      {movie.language}
-                    </span>
-                  </div>
-
-                  <div className="p-4">
-                    <h3 className="text-base font-bold text-white font-serif">{movie.title}</h3>
-                    <p className="text-xs text-gray-400 mt-0.5">{movie.videoClips.length} HD Videos Available</p>
-
-                    <div className="mt-3 pt-3 border-t border-white/10 flex items-center justify-between text-xs">
-                      <span className="text-emerald-400 font-bold">₹{movie.boxOfficeGrossCrores} Cr WW</span>
-                      <button
-                        onClick={() => handleOpenTrailer(movie)}
-                        className="font-bold text-purple-400 hover:underline flex items-center gap-1 cursor-pointer"
-                      >
-                        <Tv className="w-3.5 h-3.5" /> Play Footage
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* TAB 4: COMMUNITY FORUM */}
-        {activeTab === "community" && (
-          <CommunityForum
-            userRole={userProfile.role}
-            userName={userProfile.name}
-          />
-        )}
-
-        {/* TAB 5: MY DASHBOARD */}
-        {activeTab === "dashboard" && (
-          <UserDashboard
-            userProfile={userProfile}
-            setUserProfile={setUserProfile}
-            moviesList={INDIAN_MOVIES_DATABASE}
-            onSelectMovie={setSelectedMovie}
-            onOpenTrailer={handleOpenTrailer}
-            onRemoveWatchlist={handleToggleWatchlist}
-          />
+            {/* TAB 6: MY WORKSPACE & DASHBOARD */}
+            {activeTab === "dashboard" && (
+              <UserDashboard
+                userProfile={userProfile}
+                setUserProfile={setUserProfile}
+                moviesList={INDIAN_MOVIES_DATABASE}
+                onSelectMovie={(movie) => setViewingMovie(movie)}
+                onOpenTrailer={handleOpenTrailer}
+                onRemoveWatchlist={handleToggleWatchlist}
+              />
+            )}
+          </>
         )}
 
       </main>
@@ -240,8 +217,17 @@ export default function App() {
         userName={userProfile.name}
       />
 
+      <CommandPalette
+        isOpen={isCommandPaletteOpen}
+        onClose={() => setIsCommandPaletteOpen(false)}
+        movies={INDIAN_MOVIES_DATABASE}
+        onSelectMovie={(movie) => { setViewingMovie(movie); }}
+        onNavigateTab={(tab) => { setViewingMovie(null); setActiveTab(tab); }}
+        onOpenAiCopilot={() => setIsAiAssistantOpen(true)}
+      />
+
       {/* Footer */}
-      <footer className="bg-[#07080d] border-t border-white/10 py-10 mt-auto">
+      <footer className="bg-[#050609] border-t border-white/10 py-10 mt-auto relative z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 rounded-lg bg-[#e50914] text-white flex items-center justify-center font-bold text-sm">
@@ -249,9 +235,9 @@ export default function App() {
             </div>
             <div>
               <p className="text-sm font-extrabold text-white font-serif">
-                CINE<span className="text-[#e5b842]">BHARAT</span>
+                MOVIEHUB <span className="text-amber-400">X</span>
               </p>
-              <p className="text-[11px] text-gray-400">Pan-Indian Film Industry Ecosystem & Analytics Platform</p>
+              <p className="text-[11px] text-gray-400">The AI Operating System for Global Cinema</p>
             </div>
           </div>
 
@@ -268,7 +254,7 @@ export default function App() {
           </div>
 
           <p className="text-xs text-gray-500">
-            Powered by Gemini 3.6 Flash Server Intelligence
+            Powered by Gemini 3.6 Flash & Live Public Cinema APIs
           </p>
         </div>
       </footer>

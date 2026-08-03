@@ -24,6 +24,7 @@ interface NavbarProps {
   moviesList: Movie[];
   onSelectMovie: (movie: Movie) => void;
   onOpenAiAssistant: () => void;
+  onOpenCommandPalette?: () => void;
   userRole: UserRole;
   userName: string;
 }
@@ -38,6 +39,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   moviesList,
   onSelectMovie,
   onOpenAiAssistant,
+  onOpenCommandPalette,
   userRole,
   userName
 }) => {
@@ -54,26 +56,26 @@ export const Navbar: React.FC<NavbarProps> = ({
     : [];
 
   return (
-    <header className="sticky top-0 z-40 bg-[#0A0C10]/90 backdrop-blur-md border-b border-white/10 shadow-2xl">
+    <header className="sticky top-0 z-40 bg-[#07080c]/90 backdrop-blur-xl border-b border-white/10 shadow-2xl">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 sm:h-20">
           
           {/* Logo & Geometric Identity */}
           <div className="flex items-center gap-3 cursor-pointer" onClick={() => setActiveTab("explore")}>
-            <div className="w-8 h-8 sm:w-9 sm:h-9 bg-gradient-to-tr from-red-600 to-rose-600 rounded-sm rotate-45 flex items-center justify-center shadow-lg shadow-red-600/40 shrink-0">
+            <div className="w-8 h-8 sm:w-9 sm:h-9 bg-gradient-to-tr from-[#e50914] to-amber-500 rounded-lg rotate-45 flex items-center justify-center shadow-lg shadow-red-600/40 shrink-0">
               <Film className="w-4 h-4 sm:w-5 sm:h-5 text-white -rotate-45 font-bold" />
             </div>
             <div>
               <div className="flex items-center gap-2">
                 <span className="text-lg sm:text-xl font-black tracking-tight text-white font-sans">
-                  CINE<span className="text-red-500 font-extrabold">BHARAT</span>
+                  MOVIEHUB <span className="text-amber-400 font-serif">X</span>
                 </span>
-                <span className="hidden xs:inline-block px-2 py-0.5 text-[9px] font-extrabold bg-blue-500/20 text-blue-400 border border-blue-500/30 rounded uppercase tracking-widest font-mono">
-                  RED-BLUE PRO
+                <span className="hidden xs:inline-block px-2 py-0.5 text-[9px] font-extrabold bg-amber-400/20 text-amber-300 border border-amber-400/30 rounded uppercase tracking-widest font-mono">
+                  AI CINEMA OS
                 </span>
               </div>
               <p className="text-[11px] text-gray-400 font-medium hidden md:block">
-                Pan-Indian Cinema Ecosystem & Real-Time Telemetry
+                The AI Operating System for Global Cinema
               </p>
             </div>
           </div>
@@ -179,6 +181,14 @@ export const Navbar: React.FC<NavbarProps> = ({
                 {searchQuery && (
                   <button onClick={() => setSearchQuery("")} className="text-gray-400 hover:text-white ml-1">
                     <X className="w-3.5 h-3.5" />
+                  </button>
+                )}
+                {onOpenCommandPalette && (
+                  <button
+                    onClick={onOpenCommandPalette}
+                    className="hidden sm:flex items-center gap-1 ml-2 px-2 py-0.5 rounded text-[10px] font-bold bg-white/10 text-amber-300 border border-white/15 hover:bg-white/20 transition-all cursor-pointer"
+                  >
+                    ⌘K
                   </button>
                 )}
               </div>
