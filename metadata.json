@@ -1,0 +1,6 @@
+{
+  "name": "CineBharat - Indian Cinema Ecosystem & Analytics",
+  "description": "Advanced Indian movie platform featuring real-time box office analytics, HD trailer streaming, director & actor insights, community discussions, and AI recommendations.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
