@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { Navbar } from "./components/Navbar";
+import { LeftSidebar } from "./components/LeftSidebar";
+import { FeatureFooterBar } from "./components/FeatureFooterBar";
 import { HeroBanner } from "./components/HeroBanner";
 import { MovieGrid } from "./components/MovieGrid";
 import { MovieDetailModal } from "./components/MovieDetailModal";
@@ -108,103 +110,111 @@ export default function App() {
         userName={userProfile.name}
       />
 
-      {/* Main View Area: Dedicated Movie View vs Search Engine vs Tab Views */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 pb-20 relative z-10">
-        
-        {viewingMovie ? (
-          <DedicatedMovieView
-            movie={viewingMovie}
-            onBack={() => setViewingMovie(null)}
-            onOpenTrailer={handleOpenTrailer}
-            isWatchlisted={userProfile.watchlist.includes(viewingMovie.id)}
-            onToggleWatchlist={handleToggleWatchlist}
-          />
-        ) : (
-          <>
-            {/* Multi-Dimensional AI Search Engine Display when user types in search */}
-            {searchQuery ? (
-              <div className="my-8">
-                <SearchEngine
-                  movies={INDIAN_MOVIES_DATABASE}
-                  onSelectMovie={(movie) => setViewingMovie(movie)}
-                />
-              </div>
-            ) : (
-              <>
-                {/* TAB 1: EXPLORE MOVIES */}
-                {activeTab === "explore" && (
-                  <div>
-                    <HeroBanner
-                      movie={heroMovie}
-                      onSelectMovie={(movie) => setViewingMovie(movie)}
-                      onOpenTrailer={handleOpenTrailer}
-                      isWatchlisted={userProfile.watchlist.includes(heroMovie.id)}
-                      onToggleWatchlist={handleToggleWatchlist}
-                    />
+      {/* Main Body Shell: Left Icon Rail Sidebar + Main View Content */}
+      <div className="flex-1 flex w-full relative z-10">
+        <LeftSidebar
+          activeTab={activeTab}
+          onNavigate={(tab) => { setViewingMovie(null); setActiveTab(tab); }}
+          onOpenAiCopilot={() => setIsAiAssistantOpen(true)}
+        />
 
+        <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 pb-12 min-w-0">
+          {viewingMovie ? (
+            <DedicatedMovieView
+              movie={viewingMovie}
+              onBack={() => setViewingMovie(null)}
+              onOpenTrailer={handleOpenTrailer}
+              isWatchlisted={userProfile.watchlist.includes(viewingMovie.id)}
+              onToggleWatchlist={handleToggleWatchlist}
+            />
+          ) : (
+            <>
+              {searchQuery ? (
+                <div className="my-8">
+                  <SearchEngine
+                    movies={INDIAN_MOVIES_DATABASE}
+                    onSelectMovie={(movie) => setViewingMovie(movie)}
+                  />
+                </div>
+              ) : (
+                <>
+                  {/* TAB 1: EXPLORE MOVIES */}
+                  {activeTab === "explore" && (
+                    <div>
+                      <HeroBanner
+                        movie={heroMovie}
+                        onSelectMovie={(movie) => setViewingMovie(movie)}
+                        onOpenTrailer={handleOpenTrailer}
+                        isWatchlisted={userProfile.watchlist.includes(heroMovie.id)}
+                        onToggleWatchlist={handleToggleWatchlist}
+                      />
+
+                      <LiveApiDataExplorer
+                        onSelectMovie={(movie) => setViewingMovie(movie)}
+                        onOpenTrailer={handleOpenTrailer}
+                      />
+
+                      <MovieGrid
+                        movies={INDIAN_MOVIES_DATABASE}
+                        onSelectMovie={(movie) => setViewingMovie(movie)}
+                        onOpenTrailer={handleOpenTrailer}
+                        watchlist={userProfile.watchlist}
+                        onToggleWatchlist={handleToggleWatchlist}
+                        selectedLanguage={selectedLanguage}
+                        setSelectedLanguage={setSelectedLanguage}
+                      />
+                    </div>
+                  )}
+
+                  {/* TAB 2: LIVE FREE API ENGINE */}
+                  {activeTab === "live-api" && (
                     <LiveApiDataExplorer
                       onSelectMovie={(movie) => setViewingMovie(movie)}
                       onOpenTrailer={handleOpenTrailer}
                     />
+                  )}
 
-                    <MovieGrid
+                  {/* TAB 3: BOX OFFICE TELEMETRY */}
+                  {activeTab === "analytics" && (
+                    <BoxOfficeAnalyticsDashboard />
+                  )}
+
+                  {/* TAB 4: HD STREAMING & TRAILER HUB */}
+                  {activeTab === "streaming" && (
+                    <TrailerHubView
                       movies={INDIAN_MOVIES_DATABASE}
+                      onOpenTrailer={handleOpenTrailer}
+                    />
+                  )}
+
+                  {/* TAB 5: COMMUNITY FORUM */}
+                  {activeTab === "community" && (
+                    <CommunityForum
+                      userRole={userProfile.role}
+                      userName={userProfile.name}
+                    />
+                  )}
+
+                  {/* TAB 6: MY WORKSPACE & DASHBOARD */}
+                  {activeTab === "dashboard" && (
+                    <UserDashboard
+                      userProfile={userProfile}
+                      setUserProfile={setUserProfile}
+                      moviesList={INDIAN_MOVIES_DATABASE}
                       onSelectMovie={(movie) => setViewingMovie(movie)}
                       onOpenTrailer={handleOpenTrailer}
-                      watchlist={userProfile.watchlist}
-                      onToggleWatchlist={handleToggleWatchlist}
-                      selectedLanguage={selectedLanguage}
-                      setSelectedLanguage={setSelectedLanguage}
+                      onRemoveWatchlist={handleToggleWatchlist}
                     />
-                  </div>
-                )}
+                  )}
+                </>
+              )}
+            </>
+          )}
+        </main>
+      </div>
 
-                {/* TAB 2: LIVE FREE API ENGINE */}
-                {activeTab === "live-api" && (
-                  <LiveApiDataExplorer
-                    onSelectMovie={(movie) => setViewingMovie(movie)}
-                    onOpenTrailer={handleOpenTrailer}
-                  />
-                )}
-
-                {/* TAB 3: BOX OFFICE TELEMETRY */}
-                {activeTab === "analytics" && (
-                  <BoxOfficeAnalyticsDashboard />
-                )}
-
-                {/* TAB 4: HD STREAMING & TRAILER HUB */}
-                {activeTab === "streaming" && (
-                  <TrailerHubView
-                    movies={INDIAN_MOVIES_DATABASE}
-                    onOpenTrailer={handleOpenTrailer}
-                  />
-                )}
-
-                {/* TAB 5: COMMUNITY FORUM */}
-                {activeTab === "community" && (
-                  <CommunityForum
-                    userRole={userProfile.role}
-                    userName={userProfile.name}
-                  />
-                )}
-
-                {/* TAB 6: MY WORKSPACE & DASHBOARD */}
-                {activeTab === "dashboard" && (
-                  <UserDashboard
-                    userProfile={userProfile}
-                    setUserProfile={setUserProfile}
-                    moviesList={INDIAN_MOVIES_DATABASE}
-                    onSelectMovie={(movie) => setViewingMovie(movie)}
-                    onOpenTrailer={handleOpenTrailer}
-                    onRemoveWatchlist={handleToggleWatchlist}
-                  />
-                )}
-              </>
-            )}
-          </>
-        )}
-
-      </main>
+      {/* Bottom Feature Pillars Bar */}
+      <FeatureFooterBar />
 
       {/* Global Modals */}
       <MovieDetailModal

@@ -1,183 +1,174 @@
-import React from "react";
-import {
-  BarChart3,
-  TrendingUp,
-  Award,
-  Globe2,
-  DollarSign,
-  PieChart,
-  Layers,
-  Sparkles,
-  ArrowUpRight,
-  Flame,
-  Film
-} from "lucide-react";
-import { BOX_OFFICE_PAN_INDIA_TELEMETRY, INDIAN_MOVIES_DATABASE } from "../data/indianMovies";
+import React, { useState } from "react";
+import { BarChart3, TrendingUp, DollarSign, Film, Globe, PieChart, ArrowUpRight } from "lucide-react";
 
 export const BoxOfficeAnalyticsDashboard: React.FC = () => {
-  const topRoiMovies = [...INDIAN_MOVIES_DATABASE].sort((a, b) => b.roiPercentage - a.roiPercentage);
-  const topGrossers = [...INDIAN_MOVIES_DATABASE].sort((a, b) => b.boxOfficeGrossCrores - a.boxOfficeGrossCrores);
+  const [timeFilter, setTimeFilter] = useState<"overview" | "daily" | "weekly" | "monthly" | "yearly">("overview");
+
+  const topGrossers = [
+    { rank: 1, title: "Kalki 2898 AD", gross: "₹1100 Cr+" },
+    { rank: 2, title: "Pushpa 2: The Rule", gross: "₹970 Cr+" },
+    { rank: 3, title: "Jawan", gross: "₹950 Cr+" },
+    { rank: 4, title: "Animal", gross: "₹840 Cr+" },
+    { rank: 5, title: "Salaar: Part 1", gross: "₹630 Cr+" },
+  ];
+
+  const industryShares = [
+    { name: "Bollywood", percentage: 45, color: "bg-red-500" },
+    { name: "Tollywood", percentage: 25, color: "bg-amber-400" },
+    { name: "Kollywood", percentage: 15, color: "bg-purple-500" },
+    { name: "Sandalwood", percentage: 10, color: "bg-emerald-400" },
+    { name: "Mollywood", percentage: 5, color: "bg-blue-400" },
+  ];
 
   return (
-    <div className="space-y-8 my-8 animate-fadeIn">
-      
-      {/* Title Banner */}
-      <div className="bg-[#14171E] border border-white/5 rounded-3xl p-6 sm:p-10 shadow-2xl relative overflow-hidden">
-        <div className="absolute top-0 right-0 p-8 opacity-5 pointer-events-none">
-          <BarChart3 className="w-64 h-64 text-emerald-400" />
-        </div>
-
-        <div className="relative z-10 max-w-3xl">
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-[11px] font-extrabold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 mb-3 font-mono">
-            <Flame className="w-3.5 h-3.5 text-emerald-400" /> PAN-INDIAN TELEMETRY CONSOLE
-          </span>
-          <h1 className="text-3xl sm:text-5xl font-extrabold text-white font-sans tracking-tight">
-            Indian Film Industry Box Office Telemetry
+    <div className="space-y-6 my-6 animate-fadeIn">
+      {/* Header Bar */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-2xl sm:text-3xl font-black text-white font-serif flex items-center gap-2">
+            <BarChart3 className="w-7 h-7 text-red-500" /> Box Office Analytics
           </h1>
-          <p className="text-xs sm:text-sm text-gray-400 mt-2 leading-relaxed">
-            Real-time trade analysis, regional revenue share distributions, ROI multipliers, and 1000+ Crore Club milestones across Tollywood, Bollywood, Kollywood, Mollywood, and Sandalwood.
+          <p className="text-xs text-gray-400">
+            Real-time collection updates, collection trends, and industry analytics
           </p>
         </div>
-      </div>
 
-      {/* Quick Macro Indicators */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="p-5 bg-[#14171E] border border-white/5 rounded-2xl shadow-xl">
-          <div className="flex items-center justify-between text-xs text-gray-500 font-mono">
-            <span>2024 Pan-India Gross</span>
-            <span className="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 font-bold flex items-center text-[10px]">
-              <ArrowUpRight className="w-3 h-3 mr-0.5" /> +18.4%
-            </span>
-          </div>
-          <p className="text-3xl font-extrabold text-emerald-400 font-mono mt-2">
-            ₹{BOX_OFFICE_PAN_INDIA_TELEMETRY.totalGrossCrores2024.toLocaleString()} Cr
-          </p>
-          <p className="text-[11px] text-gray-500 mt-1">Cumulative All-India Box Office</p>
-        </div>
-
-        <div className="p-5 bg-[#14171E] border border-white/5 rounded-2xl shadow-xl">
-          <div className="flex items-center justify-between text-xs text-gray-500 font-mono">
-            <span>Market Share Leader</span>
-            <span className="px-2 py-0.5 rounded bg-blue-500/10 text-blue-400 font-bold text-[10px]">29% Share</span>
-          </div>
-          <p className="text-3xl font-extrabold text-white font-sans mt-2">Tollywood</p>
-          <p className="text-[11px] text-gray-500 mt-1">Telugu Cinema Industry (₹3,726 Cr)</p>
-        </div>
-
-        <div className="p-5 bg-[#14171E] border border-white/5 rounded-2xl shadow-xl">
-          <div className="flex items-center justify-between text-xs text-gray-500 font-mono">
-            <span>1000 Cr+ Members</span>
-            <span className="px-2 py-0.5 rounded bg-purple-500/10 text-purple-400 font-bold text-[10px]">8 Films</span>
-          </div>
-          <p className="text-3xl font-extrabold text-purple-400 font-sans mt-2">Elite Club</p>
-          <p className="text-[11px] text-gray-500 mt-1">Pan-Indian Global Milestones</p>
-        </div>
-
-        <div className="p-5 bg-[#14171E] border border-white/5 rounded-2xl shadow-xl">
-          <div className="flex items-center justify-between text-xs text-gray-500 font-mono">
-            <span>Highest ROI Winner</span>
-            <span className="px-2 py-0.5 rounded bg-amber-500/10 text-amber-400 font-bold text-[10px]">2700% ROI</span>
-          </div>
-          <p className="text-3xl font-extrabold text-amber-300 font-sans mt-2">Kantara</p>
-          <p className="text-[11px] text-gray-500 mt-1">Sandalwood Folklore Blockbuster</p>
-        </div>
-      </div>
-
-      {/* Industry Share Distribution */}
-      <div className="bg-[#14171E] border border-white/5 p-6 sm:p-8 rounded-3xl shadow-xl space-y-6">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-white/5 pb-4">
-          <div>
-            <h3 className="text-lg font-bold text-white font-sans flex items-center gap-2">
-              <PieChart className="w-5 h-5 text-emerald-400" /> Regional Cinema Market Share Breakdown
-            </h3>
-            <p className="text-xs text-gray-400">Percentage contribution to total Indian box office revenue</p>
-          </div>
-          <span className="text-[11px] font-mono text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-md border border-emerald-500/20 self-start sm:self-auto font-bold">
-            Multi-Lingual Crossover Era
-          </span>
-        </div>
-
-        {/* Visual Bar Stack */}
-        <div className="h-5 w-full bg-black/60 rounded-lg overflow-hidden flex shadow-inner">
-          {BOX_OFFICE_PAN_INDIA_TELEMETRY.industryShare.map((ind) => (
-            <div
-              key={ind.industry}
-              style={{ width: `${ind.sharePercentage}%`, backgroundColor: ind.color }}
-              className="h-full transition-all duration-500 hover:opacity-80"
-              title={`${ind.industry}: ${ind.sharePercentage}%`}
-            />
+        {/* Time Filters matching Screen 05 */}
+        <div className="flex gap-1.5 bg-[#12141d] p-1.5 rounded-xl border border-white/10 text-xs font-bold self-start sm:self-auto">
+          {["overview", "daily", "weekly", "monthly", "yearly"].map((t) => (
+            <button
+              key={t}
+              onClick={() => setTimeFilter(t as any)}
+              className={`px-3 py-1.5 rounded-lg capitalize transition-all cursor-pointer ${
+                timeFilter === t
+                  ? "bg-[#e50914] text-white shadow"
+                  : "text-gray-400 hover:text-white"
+              }`}
+            >
+              {t}
+            </button>
           ))}
         </div>
+      </div>
 
-        {/* Legend Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-          {BOX_OFFICE_PAN_INDIA_TELEMETRY.industryShare.map((ind) => (
-            <div key={ind.industry} className="p-3 bg-[#0F1116] border border-white/5 rounded-xl flex items-center gap-2.5">
-              <span className="w-3 h-3 rounded-xs shrink-0" style={{ backgroundColor: ind.color }} />
-              <div className="min-w-0">
-                <p className="text-xs font-bold text-white truncate">{ind.industry}</p>
-                <p className="text-[10px] text-gray-400 font-mono font-semibold">{ind.sharePercentage}% Share</p>
-              </div>
+      {/* Top 4 KPI Summary Cards matching Screen 05 */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 font-mono">
+        <div className="bg-[#12141d] border border-white/10 p-5 rounded-2xl space-y-1">
+          <p className="text-xs text-gray-400 uppercase font-bold font-sans">Total Collection</p>
+          <p className="text-2xl font-black text-white font-serif">₹12,432 Cr</p>
+          <p className="text-[11px] text-emerald-400 font-bold flex items-center gap-1">
+            <TrendingUp className="w-3 h-3" /> +18.4% vs last month
+          </p>
+        </div>
+
+        <div className="bg-[#12141d] border border-white/10 p-5 rounded-2xl space-y-1">
+          <p className="text-xs text-gray-400 uppercase font-bold font-sans">India Net</p>
+          <p className="text-2xl font-black text-emerald-400 font-serif">₹7,842 Cr</p>
+          <p className="text-[11px] text-emerald-400 font-bold flex items-center gap-1">
+            <TrendingUp className="w-3 h-3" /> +22.1% vs last month
+          </p>
+        </div>
+
+        <div className="bg-[#12141d] border border-white/10 p-5 rounded-2xl space-y-1">
+          <p className="text-xs text-gray-400 uppercase font-bold font-sans">Overseas Gross</p>
+          <p className="text-2xl font-black text-amber-400 font-serif">₹4,590 Cr</p>
+          <p className="text-[11px] text-emerald-400 font-bold flex items-center gap-1">
+            <TrendingUp className="w-3 h-3" /> +15.2% vs last month
+          </p>
+        </div>
+
+        <div className="bg-[#12141d] border border-white/10 p-5 rounded-2xl space-y-1">
+          <p className="text-xs text-gray-400 uppercase font-bold font-sans">Releases</p>
+          <p className="text-2xl font-black text-purple-400 font-serif">128</p>
+          <p className="text-[11px] text-emerald-400 font-bold flex items-center gap-1">
+            <TrendingUp className="w-3 h-3" /> +14 vs last month
+          </p>
+        </div>
+      </div>
+
+      {/* Main Collection Trend Chart matching Screen 05 */}
+      <div className="bg-[#12141d] border border-white/10 p-6 rounded-3xl space-y-4 shadow-2xl">
+        <div className="flex items-center justify-between">
+          <h3 className="text-base font-bold text-white font-serif">Collection Trend (Last 12 Months)</h3>
+          <span className="text-xs text-gray-400 font-mono">in ₹ Crores</span>
+        </div>
+
+        {/* Visual Line Chart Graphic matching Screen 05 */}
+        <div className="relative h-56 w-full flex items-end justify-between pt-6 px-2 gap-2">
+          {/* Background Grid Lines */}
+          <div className="absolute inset-0 flex flex-col justify-between pointer-events-none opacity-10">
+            <div className="border-b border-white w-full" />
+            <div className="border-b border-white w-full" />
+            <div className="border-b border-white w-full" />
+            <div className="border-b border-white w-full" />
+          </div>
+
+          {[
+            { month: "Jan", val: 65 },
+            { month: "Feb", val: 80 },
+            { month: "Mar", val: 55 },
+            { month: "Apr", val: 90 },
+            { month: "May", val: 110 },
+            { month: "Jun", val: 140 },
+            { month: "Jul", val: 160 },
+            { month: "Aug", val: 125 },
+            { month: "Sep", val: 95 },
+            { month: "Oct", val: 130 },
+            { month: "Nov", val: 175 },
+            { month: "Dec", val: 200 },
+          ].map((bar, idx) => (
+            <div key={idx} className="flex-1 flex flex-col items-center gap-2 group z-10">
+              <div
+                className="w-full max-w-[28px] rounded-t-lg bg-gradient-to-t from-red-800 to-red-500 group-hover:from-red-600 group-hover:to-rose-400 transition-all shadow-lg shadow-red-900/30"
+                style={{ height: `${(bar.val / 200) * 100}%` }}
+              />
+              <span className="text-[10px] text-gray-400 font-mono group-hover:text-white transition-colors">{bar.month}</span>
             </div>
           ))}
         </div>
       </div>
 
-      {/* Two Column Section: 1000 Cr Club vs Highest ROI */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      {/* Bottom Grid: Top Grossers & Industry Share Donut matching Screen 05 */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         
-        {/* 1000 Crore Club Leaderboard */}
-        <div className="bg-[#14171E] border border-white/5 p-6 rounded-3xl shadow-xl space-y-4">
-          <h3 className="text-base font-bold text-white font-sans flex items-center gap-2">
-            <Award className="w-5 h-5 text-emerald-400" /> The ₹1000 Crore Club (All-Time Global)
+        {/* Left: Top Grossers */}
+        <div className="bg-[#12141d] border border-white/10 p-6 rounded-3xl space-y-4 shadow-2xl">
+          <h3 className="text-base font-bold text-white font-serif flex items-center justify-between">
+            <span>Top Grossers</span>
+            <span className="text-xs text-red-500 font-mono">2024 Benchmark</span>
           </h3>
-          <p className="text-xs text-gray-400">Highest grossing Indian feature films worldwide</p>
 
-          <div className="space-y-2 max-h-96 overflow-y-auto pr-1">
-            {BOX_OFFICE_PAN_INDIA_TELEMETRY.top1000CroreClub.map((item, idx) => (
-              <div key={item.title} className="p-3 bg-[#0F1116] border border-white/5 rounded-xl flex items-center justify-between hover:bg-white/5 transition-colors">
+          <div className="space-y-2.5">
+            {topGrossers.map((g) => (
+              <div key={g.rank} className="flex items-center justify-between p-3 rounded-2xl bg-[#07080c] border border-white/5 text-xs font-mono">
                 <div className="flex items-center gap-3">
-                  <span className={`w-6 h-6 rounded-md flex items-center justify-center font-bold text-xs font-mono ${
-                    idx === 0 ? "bg-emerald-500 text-black" : idx === 1 ? "bg-blue-500 text-white" : idx === 2 ? "bg-amber-500 text-black" : "bg-white/10 text-gray-400"
-                  }`}>
-                    #{idx + 1}
+                  <span className="w-6 h-6 rounded-full bg-red-600/20 text-red-400 font-bold flex items-center justify-center text-xs">
+                    {g.rank}
                   </span>
-                  <div>
-                    <h4 className="text-xs font-bold text-white font-sans">{item.title}</h4>
-                    <p className="text-[10px] text-gray-500 font-mono">{item.language} • {item.year}</p>
-                  </div>
+                  <span className="font-bold text-white font-sans">{g.title}</span>
                 </div>
-                <div className="text-right">
-                  <p className="text-xs font-extrabold text-emerald-400 font-mono">₹{item.gross} Cr</p>
-                  <p className="text-[9px] text-gray-500 uppercase tracking-wider">Worldwide Gross</p>
-                </div>
+                <span className="text-emerald-400 font-bold">{g.gross}</span>
               </div>
             ))}
           </div>
         </div>
 
-        {/* Highest ROI Multiplier Leaderboard */}
-        <div className="bg-[#14171E] border border-white/5 p-6 rounded-3xl shadow-xl space-y-4">
-          <h3 className="text-base font-bold text-white font-sans flex items-center gap-2">
-            <TrendingUp className="w-5 h-5 text-emerald-400" /> Top ROI Multiplier Champions
-          </h3>
-          <p className="text-xs text-gray-400">Films delivering highest profit returns on declared budget</p>
+        {/* Right: Industry Share Donut Breakdown */}
+        <div className="bg-[#12141d] border border-white/10 p-6 rounded-3xl space-y-4 shadow-2xl">
+          <div className="flex items-center justify-between">
+            <h3 className="text-base font-bold text-white font-serif">Industry Share</h3>
+            <span className="text-xs text-gray-400 font-mono">Total: ₹12,432 Cr</span>
+          </div>
 
-          <div className="space-y-2 max-h-96 overflow-y-auto pr-1">
-            {topRoiMovies.map((movie, idx) => (
-              <div key={movie.id} className="p-3 bg-[#0F1116] border border-white/5 rounded-xl flex items-center justify-between hover:bg-white/5 transition-colors">
-                <div className="flex items-center gap-3">
-                  <img src={movie.posterUrl} alt={movie.title} className="w-8 h-12 object-cover rounded-md border border-white/10" />
-                  <div>
-                    <h4 className="text-xs font-bold text-white font-sans">{movie.title}</h4>
-                    <p className="text-[10px] text-gray-500 font-mono">
-                      Budget: <span className="text-gray-300">₹{movie.budgetCrores} Cr</span> • Gross: <span className="text-emerald-400">₹{movie.boxOfficeGrossCrores} Cr</span>
-                    </p>
-                  </div>
+          <div className="space-y-3">
+            {industryShares.map((ind) => (
+              <div key={ind.name} className="space-y-1">
+                <div className="flex items-center justify-between text-xs font-mono">
+                  <span className="text-gray-300 font-sans">{ind.name}</span>
+                  <span className="text-white font-bold">{ind.percentage}%</span>
                 </div>
-                <div className="text-right">
-                  <p className="text-xs font-extrabold text-blue-400 font-mono">+{movie.roiPercentage}%</p>
-                  <p className="text-[9px] text-emerald-400 font-bold uppercase tracking-wider">ROI Return</p>
+                <div className="w-full h-2 bg-[#07080c] rounded-full overflow-hidden">
+                  <div className={`h-full ${ind.color} rounded-full`} style={{ width: `${ind.percentage}%` }} />
                 </div>
               </div>
             ))}
@@ -185,7 +176,6 @@ export const BoxOfficeAnalyticsDashboard: React.FC = () => {
         </div>
 
       </div>
-
     </div>
   );
 };
