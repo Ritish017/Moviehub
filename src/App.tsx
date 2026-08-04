@@ -12,6 +12,7 @@ import { LiveApiDataExplorer } from "./components/LiveApiDataExplorer";
 import { AiCinemaAssistantModal } from "./components/AiCinemaAssistantModal";
 import { HdStreamPlayerModal } from "./components/HdStreamPlayerModal";
 import { AmbientBackground } from "./components/ui/AmbientBackground";
+import { LiveMarketTickerBar } from "./components/ui/LiveMarketTickerBar";
 import { CommandPalette } from "./components/ui/CommandPalette";
 import { DedicatedMovieView } from "./features/movies/DedicatedMovieView";
 import { TrailerHubView } from "./features/trailers/TrailerHubView";
@@ -94,6 +95,9 @@ export default function App() {
       
       {/* Ambient Poster Aura Background */}
       <AmbientBackground backdropUrl={(viewingMovie || selectedMovie || heroMovie)?.backdropUrl} />
+
+      {/* Live BFilmy Box Office Ticker Bar */}
+      <LiveMarketTickerBar />
 
       {/* Top Navbar */}
       <Navbar
