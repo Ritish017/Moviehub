@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { HeroBanner } from "../../components/HeroBanner";
 import { MovieGrid } from "../../components/MovieGrid";
 import { LiveApiDataExplorer } from "../../components/LiveApiDataExplorer";
 import { BoxOfficeAnalyticsDashboard } from "../../components/BoxOfficeAnalyticsDashboard";
+import { CommunityForum } from "../../components/CommunityForum";
 import { ComingSoonRail } from "./ComingSoonRail";
 import { AiPicksRail } from "./AiPicksRail";
 import { CollectionsRail } from "./CollectionsRail";
 import { IndianCinemaRail } from "./IndianCinemaRail";
-import { FeaturedTalentRail } from "./FeaturedTalentRail";
 import { Movie, VideoClip } from "../../types";
 
 interface HomepageAggregatorViewProps {
@@ -29,24 +29,11 @@ export const HomepageAggregatorView: React.FC<HomepageAggregatorViewProps> = ({
   selectedLanguage,
   setSelectedLanguage,
 }) => {
-  const [aggregatorData, setAggregatorData] = useState<any>(null);
-
-  useEffect(() => {
-    fetch("/api/cinema/homepage-aggregator")
-      .then((res) => res.json())
-      .then((json) => {
-        if (json.success) {
-          setAggregatorData(json.data);
-        }
-      })
-      .catch((err) => console.error("Aggregator load error:", err));
-  }, []);
-
   const heroMovie = movies[0];
 
   return (
     <div className="space-y-12 animate-fadeIn">
-      {/* 1. Full-Viewport Auto-Rotating Hero Spotlight */}
+      {/* 1. Full-Viewport Auto-Rotating Hero (85vh) */}
       <HeroBanner
         movie={heroMovie}
         onSelectMovie={onSelectMovie}
@@ -55,28 +42,7 @@ export const HomepageAggregatorView: React.FC<HomepageAggregatorViewProps> = ({
         onToggleWatchlist={onToggleWatchlist}
       />
 
-      {/* 2. Live API Cinema Gateway Sandbox */}
-      <LiveApiDataExplorer
-        onSelectMovie={onSelectMovie}
-        onOpenTrailer={onOpenTrailer}
-      />
-
-      {/* 3. 🎬 Section 3: Coming Soon & Release Countdowns */}
-      <ComingSoonRail />
-
-      {/* 4. 🤖 Section 7: AI Picks by Gemini 3.6 Flash */}
-      <AiPicksRail movies={movies} onSelectMovie={onSelectMovie} />
-
-      {/* 5. 🇮🇳 Section 9: Indian Regional Cinema Hub */}
-      <IndianCinemaRail movies={movies} onSelectMovie={onSelectMovie} />
-
-      {/* 6. 🎭 Section 8: Collections & Franchise Universes */}
-      <CollectionsRail />
-
-      {/* 7. ⭐ & 🎬 Sections 13 & 14: Featured Actors & Directors */}
-      <FeaturedTalentRail />
-
-      {/* 8. Main Catalog Grid with Language & Industry Filters */}
+      {/* 2. Trending Now Catalog Grid */}
       <MovieGrid
         movies={movies}
         onSelectMovie={onSelectMovie}
@@ -87,8 +53,29 @@ export const HomepageAggregatorView: React.FC<HomepageAggregatorViewProps> = ({
         setSelectedLanguage={setSelectedLanguage}
       />
 
-      {/* 9. 📈 Section 11: Box Office Telemetry */}
+      {/* 3. Trending in India (Bollywood / Tollywood / Kollywood / Mollywood / Sandalwood) */}
+      <IndianCinemaRail movies={movies} onSelectMovie={onSelectMovie} />
+
+      {/* 4. Coming Soon Countdown Cards */}
+      <ComingSoonRail />
+
+      {/* 5. Latest Trailers (YouTube Data Proxy Rail) */}
+      <LiveApiDataExplorer
+        onSelectMovie={onSelectMovie}
+        onOpenTrailer={onOpenTrailer}
+      />
+
+      {/* 6. AI Picks (Gemini 3.6 Flash Curated Rows) */}
+      <AiPicksRail movies={movies} onSelectMovie={onSelectMovie} />
+
+      {/* 7. Collections & Franchise Universes */}
+      <CollectionsRail />
+
+      {/* 8. Box Office / Analytics Telemetry */}
       <BoxOfficeAnalyticsDashboard />
+
+      {/* 9. Cinephile Community & Verified Critic Discussions */}
+      <CommunityForum />
     </div>
   );
 };

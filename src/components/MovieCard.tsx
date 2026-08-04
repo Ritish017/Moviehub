@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Star, Play, Sparkles, Bookmark, Check, ArrowUpRight } from "lucide-react";
 import { Movie } from "../types";
 import { getYouTubeEmbedUrl } from "../utils/videoUtils";
+import { getPosterUrl, FALLBACK_POSTER } from "../utils/imageUtils";
 
 interface MovieCardProps {
   movie: Movie;
@@ -19,6 +20,8 @@ export const MovieCard: React.FC<MovieCardProps> = ({
   onToggleWatchlist
 }) => {
   const [isHovered, setIsHovered] = useState(false);
+
+  const posterSrc = getPosterUrl(movie.posterUrl);
 
   return (
     <div
@@ -42,10 +45,13 @@ export const MovieCard: React.FC<MovieCardProps> = ({
           </div>
         ) : (
           <img
-            src={movie.posterUrl}
+            src={posterSrc}
             alt={movie.title}
             className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700"
             loading="lazy"
+            onError={(e) => {
+              (e.target as HTMLImageElement).src = FALLBACK_POSTER;
+            }}
           />
         )}
 

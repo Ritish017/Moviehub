@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { Play, Plus, Check, Star, Flame, Trophy, Volume2, VolumeX, Sparkles, Share2, Calendar, Clock, ChevronLeft, ChevronRight } from "lucide-react";
+import { Play, Plus, Check, Star, Flame, Volume2, VolumeX, Sparkles, Clock, ChevronLeft, ChevronRight } from "lucide-react";
 import { Movie } from "../types";
 import { getYouTubeEmbedUrl } from "../utils/videoUtils";
+import { getBackdropUrl, FALLBACK_BACKDROP } from "../utils/imageUtils";
 
 interface HeroBannerProps {
   movie: Movie;
@@ -81,28 +82,35 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
   const [activeIndex, setActiveIndex] = useState(0);
   const [isPlayingVideo, setIsPlayingVideo] = useState(false);
   const [isMuted, setIsMuted] = useState(true);
+  const [isPaused, setIsPaused] = useState(false);
 
-  // 10-Second Auto Rotate Timer
+  // 10-Second Auto Rotate Timer (Pauses on hover)
   useEffect(() => {
+    if (isPaused) return;
     const timer = setInterval(() => {
       setActiveIndex((prev) => (prev + 1) % rotatingMovies.length);
       setIsPlayingVideo(false);
-    }, 10000);
+    }, 9000);
     return () => clearInterval(timer);
-  }, [rotatingMovies.length]);
+  }, [rotatingMovies.length, isPaused]);
 
   // Auto video preview after 3s on slide change
   useEffect(() => {
     const videoTimer = setTimeout(() => {
       setIsPlayingVideo(true);
-    }, 3500);
+    }, 3200);
     return () => clearTimeout(videoTimer);
   }, [activeIndex]);
 
   const activeSlide = rotatingMovies[activeIndex];
+  const bgUrl = getBackdropUrl(activeSlide.backdropUrl);
 
   return (
-    <div className="relative w-full h-[82vh] min-h-[580px] max-h-[780px] overflow-hidden rounded-3xl my-4 border border-white/15 shadow-2xl group bg-[#07080c] select-none transition-all duration-700">
+    <div
+      onMouseEnter={() => setIsPaused(true)}
+      onMouseLeave={() => setIsPaused(false)}
+      className="relative w-full h-[85vh] min-h-[580px] max-h-[820px] overflow-hidden rounded-3xl my-4 border border-white/15 shadow-2xl group bg-[#07080c] select-none transition-all duration-700"
+    >
       
       {/* Media Layer: Live Video vs Backdrop Image */}
       {isPlayingVideo ? (
@@ -116,9 +124,12 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
         </div>
       ) : (
         <img
-          src={activeSlide.backdropUrl}
+          src={bgUrl}
           alt={activeSlide.title}
           className="absolute inset-0 w-full h-full object-cover object-center transform scale-105 transition-transform duration-1000 group-hover:scale-110 filter brightness-90"
+          onError={(e) => {
+            (e.target as HTMLImageElement).src = FALLBACK_BACKDROP;
+          }}
         />
       )}
 
@@ -152,7 +163,9 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
           <span className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-black bg-gradient-to-r ${activeSlide.badgeColor} text-white shadow-xl uppercase tracking-wider font-mono`}>
             <Flame className="w-3.5 h-3.5 fill-current" /> {activeSlide.badge}
           </span>
-          <span className="text-xs text-gray-400 font-mono hidden sm:inline">Auto-rotating every 10s</span>
+          <span className="text-xs text-gray-400 font-mono hidden sm:inline">
+            {isPaused ? "Paused on hover" : "Rotating every 9s"}
+          </span>
         </div>
 
         {/* Floating Movie Title */}
@@ -234,7 +247,7 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
           )}
         </div>
 
-        {/* 10-Second Auto Slider Indicator Dots */}
+        {/* 9-Second Auto Slider Indicator Dots */}
         <div className="flex items-center justify-between pt-2 border-t border-white/10">
           <div className="flex items-center gap-2">
             {rotatingMovies.map((_, idx) => (

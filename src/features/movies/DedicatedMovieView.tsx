@@ -4,24 +4,16 @@ import {
   Play,
   Plus,
   Check,
-  Star,
   Clock,
   Calendar,
   Sparkles,
   Tv,
-  Award,
   Layers,
-  Users,
-  DollarSign,
-  Share2,
-  Film,
-  Music,
-  HelpCircle,
-  TrendingUp,
-  Globe
+  DollarSign
 } from "lucide-react";
 import { Movie, VideoClip } from "../../types";
 import { MovieAiAnalysisPanel } from "../ai/MovieAiAnalysisPanel";
+import { getPosterUrl, getBackdropUrl, FALLBACK_POSTER, FALLBACK_BACKDROP } from "../../utils/imageUtils";
 
 interface DedicatedMovieViewProps {
   movie: Movie;
@@ -39,8 +31,11 @@ export const DedicatedMovieView: React.FC<DedicatedMovieViewProps> = ({
   onToggleWatchlist,
 }) => {
   const [activeTab, setActiveTab] = useState<
-    "overview" | "ai" | "timeline" | "cast" | "financials" | "soundtrack" | "reviews"
+    "overview" | "ai" | "timeline" | "cast" | "financials" | "reviews"
   >("overview");
+
+  const backdropSrc = getBackdropUrl(movie.backdropUrl);
+  const posterSrc = getPosterUrl(movie.posterUrl);
 
   return (
     <div className="min-h-screen text-gray-100 font-sans pb-20 animate-fadeIn">
@@ -66,9 +61,12 @@ export const DedicatedMovieView: React.FC<DedicatedMovieViewProps> = ({
       {/* Hero Backdrop Spotlight */}
       <div className="relative w-full h-[65vh] min-h-[480px] max-h-[700px] overflow-hidden">
         <img
-          src={movie.backdropUrl}
+          src={backdropSrc}
           alt={movie.title}
           className="w-full h-full object-cover object-center filter brightness-[0.7] transform scale-105"
+          onError={(e) => {
+            (e.target as HTMLImageElement).src = FALLBACK_BACKDROP;
+          }}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-[#07080c] via-[#07080c]/60 to-transparent" />
         <div className="absolute inset-0 bg-gradient-to-r from-[#07080c] via-transparent to-[#07080c]/80" />
@@ -80,7 +78,14 @@ export const DedicatedMovieView: React.FC<DedicatedMovieViewProps> = ({
         <div className="absolute bottom-0 inset-x-0 max-w-7xl mx-auto px-4 sm:px-8 pb-10 flex flex-col md:flex-row items-end gap-8">
           {/* Poster Box */}
           <div className="hidden md:block w-52 aspect-[2/3] rounded-2xl overflow-hidden shadow-2xl border-2 border-white/20 shrink-0 transform -translate-y-4 hover:scale-105 transition-transform duration-300">
-            <img src={movie.posterUrl} alt={movie.title} className="w-full h-full object-cover" />
+            <img
+              src={posterSrc}
+              alt={movie.title}
+              className="w-full h-full object-cover"
+              onError={(e) => {
+                (e.target as HTMLImageElement).src = FALLBACK_POSTER;
+              }}
+            />
           </div>
 
           {/* Details & Actions */}
@@ -227,31 +232,40 @@ export const DedicatedMovieView: React.FC<DedicatedMovieViewProps> = ({
               </div>
 
               {/* Video Clips Showcase */}
-              <div className="space-y-3">
-                <h3 className="text-base font-bold text-white font-serif">HD Trailers & Featured Clips ({movie.videoClips.length})</h3>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  {movie.videoClips.map((clip) => (
-                    <div
-                      key={clip.id}
-                      onClick={() => onOpenTrailer(movie, clip)}
-                      className="bg-[#12141d] border border-white/10 rounded-xl overflow-hidden cursor-pointer group hover:border-purple-500/50 transition-all"
-                    >
-                      <div className="relative aspect-video bg-black">
-                        <img src={clip.thumbnailUrl} alt={clip.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform" />
-                        <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
-                          <div className="w-10 h-10 rounded-full bg-red-600 text-white flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
-                            <Play className="w-4 h-4 fill-current ml-0.5" />
+              {movie.videoClips && movie.videoClips.length > 0 && (
+                <div className="space-y-3">
+                  <h3 className="text-base font-bold text-white font-serif">HD Trailers & Featured Clips ({movie.videoClips.length})</h3>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {movie.videoClips.map((clip) => (
+                      <div
+                        key={clip.id}
+                        onClick={() => onOpenTrailer(movie, clip)}
+                        className="bg-[#12141d] border border-white/10 rounded-xl overflow-hidden cursor-pointer group hover:border-purple-500/50 transition-all"
+                      >
+                        <div className="relative aspect-video bg-black">
+                          <img
+                            src={getPosterUrl(clip.thumbnailUrl || movie.posterUrl)}
+                            alt={clip.title}
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                            onError={(e) => {
+                              (e.target as HTMLImageElement).src = FALLBACK_POSTER;
+                            }}
+                          />
+                          <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+                            <div className="w-10 h-10 rounded-full bg-red-600 text-white flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                              <Play className="w-4 h-4 fill-current ml-0.5" />
+                            </div>
                           </div>
                         </div>
+                        <div className="p-3">
+                          <p className="text-xs font-bold text-white truncate">{clip.title}</p>
+                          <p className="text-[11px] text-gray-400 mt-0.5">{clip.type} • {clip.duration}</p>
+                        </div>
                       </div>
-                      <div className="p-3">
-                        <p className="text-xs font-bold text-white truncate">{clip.title}</p>
-                        <p className="text-[11px] text-gray-400 mt-0.5">{clip.type} • {clip.duration}</p>
-                      </div>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
-              </div>
+              )}
 
               {/* Pre-rendered AI Breakdown Block */}
               <MovieAiAnalysisPanel movie={movie} />
@@ -295,7 +309,14 @@ export const DedicatedMovieView: React.FC<DedicatedMovieViewProps> = ({
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                 {movie.cast.map((member) => (
                   <div key={member.id} className="bg-[#12141d] border border-white/10 p-3.5 rounded-xl flex items-center gap-3">
-                    <img src={member.photoUrl} alt={member.name} className="w-12 h-12 rounded-full object-cover border border-white/20 shrink-0" />
+                    <img
+                      src={getPosterUrl(member.photoUrl)}
+                      alt={member.name}
+                      className="w-12 h-12 rounded-full object-cover border border-white/20 shrink-0"
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).src = FALLBACK_POSTER;
+                      }}
+                    />
                     <div className="truncate">
                       <p className="text-xs font-bold text-white truncate">{member.name}</p>
                       <p className="text-[11px] text-gray-400 truncate">{member.characterName}</p>
