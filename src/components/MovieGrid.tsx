@@ -72,16 +72,9 @@ export const MovieGrid: React.FC<MovieGridProps> = ({
       <div className="bg-[#080A0F] border border-red-500/20 rounded-3xl p-5 sm:p-6 mb-8 shadow-xl">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-white/10">
           <div>
-            <h2 className="text-lg sm:text-xl font-extrabold text-white font-sans flex items-center gap-2">
-              <Film className="w-5 h-5 text-red-500" />
-              <span>Pan-Indian Film Catalog</span>
-              <span className="text-[11px] font-mono font-bold text-red-400 bg-red-500/10 border border-red-500/30 px-2.5 py-0.5 rounded-full">
-                {filteredMovies.length} Titles
-              </span>
+            <h2 className="text-xl font-extrabold text-white font-sans lowercase tracking-tight">
+              trending now
             </h2>
-            <p className="text-xs text-gray-400 mt-1">
-              Filter Indian Cinema by regional industry, genre, box office status & financial telemetry
-            </p>
           </div>
 
           {/* Sort Selector */}

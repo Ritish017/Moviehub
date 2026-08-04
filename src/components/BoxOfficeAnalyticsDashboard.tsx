@@ -51,38 +51,26 @@ export const BoxOfficeAnalyticsDashboard: React.FC = () => {
         </div>
       </div>
 
-      {/* Top 4 KPI Summary Cards matching Screen 05 */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 font-mono">
-        <div className="bg-[#12141d] border border-white/10 p-5 rounded-2xl space-y-1">
-          <p className="text-xs text-gray-400 uppercase font-bold font-sans">Total Collection</p>
-          <p className="text-2xl font-black text-white font-serif">₹12,432 Cr</p>
-          <p className="text-[11px] text-emerald-400 font-bold flex items-center gap-1">
-            <TrendingUp className="w-3 h-3" /> +18.4% vs last month
-          </p>
+      {/* Top 4 KPI Summary Cards matching Screenshot UI */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="bg-[#121319] border border-white/5 p-6 rounded-2xl space-y-2">
+          <p className="text-xs text-gray-400 font-sans lowercase">total collection</p>
+          <p className="text-3xl font-extrabold text-white font-sans tracking-tight">₹12,432 cr</p>
         </div>
 
-        <div className="bg-[#12141d] border border-white/10 p-5 rounded-2xl space-y-1">
-          <p className="text-xs text-gray-400 uppercase font-bold font-sans">India Net</p>
-          <p className="text-2xl font-black text-emerald-400 font-serif">₹7,842 Cr</p>
-          <p className="text-[11px] text-emerald-400 font-bold flex items-center gap-1">
-            <TrendingUp className="w-3 h-3" /> +22.1% vs last month
-          </p>
+        <div className="bg-[#121319] border border-white/5 p-6 rounded-2xl space-y-2">
+          <p className="text-xs text-gray-400 font-sans lowercase">india net</p>
+          <p className="text-3xl font-extrabold text-white font-sans tracking-tight">₹7,842 cr</p>
         </div>
 
-        <div className="bg-[#12141d] border border-white/10 p-5 rounded-2xl space-y-1">
-          <p className="text-xs text-gray-400 uppercase font-bold font-sans">Overseas Gross</p>
-          <p className="text-2xl font-black text-amber-400 font-serif">₹4,590 Cr</p>
-          <p className="text-[11px] text-emerald-400 font-bold flex items-center gap-1">
-            <TrendingUp className="w-3 h-3" /> +15.2% vs last month
-          </p>
+        <div className="bg-[#121319] border border-white/5 p-6 rounded-2xl space-y-2">
+          <p className="text-xs text-gray-400 font-sans lowercase">overseas</p>
+          <p className="text-3xl font-extrabold text-white font-sans tracking-tight">₹4,590 cr</p>
         </div>
 
-        <div className="bg-[#12141d] border border-white/10 p-5 rounded-2xl space-y-1">
-          <p className="text-xs text-gray-400 uppercase font-bold font-sans">Releases</p>
-          <p className="text-2xl font-black text-purple-400 font-serif">128</p>
-          <p className="text-[11px] text-emerald-400 font-bold flex items-center gap-1">
-            <TrendingUp className="w-3 h-3" /> +14 vs last month
-          </p>
+        <div className="bg-[#121319] border border-white/5 p-6 rounded-2xl space-y-2">
+          <p className="text-xs text-gray-400 font-sans lowercase">releases</p>
+          <p className="text-3xl font-extrabold text-white font-sans tracking-tight">128</p>
         </div>
       </div>
 
