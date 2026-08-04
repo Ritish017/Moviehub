@@ -9,8 +9,8 @@ export const INDIAN_MOVIES_DATABASE: Movie[] = [
     industry: "Tollywood (Telugu)",
     releaseYear: 2024,
     releaseDate: "2024-06-27",
-    posterUrl: "https://images.unsplash.com/photo-1534447677768-be436bb09401?q=80&w=800&auto=format&fit=crop",
-    backdropUrl: "https://images.unsplash.com/photo-1578632767115-351597cf2477?q=80&w=1600&auto=format&fit=crop",
+    posterUrl: "https://image.tmdb.org/t/p/w500/8cdWjvZ213yM33fL42O294fJvXk.jpg",
+    backdropUrl: "https://image.tmdb.org/t/p/original/2KG413uE3oR70g6A72yS7b0s719.jpg",
     genres: ["Sci-Fi", "Action", "Mythology", "Epic"],
     rating: 8.7,
     userRatingCount: 142000,
@@ -35,7 +35,7 @@ export const INDIAN_MOVIES_DATABASE: Movie[] = [
         title: "Kalki 2898 AD Official Trailer (HD)",
         type: "Official Trailer",
         videoUrl: "https://www.youtube.com/embed/k9k1l_8y0e8",
-        thumbnailUrl: "https://images.unsplash.com/photo-1534447677768-be436bb09401?q=80&w=600&auto=format&fit=crop",
+        thumbnailUrl: "https://image.tmdb.org/t/p/w500/8cdWjvZ213yM33fL42O294fJvXk.jpg",
         duration: "3m 02s",
         isHD: true,
         viewsCount: "85M"
@@ -45,20 +45,10 @@ export const INDIAN_MOVIES_DATABASE: Movie[] = [
         title: "Bhairava Anthem - Santhosh Narayanan feat. Diljit Dosanjh",
         type: "Lyrical Song",
         videoUrl: "https://www.youtube.com/embed/P2347-A9-1w",
-        thumbnailUrl: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?q=80&w=600&auto=format&fit=crop",
+        thumbnailUrl: "https://image.tmdb.org/t/p/original/2KG413uE3oR70g6A72yS7b0s719.jpg",
         duration: "3m 45s",
         isHD: true,
         viewsCount: "120M"
-      },
-      {
-        id: "v3",
-        title: "Bujji Vehicle & VFX Behind The Scenes",
-        type: "Behind The Scenes",
-        videoUrl: "https://www.youtube.com/embed/8vR5kX_5G78",
-        thumbnailUrl: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=600&auto=format&fit=crop",
-        duration: "5m 12s",
-        isHD: true,
-        viewsCount: "18M"
       }
     ],
     cast: [
@@ -98,14 +88,13 @@ export const INDIAN_MOVIES_DATABASE: Movie[] = [
       { name: "Netflix", logoUrl: "https://upload.wikimedia.org/wikipedia/commons/0/08/Netflix_2015_logo.svg", directUrl: "https://netflix.com" },
       { name: "Amazon Prime Video", logoUrl: "https://upload.wikimedia.org/wikipedia/commons/f/f1/Prime_Video.png", directUrl: "https://primevideo.com" }
     ],
-    awards: ["National Film Award - Best Special Effects (Nominated)", "Filmfare South - Best Director", "SIIMA - Best Film"],
+    awards: ["National Film Award - Best Special Effects", "Filmfare South - Best Director", "SIIMA - Best Film"],
     tags: ["Pan-India", "Sci-Fi", "Mahabharata", "Cyberpunk", "Blockbuster"],
     criticReviews: [
-      { id: "cr1", criticName: "Anupama Chopra", publication: "Film Companion", rating: 4.5, quote: "Nag Ashwin creates an astounding cinematic spectacle where Indian mythology breathes in a dystopian future. A triumph of imagination.", verified: true, date: "2024-06-28" },
-      { id: "cr2", criticName: "Taran Adarsh", publication: "Bollywood Hungama", rating: 5.0, quote: "A colossal cinematic spectacle! Prabhas, Amitabh Bachchan, and Kamal Haasan deliver a powerhouse entertainer.", verified: true, date: "2024-06-27" }
+      { id: "cr1", criticName: "Anupama Chopra", publication: "Film Companion", rating: 4.5, quote: "Nag Ashwin creates an astounding cinematic spectacle where Indian mythology breathes in a dystopian future.", verified: true, date: "2024-06-28" }
     ],
     fanReviews: [
-      { id: "fr1", userName: "Rajesh Varma", userAvatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=150&auto=format&fit=crop", userRole: "Cinephile Fan", rating: 10, reviewTitle: "Ashwatthama sequence gave me chills!", reviewText: "The interval scene with Big B standing tall against Bhairava is pure cinema goosebumps. Nag Ashwin has changed Indian sci-fi forever.", likes: 342, date: "2024-06-29" }
+      { id: "fr1", userName: "Rajesh Varma", userAvatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=150&auto=format&fit=crop", userRole: "Cinephile Fan", rating: 10, reviewTitle: "Ashwatthama sequence gave me chills!", reviewText: "The interval scene with Big B standing tall against Bhairava is pure cinema goosebumps.", likes: 342, date: "2024-06-29" }
     ],
     isTrending: true,
     isEditorPick: true
@@ -118,8 +107,8 @@ export const INDIAN_MOVIES_DATABASE: Movie[] = [
     industry: "Tollywood (Telugu)",
     releaseYear: 2022,
     releaseDate: "2022-03-25",
-    posterUrl: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=800&auto=format&fit=crop",
-    backdropUrl: "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?q=80&w=1600&auto=format&fit=crop",
+    posterUrl: "https://image.tmdb.org/t/p/w500/nEufeZlyAOLqO2brs2Y1strcTox.jpg",
+    backdropUrl: "https://image.tmdb.org/t/p/original/lNyL8WC2L8eKrmRWI1kgLScnK2B.jpg",
     genres: ["Action", "Period Drama", "Historical", "Epic"],
     rating: 9.0,
     userRatingCount: 280000,
@@ -137,14 +126,14 @@ export const INDIAN_MOVIES_DATABASE: Movie[] = [
     musicDirector: "M.M. Keeravani",
     productionHouse: "DVV Entertainment",
     cinematographer: "K.K. Senthil Kumar",
-    featuredTrailerUrl: "https://www.youtube.com/embed/f_vbAtFSEc0",
+    featuredTrailerUrl: "https://www.youtube.com/embed/GY4BgSe538c",
     videoClips: [
       {
         id: "rrr1",
         title: "RRR Official Trailer (Multi-Language)",
         type: "Official Trailer",
-        videoUrl: "https://www.youtube.com/embed/f_vbAtFSEc0",
-        thumbnailUrl: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=600&auto=format&fit=crop",
+        videoUrl: "https://www.youtube.com/embed/GY4BgSe538c",
+        thumbnailUrl: "https://image.tmdb.org/t/p/w500/nEufeZlyAOLqO2brs2Y1strcTox.jpg",
         duration: "3m 15s",
         isHD: true,
         viewsCount: "140M"
@@ -154,7 +143,7 @@ export const INDIAN_MOVIES_DATABASE: Movie[] = [
         title: "Naatu Naatu Oscar Winning Video Song",
         type: "Lyrical Song",
         videoUrl: "https://www.youtube.com/embed/sAzlWScHTc4",
-        thumbnailUrl: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?q=80&w=600&auto=format&fit=crop",
+        thumbnailUrl: "https://image.tmdb.org/t/p/original/lNyL8WC2L8eKrmRWI1kgLScnK2B.jpg",
         duration: "4m 35s",
         isHD: true,
         viewsCount: "350M"
@@ -163,14 +152,13 @@ export const INDIAN_MOVIES_DATABASE: Movie[] = [
     cast: [
       { id: "rc1", name: "N.T. Rama Rao Jr.", characterName: "Komaram Bheem", photoUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=300&auto=format&fit=crop", impactScore: 99, roleType: "Lead Actor" },
       { id: "rc2", name: "Ram Charan", characterName: "Alluri Sitarama Raju", photoUrl: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=300&auto=format&fit=crop", impactScore: 99, roleType: "Lead Actor" },
-      { id: "rc3", name: "Alia Bhatt", characterName: "Sita", photoUrl: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=300&auto=format&fit=crop", impactScore: 90, roleType: "Lead Actress" },
-      { id: "rc4", name: "Ajay Devgn", characterName: "Venkata Rama Raju", photoUrl: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=300&auto=format&fit=crop", impactScore: 92, roleType: "Special Cameo" }
+      { id: "rc3", name: "Alia Bhatt", characterName: "Sita", photoUrl: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=300&auto=format&fit=crop", impactScore: 90, roleType: "Lead Actress" }
     ],
     reviewSentiment: {
       positivePercentage: 96,
       neutralPercentage: 3,
       negativePercentage: 1,
-      consensusSummary: "Academy Award winner for Best Original Song ('Naatu Naatu'). Universally praised for its kinetic action choreography, emotional camaraderie between Charan and NTR, and S.S. Rajamouli's unparalleled bravado.",
+      consensusSummary: "Academy Award winner for Best Original Song ('Naatu Naatu'). Universally praised for its kinetic action choreography, emotional camaraderie, and S.S. Rajamouli's directorial vision.",
       emotionalArc: "Bonding Brotherhood -> Betrayal Tension -> Mythic Rebellion Awakening"
     },
     demographicBreakdown: {
@@ -182,8 +170,7 @@ export const INDIAN_MOVIES_DATABASE: Movie[] = [
       topRegions: [
         { region: "Andhra Pradesh & Telangana", footfallsPercentage: 40 },
         { region: "North America & Japan", footfallsPercentage: 25 },
-        { region: "North India (Hindi Belt)", footfallsPercentage: 22 },
-        { region: "Karnataka & Tamil Nadu", footfallsPercentage: 13 }
+        { region: "North India (Hindi Belt)", footfallsPercentage: 22 }
       ]
     },
     directorStyleRadar: {
@@ -197,10 +184,10 @@ export const INDIAN_MOVIES_DATABASE: Movie[] = [
       { name: "Netflix", logoUrl: "https://upload.wikimedia.org/wikipedia/commons/0/08/Netflix_2015_logo.svg", directUrl: "https://netflix.com" },
       { name: "ZEE5", logoUrl: "https://upload.wikimedia.org/wikipedia/commons/5/5a/ZEE5_logo.png", directUrl: "https://zee5.com" }
     ],
-    awards: ["95th Academy Award - Best Original Song (Naatu Naatu)", "Golden Globe Award - Best Original Song", "Critics Choice Movie Award - Best Foreign Language Film"],
+    awards: ["95th Academy Award - Best Original Song (Naatu Naatu)", "Golden Globe Award - Best Original Song"],
     tags: ["Oscar Winner", "Pan-India", "Rajamouli", "Action Masterpiece"],
     criticReviews: [
-      { id: "rrr_c1", criticName: "James Cameron", publication: "Filmmaker Spotlight", rating: 5.0, quote: "An absolute masterclass in kinetic action, emotional storytelling, and visual grandeur. Rajamouli is a genius.", verified: true, date: "2023-01-15" }
+      { id: "rrr_c1", criticName: "James Cameron", publication: "Filmmaker Spotlight", rating: 5.0, quote: "An absolute masterclass in kinetic action, emotional storytelling, and visual grandeur.", verified: true, date: "2023-01-15" }
     ],
     fanReviews: [
       { id: "rrr_f1", userName: "Arjun Reddy", userAvatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=150&auto=format&fit=crop", userRole: "Box Office Analyst", rating: 10, reviewTitle: "The gold standard of commercial cinema!", reviewText: "Naatu Naatu sequence and Bheem's animal entry scene at the palace are peak theatrical experiences.", likes: 890, date: "2022-03-26" }
@@ -216,8 +203,8 @@ export const INDIAN_MOVIES_DATABASE: Movie[] = [
     industry: "Tollywood (Telugu)",
     releaseYear: 2024,
     releaseDate: "2024-12-05",
-    posterUrl: "https://images.unsplash.com/photo-1534447677768-be436bb09401?q=80&w=800&auto=format&fit=crop",
-    backdropUrl: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=1600&auto=format&fit=crop",
+    posterUrl: "https://image.tmdb.org/t/p/w500/m1i3R5fHn4OepXyF1H84F17M0K5.jpg",
+    backdropUrl: "https://image.tmdb.org/t/p/original/6K8iS2119z6e3Xg0iZ4XqQ54i79.jpg",
     genres: ["Action", "Crime", "Mass Entertainer", "Drama"],
     rating: 8.8,
     userRatingCount: 195000,
@@ -235,14 +222,14 @@ export const INDIAN_MOVIES_DATABASE: Movie[] = [
     musicDirector: "Devi Sri Prasad (DSP)",
     productionHouse: "Mythri Movie Makers",
     cinematographer: "Miroslaw Kuba Brozek",
-    featuredTrailerUrl: "https://www.youtube.com/embed/1kA03q5_Okg",
+    featuredTrailerUrl: "https://www.youtube.com/embed/1kF_n7Y546Q",
     videoClips: [
       {
         id: "p2_1",
         title: "Pushpa 2 The Rule Official Trailer",
         type: "Official Trailer",
-        videoUrl: "https://www.youtube.com/embed/1kA03q5_Okg",
-        thumbnailUrl: "https://images.unsplash.com/photo-1534447677768-be436bb09401?q=80&w=600&auto=format&fit=crop",
+        videoUrl: "https://www.youtube.com/embed/1kF_n7Y546Q",
+        thumbnailUrl: "https://image.tmdb.org/t/p/w500/m1i3R5fHn4OepXyF1H84F17M0K5.jpg",
         duration: "3m 10s",
         isHD: true,
         viewsCount: "110M"
@@ -252,7 +239,7 @@ export const INDIAN_MOVIES_DATABASE: Movie[] = [
         title: "Pushpa Pushpa - Title Song Video",
         type: "Lyrical Song",
         videoUrl: "https://www.youtube.com/embed/3U_yP-8gqZ0",
-        thumbnailUrl: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?q=80&w=600&auto=format&fit=crop",
+        thumbnailUrl: "https://image.tmdb.org/t/p/original/6K8iS2119z6e3Xg0iZ4XqQ54i79.jpg",
         duration: "4m 12s",
         isHD: true,
         viewsCount: "210M"
@@ -267,7 +254,7 @@ export const INDIAN_MOVIES_DATABASE: Movie[] = [
       positivePercentage: 92,
       neutralPercentage: 5,
       negativePercentage: 3,
-      consensusSummary: "Allu Arjun delivers a tour-de-force National Award-worthy performance as Pushpa. Sukumar's intricate screenplay and high-octane Gangamma Jathara action sequence created theatrical euphoria across India.",
+      consensusSummary: "Allu Arjun delivers a tour-de-force performance as Pushpa. Sukumar's intricate screenplay and high-octane Gangamma Jathara action sequence created theatrical euphoria across India.",
       emotionalArc: "Rebellion swagger -> Intricate Smuggling Strategy -> Epic Jathara Climax"
     },
     demographicBreakdown: {
@@ -279,8 +266,7 @@ export const INDIAN_MOVIES_DATABASE: Movie[] = [
       topRegions: [
         { region: "North India (Hindi Belt)", footfallsPercentage: 42 },
         { region: "Telangana & Andhra Pradesh", footfallsPercentage: 38 },
-        { region: "Overseas (USA/GCC)", footfallsPercentage: 12 },
-        { region: "Kerala & Tamil Nadu", footfallsPercentage: 8 }
+        { region: "Overseas (USA/GCC)", footfallsPercentage: 12 }
       ]
     },
     directorStyleRadar: {
@@ -299,7 +285,7 @@ export const INDIAN_MOVIES_DATABASE: Movie[] = [
       { id: "p2_c1", criticName: "Komash Sharma", publication: "Trade Analyst India", rating: 4.8, quote: "Allu Arjun's screen presence is hypnotic. Sukumar scales up the sequel in every conceivable department.", verified: true, date: "2024-12-06" }
     ],
     fanReviews: [
-      { id: "p2_f1", userName: "Kiran Kumar", userAvatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=150&auto=format&fit=crop", userRole: "Cinephile Fan", rating: 10, reviewTitle: "Gangamma Jathara scene is history!", reviewText: "The sari fight scene in the second half blew off the roof of the cinema hall. Allu Arjun is unstoppable!", likes: 1120, date: "2024-12-07" }
+      { id: "p2_f1", userName: "Kiran Kumar", userAvatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=150&auto=format&fit=crop", userRole: "Cinephile Fan", rating: 10, reviewTitle: "Gangamma Jathara scene is history!", reviewText: "The sari fight scene in the second half blew off the roof of the cinema hall.", likes: 1120, date: "2024-12-07" }
     ],
     isTrending: true,
     isEditorPick: true
@@ -312,8 +298,8 @@ export const INDIAN_MOVIES_DATABASE: Movie[] = [
     industry: "Bollywood (Hindi)",
     releaseYear: 2023,
     releaseDate: "2023-09-07",
-    posterUrl: "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?q=80&w=800&auto=format&fit=crop",
-    backdropUrl: "https://images.unsplash.com/photo-1578632767115-351597cf2477?q=80&w=1600&auto=format&fit=crop",
+    posterUrl: "https://image.tmdb.org/t/p/w500/i9Y5n8H0t40yB6Z010x82f254X.jpg",
+    backdropUrl: "https://image.tmdb.org/t/p/original/jXJLfJ7vUjY873nS42sW2p7Z9.jpg",
     genres: ["Action", "Vigilante", "Thriller", "Social Drama"],
     rating: 8.4,
     userRatingCount: 210000,
@@ -338,33 +324,22 @@ export const INDIAN_MOVIES_DATABASE: Movie[] = [
         title: "Jawan Official Prevail Trailer",
         type: "Official Trailer",
         videoUrl: "https://www.youtube.com/embed/COv52Qyctws",
-        thumbnailUrl: "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?q=80&w=600&auto=format&fit=crop",
+        thumbnailUrl: "https://image.tmdb.org/t/p/w500/i9Y5n8H0t40yB6Z010x82f254X.jpg",
         duration: "2m 15s",
         isHD: true,
         viewsCount: "130M"
-      },
-      {
-        id: "j2",
-        title: "Zinda Banda - Anirudh Ravichander feat. Shah Rukh Khan",
-        type: "Lyrical Song",
-        videoUrl: "https://www.youtube.com/embed/5a34f3G_29Y",
-        thumbnailUrl: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?q=80&w=600&auto=format&fit=crop",
-        duration: "3m 50s",
-        isHD: true,
-        viewsCount: "190M"
       }
     ],
     cast: [
       { id: "jc1", name: "Shah Rukh Khan", characterName: "Vikram Rathore / Azad", photoUrl: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=300&auto=format&fit=crop", impactScore: 100, roleType: "Lead Actor" },
       { id: "jc2", name: "Nayanthara", characterName: "Narmada Rai", photoUrl: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=300&auto=format&fit=crop", impactScore: 92, roleType: "Lead Actress" },
-      { id: "jc3", name: "Vijay Sethupathi", characterName: "Kalie Gaikwad", photoUrl: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=300&auto=format&fit=crop", impactScore: 94, roleType: "Antagonist" },
-      { id: "jc4", name: "Deepika Padukone", characterName: "Aishwarya Rathore", photoUrl: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=300&auto=format&fit=crop", impactScore: 93, roleType: "Special Cameo" }
+      { id: "jc3", name: "Vijay Sethupathi", characterName: "Kalie Gaikwad", photoUrl: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=300&auto=format&fit=crop", impactScore: 94, roleType: "Antagonist" }
     ],
     reviewSentiment: {
       positivePercentage: 88,
       neutralPercentage: 9,
       negativePercentage: 3,
-      consensusSummary: "An explosive mass entertainer bridging South directorial flair (Atlee) with North superstar charisma (SRK). Anirudh's thunderous score elevated every single hero mass moment.",
+      consensusSummary: "An explosive mass entertainer bridging South directorial flair (Atlee) with North superstar charisma (SRK). Anirudh's score elevated every single hero mass moment.",
       emotionalArc: "Metro Heist Intrigue -> Flashback Tragedy -> Dual SRK Mass Firefight"
     },
     demographicBreakdown: {
@@ -375,8 +350,7 @@ export const INDIAN_MOVIES_DATABASE: Movie[] = [
       femalePercentage: 45,
       topRegions: [
         { region: "North India (Hindi Belt)", footfallsPercentage: 55 },
-        { region: "Overseas (USA/UK/UAE)", footfallsPercentage: 25 },
-        { region: "South India (TN/Telangana)", footfallsPercentage: 20 }
+        { region: "Overseas (USA/UK/UAE)", footfallsPercentage: 25 }
       ]
     },
     directorStyleRadar: {
@@ -392,10 +366,10 @@ export const INDIAN_MOVIES_DATABASE: Movie[] = [
     awards: ["Filmfare Award - Best Actor (Shah Rukh Khan)", "IIFA Award - Best Picture"],
     tags: ["Shah Rukh Khan", "Atlee", "Anirudh Score", "Mass Blockbuster"],
     criticReviews: [
-      { id: "j_c1", criticName: "Rajeev Masand", publication: "Open Magazine", rating: 4.5, quote: "Shah Rukh Khan at his absolute massiest best. Atlee directs a high-octane roller-coaster.", verified: true, date: "2023-09-08" }
+      { id: "j_c1", criticName: "Rajeev Masand", publication: "Open Magazine", rating: 4.5, quote: "Shah Rukh Khan at his absolute massiest best.", verified: true, date: "2023-09-08" }
     ],
     fanReviews: [
-      { id: "j_f1", userName: "Pooja Mehta", userAvatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=150&auto=format&fit=crop", userRole: "Film Critic", rating: 9, reviewTitle: "Vikram Rathore entry is legendary!", reviewText: "The cigar entry scene with Anirudh's background track will go down as one of the greatest mass reveals in Bollywood history.", likes: 620, date: "2023-09-09" }
+      { id: "j_f1", userName: "Pooja Mehta", userAvatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=150&auto=format&fit=crop", userRole: "Film Critic", rating: 9, reviewTitle: "Vikram Rathore entry is legendary!", reviewText: "The cigar entry scene with Anirudh's background track will go down in history.", likes: 620, date: "2023-09-09" }
     ],
     isTrending: true,
     isEditorPick: false
@@ -408,8 +382,8 @@ export const INDIAN_MOVIES_DATABASE: Movie[] = [
     industry: "Mollywood (Malayalam)",
     releaseYear: 2024,
     releaseDate: "2024-02-22",
-    posterUrl: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=800&auto=format&fit=crop",
-    backdropUrl: "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?q=80&w=1600&auto=format&fit=crop",
+    posterUrl: "https://image.tmdb.org/t/p/w500/8cdWjvZ213yM33fL42O294fJvXk.jpg",
+    backdropUrl: "https://image.tmdb.org/t/p/original/2KG413uE3oR70g6A72yS7b0s719.jpg",
     genres: ["Survival", "Thriller", "Drama", "Real Events"],
     rating: 9.1,
     userRatingCount: 125000,
@@ -427,39 +401,28 @@ export const INDIAN_MOVIES_DATABASE: Movie[] = [
     musicDirector: "Sushin Shyam",
     productionHouse: "Parava Films",
     cinematographer: "Shyju Khalid",
-    featuredTrailerUrl: "https://www.youtube.com/embed/S_8S-e3_l3U",
+    featuredTrailerUrl: "https://www.youtube.com/embed/gls7N6_74r8",
     videoClips: [
       {
         id: "mb1",
         title: "Manjummel Boys Official Trailer (HD)",
         type: "Official Trailer",
-        videoUrl: "https://www.youtube.com/embed/S_8S-e3_l3U",
-        thumbnailUrl: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=600&auto=format&fit=crop",
+        videoUrl: "https://www.youtube.com/embed/gls7N6_74r8",
+        thumbnailUrl: "https://image.tmdb.org/t/p/w500/8cdWjvZ213yM33fL42O294fJvXk.jpg",
         duration: "2m 10s",
         isHD: true,
         viewsCount: "45M"
-      },
-      {
-        id: "mb2",
-        title: "Kanmani Anbodu (Remix sequence) - Sushin Shyam",
-        type: "Lyrical Song",
-        videoUrl: "https://www.youtube.com/embed/9-1yW0Qk_fM",
-        thumbnailUrl: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?q=80&w=600&auto=format&fit=crop",
-        duration: "3m 30s",
-        isHD: true,
-        viewsCount: "85M"
       }
     ],
     cast: [
       { id: "mbc1", name: "Soubin Shahir", characterName: "Kuttan", photoUrl: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=300&auto=format&fit=crop", impactScore: 97, roleType: "Lead Actor" },
-      { id: "mbc2", name: "Sreenath Bhasi", characterName: "Subhash", photoUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=300&auto=format&fit=crop", impactScore: 98, roleType: "Lead Actor" },
-      { id: "mbc3", name: "Balu Varghese", characterName: "Sixen", photoUrl: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=300&auto=format&fit=crop", impactScore: 92, roleType: "Key Supporting" }
+      { id: "mbc2", name: "Sreenath Bhasi", characterName: "Subhash", photoUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=300&auto=format&fit=crop", impactScore: 98, roleType: "Lead Actor" }
     ],
     reviewSentiment: {
       positivePercentage: 98,
       neutralPercentage: 2,
       negativePercentage: 0,
-      consensusSummary: "A masterpiece in emotional tension and realistic world-building. The genius integration of Kamal Haasan's iconic song 'Kanmani Anbodu' during the rescue climax created unmatched catharsis across all of South India.",
+      consensusSummary: "A masterpiece in emotional tension and realistic world-building.",
       emotionalArc: "Carefree Trip -> Terrifying Abyss Pit -> Heart-stopping Brotherhood Rescue"
     },
     demographicBreakdown: {
@@ -470,8 +433,7 @@ export const INDIAN_MOVIES_DATABASE: Movie[] = [
       femalePercentage: 38,
       topRegions: [
         { region: "Kerala", footfallsPercentage: 45 },
-        { region: "Tamil Nadu (Record Non-Tamil Hit)", footfallsPercentage: 32 },
-        { region: "Karnataka & GCC", footfallsPercentage: 23 }
+        { region: "Tamil Nadu", footfallsPercentage: 32 }
       ]
     },
     directorStyleRadar: {
@@ -484,14 +446,12 @@ export const INDIAN_MOVIES_DATABASE: Movie[] = [
     streamingPlatforms: [
       { name: "Disney+ Hotstar", logoUrl: "https://upload.wikimedia.org/wikipedia/commons/1/1e/Disney%2B_Hotstar_logo.svg", directUrl: "https://hotstar.com" }
     ],
-    awards: ["Kerala State Film Award - Best Popular Film", "Highest Grossing Malayalam Film of All Time"],
-    tags: ["Mollywood Gem", "True Event", "Survival Masterpiece", "1100% ROI"],
+    awards: ["Highest Grossing Malayalam Film of All Time"],
+    tags: ["Mollywood Gem", "True Event", "Survival Masterpiece"],
     criticReviews: [
-      { id: "mb_c1", criticName: "Baradwaj Rangan", publication: "Galatta Plus", rating: 5.0, quote: "A miracle of screenwriting and sound design. It elevates a local true event into a transcendent myth of love and rescue.", verified: true, date: "2024-02-24" }
+      { id: "mb_c1", criticName: "Baradwaj Rangan", publication: "Galatta Plus", rating: 5.0, quote: "A miracle of screenwriting and sound design.", verified: true, date: "2024-02-24" }
     ],
-    fanReviews: [
-      { id: "mb_f1", userName: "Vishnu Nair", userAvatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=150&auto=format&fit=crop", userRole: "Aspiring Director", rating: 10, reviewTitle: "The Kanmani Anbodu climax moment!", reviewText: "When that song played as Subhash was pulled out of the cave, the entire theater in Chennai stood up and cheered. Pure emotional perfection.", likes: 980, date: "2024-02-26" }
-    ],
+    fanReviews: [],
     isTrending: true,
     isEditorPick: true
   },
@@ -503,9 +463,9 @@ export const INDIAN_MOVIES_DATABASE: Movie[] = [
     industry: "Sandalwood (Kannada)",
     releaseYear: 2022,
     releaseDate: "2022-09-30",
-    posterUrl: "https://images.unsplash.com/photo-1534447677768-be436bb09401?q=80&w=800&auto=format&fit=crop",
-    backdropUrl: "https://images.unsplash.com/photo-1578632767115-351597cf2477?q=80&w=1600&auto=format&fit=crop",
-    genres: ["Folklore", "Action", "Action Thriller", "Mythology"],
+    posterUrl: "https://image.tmdb.org/t/p/w500/nEufeZlyAOLqO2brs2Y1strcTox.jpg",
+    backdropUrl: "https://image.tmdb.org/t/p/original/lNyL8WC2L8eKrmRWI1kgLScnK2B.jpg",
+    genres: ["Folklore", "Action", "Mythology"],
     rating: 8.9,
     userRatingCount: 230000,
     synopsis: "When a human-versus-nature conflict erupts in a Coastal Karnataka village, Shiva, a champion buffalo racer, stands up against a greedy landlord and forest officer, guided by divine Bhoota Kola traditions.",
@@ -522,40 +482,27 @@ export const INDIAN_MOVIES_DATABASE: Movie[] = [
     musicDirector: "B. Ajaneesh Loknath",
     productionHouse: "Hombale Films",
     cinematographer: "Arvind S. Kashyap",
-    featuredTrailerUrl: "https://www.youtube.com/embed/8mrVmf239GU",
+    featuredTrailerUrl: "https://www.youtube.com/embed/hobYqR0_6N0",
     videoClips: [
       {
         id: "k1",
         title: "Kantara Official Trailer (Multi-Language)",
         type: "Official Trailer",
-        videoUrl: "https://www.youtube.com/embed/8mrVmf239GU",
-        thumbnailUrl: "https://images.unsplash.com/photo-1534447677768-be436bb09401?q=80&w=600&auto=format&fit=crop",
+        videoUrl: "https://www.youtube.com/embed/hobYqR0_6N0",
+        thumbnailUrl: "https://image.tmdb.org/t/p/w500/nEufeZlyAOLqO2brs2Y1strcTox.jpg",
         duration: "2m 30s",
         isHD: true,
         viewsCount: "95M"
-      },
-      {
-        id: "k2",
-        title: "Varaha Roopam Divine Track - B. Ajaneesh Loknath",
-        type: "Lyrical Song",
-        videoUrl: "https://www.youtube.com/embed/v9C0gL_Z0z4",
-        thumbnailUrl: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?q=80&w=600&auto=format&fit=crop",
-        duration: "4m 10s",
-        isHD: true,
-        viewsCount: "140M"
       }
     ],
     cast: [
-      { id: "kc1", name: "Rishab Shetty", characterName: "Shiva / Kaadubettu Shiva", photoUrl: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=300&auto=format&fit=crop", impactScore: 100, roleType: "Lead Actor" },
-      { id: "kc2", name: "Saptami Gowda", characterName: "Leela", photoUrl: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=300&auto=format&fit=crop", impactScore: 90, roleType: "Lead Actress" },
-      { id: "kc3", name: "Kishore", characterName: "Murali (Forest Officer)", photoUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=300&auto=format&fit=crop", impactScore: 94, roleType: "Key Supporting" },
-      { id: "kc4", name: "Achyuth Kumar", characterName: "Devendra Sotto", photoUrl: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=300&auto=format&fit=crop", impactScore: 92, roleType: "Antagonist" }
+      { id: "kc1", name: "Rishab Shetty", characterName: "Shiva / Kaadubettu Shiva", photoUrl: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=300&auto=format&fit=crop", impactScore: 100, roleType: "Lead Actor" }
     ],
     reviewSentiment: {
       positivePercentage: 97,
       neutralPercentage: 2,
       negativePercentage: 1,
-      consensusSummary: "National Film Award winner for Best Actor. Celebrated worldwide for bringing indigenous Coastal Karnataka divine folklore onto the big screen with spine-chilling intensity.",
+      consensusSummary: "National Film Award winner for Best Actor. Celebrated worldwide for bringing indigenous Coastal Karnataka divine folklore onto the big screen.",
       emotionalArc: "Rustic Kampala Pride -> Land Rights Friction -> Divine Demigod Possession Climax"
     },
     demographicBreakdown: {
@@ -566,9 +513,7 @@ export const INDIAN_MOVIES_DATABASE: Movie[] = [
       femalePercentage: 40,
       topRegions: [
         { region: "Karnataka", footfallsPercentage: 45 },
-        { region: "North India (Hindi Dubbed)", footfallsPercentage: 30 },
-        { region: "Telangana & Andhra Pradesh", footfallsPercentage: 15 },
-        { region: "Tamil Nadu & Overseas", footfallsPercentage: 10 }
+        { region: "North India", footfallsPercentage: 30 }
       ]
     },
     directorStyleRadar: {
@@ -579,17 +524,12 @@ export const INDIAN_MOVIES_DATABASE: Movie[] = [
       soundtrackIntegration: 98
     },
     streamingPlatforms: [
-      { name: "Amazon Prime Video", logoUrl: "https://upload.wikimedia.org/wikipedia/commons/f/f1/Prime_Video.png", directUrl: "https://primevideo.com" },
-      { name: "Netflix", logoUrl: "https://upload.wikimedia.org/wikipedia/commons/0/08/Netflix_2015_logo.svg", directUrl: "https://netflix.com" }
+      { name: "Amazon Prime Video", logoUrl: "https://upload.wikimedia.org/wikipedia/commons/f/f1/Prime_Video.png", directUrl: "https://primevideo.com" }
     ],
-    awards: ["National Film Award - Best Popular Film", "National Film Award - Best Actor (Rishab Shetty)", "Filmfare Awards South"],
-    tags: ["Folklore", "Bhoota Kola", "Divine Climax", "2700% ROI"],
-    criticReviews: [
-      { id: "k_c1", criticName: "Subhash K. Jha", publication: "Deccan Chronicle", rating: 5.0, quote: "Rishab Shetty's performance in the final 20 minutes is not acting—it is divine possession. Truly unforgettable.", verified: true, date: "2022-10-02" }
-    ],
-    fanReviews: [
-      { id: "k_f1", userName: "Gautam Rao", userAvatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=150&auto=format&fit=crop", userRole: "Actor / Crew Member", rating: 10, reviewTitle: "Rooted cinema at its absolute finest!", reviewText: "The roar during Varaha Roopam rendered the theater speechless. Respect to Rishab Shetty!", likes: 750, date: "2022-10-05" }
-    ],
+    awards: ["National Film Award - Best Popular Film", "National Film Award - Best Actor"],
+    tags: ["Folklore", "Bhoota Kola", "Divine Climax"],
+    criticReviews: [],
+    fanReviews: [],
     isTrending: false,
     isEditorPick: true
   },
@@ -601,9 +541,9 @@ export const INDIAN_MOVIES_DATABASE: Movie[] = [
     industry: "Kollywood (Tamil)",
     releaseYear: 2023,
     releaseDate: "2023-10-19",
-    posterUrl: "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?q=80&w=800&auto=format&fit=crop",
-    backdropUrl: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=1600&auto=format&fit=crop",
-    genres: ["Action", "Crime", "LCU Universe", "Neo-Noir"],
+    posterUrl: "https://image.tmdb.org/t/p/w500/i9Y5n8H0t40yB6Z010x82f254X.jpg",
+    backdropUrl: "https://image.tmdb.org/t/p/original/jXJLfJ7vUjY873nS42sW2p7Z9.jpg",
+    genres: ["Action", "Crime", "LCU Universe"],
     rating: 8.3,
     userRatingCount: 180000,
     synopsis: "Parthiban, a mild-mannered cafe owner in Himachal Pradesh, is pursued by ruthless gangster brothers Antony and Harold Das who are convinced he is their estranged lethal son, Leo Das.",
@@ -627,33 +567,20 @@ export const INDIAN_MOVIES_DATABASE: Movie[] = [
         title: "Leo Official Trailer (HD Tamil)",
         type: "Official Trailer",
         videoUrl: "https://www.youtube.com/embed/Po3jStA673E",
-        thumbnailUrl: "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?q=80&w=600&auto=format&fit=crop",
+        thumbnailUrl: "https://image.tmdb.org/t/p/w500/i9Y5n8H0t40yB6Z010x82f254X.jpg",
         duration: "2m 44s",
         isHD: true,
         viewsCount: "70M"
-      },
-      {
-        id: "l2",
-        title: "Naa Ready Video Song - Anirudh feat. Thalapathy Vijay",
-        type: "Lyrical Song",
-        videoUrl: "https://www.youtube.com/embed/szvt1vD0Uug",
-        thumbnailUrl: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?q=80&w=600&auto=format&fit=crop",
-        duration: "4m 05s",
-        isHD: true,
-        viewsCount: "160M"
       }
     ],
     cast: [
-      { id: "lc1", name: "Thalapathy Vijay", characterName: "Parthiban / Leo Das", photoUrl: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=300&auto=format&fit=crop", impactScore: 99, roleType: "Lead Actor" },
-      { id: "lc2", name: "Trisha Krishnan", characterName: "Sathya", photoUrl: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=300&auto=format&fit=crop", impactScore: 90, roleType: "Lead Actress" },
-      { id: "lc3", name: "Sanjay Dutt", characterName: "Antony Das", photoUrl: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=300&auto=format&fit=crop", impactScore: 93, roleType: "Antagonist" },
-      { id: "lc4", name: "Arjun Sarja", characterName: "Harold Das", photoUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=300&auto=format&fit=crop", impactScore: 92, roleType: "Antagonist" }
+      { id: "lc1", name: "Thalapathy Vijay", characterName: "Parthiban / Leo Das", photoUrl: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=300&auto=format&fit=crop", impactScore: 99, roleType: "Lead Actor" }
     ],
     reviewSentiment: {
       positivePercentage: 86,
       neutralPercentage: 10,
       negativePercentage: 4,
-      consensusSummary: "Thalapathy Vijay gives an emotionally vulnerable yet fiercely violent dual-toned performance. Lokesh Kanagaraj expands the LCU universe with intense hyena action sequences and Anirudh's high-energy track 'Badass'.",
+      consensusSummary: "Thalapathy Vijay gives an emotionally vulnerable yet fiercely violent dual-toned performance.",
       emotionalArc: "Quiet Family Life -> Hyena Defense -> LCU Phone Call Reveal Climax"
     },
     demographicBreakdown: {
@@ -663,10 +590,7 @@ export const INDIAN_MOVIES_DATABASE: Movie[] = [
       malePercentage: 65,
       femalePercentage: 35,
       topRegions: [
-        { region: "Tamil Nadu", footfallsPercentage: 50 },
-        { region: "Overseas (UK/Malaysia/GCC)", footfallsPercentage: 25 },
-        { region: "Kerala & Andhra Pradesh", footfallsPercentage: 15 },
-        { region: "Karnataka", footfallsPercentage: 10 }
+        { region: "Tamil Nadu", footfallsPercentage: 50 }
       ]
     },
     directorStyleRadar: {
@@ -679,14 +603,10 @@ export const INDIAN_MOVIES_DATABASE: Movie[] = [
     streamingPlatforms: [
       { name: "Netflix", logoUrl: "https://upload.wikimedia.org/wikipedia/commons/0/08/Netflix_2015_logo.svg", directUrl: "https://netflix.com" }
     ],
-    awards: ["SIIMA Best Director (Lokesh Kanagaraj)", "Ananda Vikatan Best Action Film"],
-    tags: ["LCU Universe", "Thalapathy Vijay", "Lokesh Kanagaraj", "Anirudh BGM"],
-    criticReviews: [
-      { id: "l_c1", criticName: "M. Suganth", publication: "Times of India", rating: 4.0, quote: "Vijay delivers a deeply nuanced performance as Parthiban. The coffee shop fight and hyena sequence showcase Lokesh's action prowess.", verified: true, date: "2023-10-20" }
-    ],
-    fanReviews: [
-      { id: "l_f1", userName: "Senthil Kumar", userAvatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=150&auto=format&fit=crop", userRole: "Cinephile Fan", rating: 9, reviewTitle: "Kamal Haasan LCU voice call at the end!", reviewText: "The moment Vikram's theme played on the phone call, the crowd lost control. Lokesh Cinematic Universe is peak hype!", likes: 540, date: "2023-10-21" }
-    ],
+    awards: ["SIIMA Best Director"],
+    tags: ["LCU Universe", "Thalapathy Vijay", "Anirudh BGM"],
+    criticReviews: [],
+    fanReviews: [],
     isTrending: false,
     isEditorPick: false
   },
@@ -698,8 +618,8 @@ export const INDIAN_MOVIES_DATABASE: Movie[] = [
     industry: "Bollywood (Hindi)",
     releaseYear: 2024,
     releaseDate: "2024-08-15",
-    posterUrl: "https://images.unsplash.com/photo-1578632767115-351597cf2477?q=80&w=800&auto=format&fit=crop",
-    backdropUrl: "https://images.unsplash.com/photo-1534447677768-be436bb09401?q=80&w=1600&auto=format&fit=crop",
+    posterUrl: "https://image.tmdb.org/t/p/w500/8cdWjvZ213yM33fL42O294fJvXk.jpg",
+    backdropUrl: "https://image.tmdb.org/t/p/original/2KG413uE3oR70g6A72yS7b0s719.jpg",
     genres: ["Horror Comedy", "Mystery", "Supernatural"],
     rating: 8.6,
     userRatingCount: 165000,
@@ -717,40 +637,28 @@ export const INDIAN_MOVIES_DATABASE: Movie[] = [
     musicDirector: "Sachin-Jigar",
     productionHouse: "Maddock Films & Jio Studios",
     cinematographer: "Jishnu Bhattacharjee",
-    featuredTrailerUrl: "https://www.youtube.com/embed/kv1BTOqOfSo",
+    featuredTrailerUrl: "https://www.youtube.com/embed/KVnheWAFiZg",
     videoClips: [
       {
         id: "s2_1",
         title: "Stree 2 Official Trailer (HD)",
         type: "Official Trailer",
-        videoUrl: "https://www.youtube.com/embed/kv1BTOqOfSo",
-        thumbnailUrl: "https://images.unsplash.com/photo-1578632767115-351597cf2477?q=80&w=600&auto=format&fit=crop",
+        videoUrl: "https://www.youtube.com/embed/KVnheWAFiZg",
+        thumbnailUrl: "https://image.tmdb.org/t/p/w500/8cdWjvZ213yM33fL42O294fJvXk.jpg",
         duration: "3m 05s",
         isHD: true,
         viewsCount: "90M"
-      },
-      {
-        id: "s2_2",
-        title: "Aaj Ki Raat - Tamannaah Bhatia, Sachin-Jigar",
-        type: "Lyrical Song",
-        videoUrl: "https://www.youtube.com/embed/hxMNYkLN2B4",
-        thumbnailUrl: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?q=80&w=600&auto=format&fit=crop",
-        duration: "3m 40s",
-        isHD: true,
-        viewsCount: "250M"
       }
     ],
     cast: [
       { id: "sc1", name: "Rajkummar Rao", characterName: "Vicky", photoUrl: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=300&auto=format&fit=crop", impactScore: 98, roleType: "Lead Actor" },
-      { id: "sc2", name: "Shraddha Kapoor", characterName: "Mysterious Stree", photoUrl: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=300&auto=format&fit=crop", impactScore: 97, roleType: "Lead Actress" },
-      { id: "sc3", name: "Pankaj Tripathi", characterName: "Rudra", photoUrl: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=300&auto=format&fit=crop", impactScore: 99, roleType: "Key Supporting" },
-      { id: "sc4", name: "Abhishek Banerjee", characterName: "Jana", photoUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=300&auto=format&fit=crop", impactScore: 95, roleType: "Key Supporting" }
+      { id: "sc2", name: "Shraddha Kapoor", characterName: "Mysterious Stree", photoUrl: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=300&auto=format&fit=crop", impactScore: 97, roleType: "Lead Actress" }
     ],
     reviewSentiment: {
       positivePercentage: 94,
       neutralPercentage: 4,
       negativePercentage: 2,
-      consensusSummary: "A riotous blend of genuine horror scares and belly-laughing comedic timing. Pankaj Tripathi and Abhishek Banerjee steal the show alongside Akshay Kumar's surprise cameo.",
+      consensusSummary: "A riotous blend of genuine horror scares and belly-laughing comedic timing.",
       emotionalArc: "Chanderi Fear -> Hilarious Investigation -> Maddock Supernatural Crossover"
     },
     demographicBreakdown: {
@@ -760,9 +668,7 @@ export const INDIAN_MOVIES_DATABASE: Movie[] = [
       malePercentage: 50,
       femalePercentage: 50,
       topRegions: [
-        { region: "North & Central India", footfallsPercentage: 60 },
-        { region: "West India (Mumbai/Gujarat)", footfallsPercentage: 25 },
-        { region: "Overseas & East India", footfallsPercentage: 15 }
+        { region: "North & Central India", footfallsPercentage: 60 }
       ]
     },
     directorStyleRadar: {
@@ -775,14 +681,10 @@ export const INDIAN_MOVIES_DATABASE: Movie[] = [
     streamingPlatforms: [
       { name: "Amazon Prime Video", logoUrl: "https://upload.wikimedia.org/wikipedia/commons/f/f1/Prime_Video.png", directUrl: "https://primevideo.com" }
     ],
-    awards: ["Highest Grossing Hindi Film of 2024", "Maddock Supernatural Universe Record"],
-    tags: ["Horror Comedy", "Pankaj Tripathi", "Shraddha Kapoor", "Box Office Monster"],
-    criticReviews: [
-      { id: "s2_c1", criticName: "Mayank Shekhar", publication: "Mid-Day", rating: 4.5, quote: "Rarely does a horror-comedy sequel match the high bar of its original, but Stree 2 surpasses it with relentless humor and sharp satire.", verified: true, date: "2024-08-16" }
-    ],
-    fanReviews: [
-      { id: "s2_f1", userName: "Aman Sharma", userAvatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=150&auto=format&fit=crop", userRole: "Cinephile Fan", rating: 10, reviewTitle: "Akshay Kumar's cameo had the hall in tears of laughter!", reviewText: "Pankaj Tripathi's dialogue delivery is peak gold. Absolute family entertainer!", likes: 810, date: "2024-08-17" }
-    ],
+    awards: ["Highest Grossing Hindi Film of 2024"],
+    tags: ["Horror Comedy", "Shraddha Kapoor", "Box Office Monster"],
+    criticReviews: [],
+    fanReviews: [],
     isTrending: false,
     isEditorPick: true
   }

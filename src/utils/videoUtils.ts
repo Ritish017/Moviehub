@@ -1,14 +1,30 @@
 /**
  * MovieHub X - Video Utilities
- * Converts any YouTube URL or video ID into a robust embed URL with fallback parameters
+ * Converts any YouTube URL, Shorts URL, or Video ID into a robust embed URL
  */
 
-export const DEFAULT_TRAILER_ID = "k9k1l_8y0e8"; // Kalki 2898 AD trailer fallback
+export const DEFAULT_TRAILER_ID = "1kF_n7Y546Q"; // Pushpa 2 / Kalki official trailer fallback
 
 export function extractYouTubeVideoId(input?: string): string {
   if (!input || !input.trim()) return DEFAULT_TRAILER_ID;
-  const match = input.match(/(?:v=|\/embed\/|youtu\.be\/|v\/|^)([a-zA-Z0-9_-]{11})/);
-  return match ? match[1] : input.trim();
+  
+  // Clean URL string
+  const cleanInput = input.trim();
+
+  // Match 11-character video ID across watch?v=, /embed/, /shorts/, youtu.be/, or raw 11-char ID
+  const match = cleanInput.match(/(?:v=|\/embed\/|\/shorts\/|youtu\.be\/|v\/|^)([a-zA-Z0-9_-]{11})/);
+  
+  if (match && match[1]) {
+    return match[1];
+  }
+
+  // Fallback cleanup if query parameters are attached
+  const idOnly = cleanInput.split("?")[0].split("&")[0].split("/").pop();
+  if (idOnly && idOnly.length === 11) {
+    return idOnly;
+  }
+
+  return DEFAULT_TRAILER_ID;
 }
 
 export function getYouTubeEmbedUrl(input?: string, autoplay = true, mute = true): string {
