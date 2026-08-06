@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { X, Tv, Play, AlertTriangle, ExternalLink } from "lucide-react";
 import { Movie, VideoClip } from "../types";
 import { getYouTubeEmbedUrl, getYouTubeWatchUrl, extractYouTubeVideoId, isDirectVideoUrl } from "../utils/videoUtils";
@@ -29,6 +29,11 @@ export const HdStreamPlayerModal: React.FC<HdStreamPlayerModalProps> = ({
 
   const [activeClip, setActiveClip] = useState<VideoClip>(currentClip);
   const [iframeError, setIframeError] = useState<boolean>(false);
+
+  useEffect(() => {
+    setActiveClip(currentClip);
+    setIframeError(false);
+  }, [movie.id, initialClip?.id, initialClip?.videoUrl]);
 
   const watchUrl = getYouTubeWatchUrl(activeClip.videoUrl);
 

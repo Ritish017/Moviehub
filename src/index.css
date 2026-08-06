@@ -4,27 +4,29 @@
    MovieHub X — Design System Tokens
    ============================================================ */
 :root {
-  /* Brand Colors */
-  --color-brand:        #f95716;
-  --color-brand-dark:   #e04708;
-  --color-brand-glow:   rgba(249, 87, 22, 0.35);
+  /* Brand & Utility Colors (Part 4 Color System) */
+  --color-brand:        #e2571c;
+  --color-brand-dark:   #c44510;
+  --color-brand-glow:   rgba(226, 87, 28, 0.35);
+  --color-urgent-red:   #e24b4a;
+  --color-utility-blue: #378ADD;
 
   /* Background Scale */
-  --color-bg-base:      #07080c;
-  --color-bg-surface:   #0d0f14;
-  --color-bg-card:      #121419;
-  --color-bg-elevated:  #181b23;
-  --color-bg-overlay:   rgba(7, 8, 12, 0.85);
+  --color-bg-base:      #0a0a0c;
+  --color-bg-surface:   #101014;
+  --color-bg-card:      #161618;
+  --color-bg-elevated:  #1d1d21;
+  --color-bg-overlay:   rgba(10, 10, 12, 0.88);
 
   /* Text */
   --color-text-primary:   #f3f4f6;
   --color-text-secondary: #9ca3af;
-  --color-text-muted:     #4b5563;
+  --color-text-muted:     #6b7280;
 
-  /* Borders */
-  --color-border-subtle:  rgba(255,255,255,0.06);
+  /* Borders & Hairlines */
+  --color-border-subtle:  #2c2c2e;
   --color-border-default: rgba(255,255,255,0.10);
-  --color-border-active:  rgba(255,255,255,0.20);
+  --color-border-active:  rgba(226,87,28,0.40);
 
   /* Radius */
   --radius-xs:   6px;

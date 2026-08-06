@@ -39,6 +39,7 @@ export const SearchEngine: React.FC<SearchEngineProps> = ({ movies, onSelectMovi
     let isSubscribed = true;
     setIsSearching(true);
     setSearchError(null);
+    console.log(`[SearchEngine] Executing search for query: "${debouncedQuery}"`);
 
     searchMoviesMultiApi(debouncedQuery)
       .then((res) => {

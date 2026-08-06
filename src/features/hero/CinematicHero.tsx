@@ -77,7 +77,7 @@ export const CinematicHero: React.FC = () => {
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
       className="relative w-full overflow-hidden rounded-3xl bg-[#07080c] border border-white/5 shadow-2xl select-none group"
-      style={{ height: "clamp(420px, 56vh, 640px)" }}
+      style={{ height: "clamp(480px, 85vh, 720px)" }}
       aria-label={`Featured: ${activeMovie.title}`}
     >
       {/* Backdrop Image */}

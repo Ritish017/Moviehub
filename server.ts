@@ -313,26 +313,55 @@ app.post("/api/cinema/public-search", async (req, res) => {
 
     const searchQuery = encodeURIComponent(query.trim());
 
-    // 1. Fetch from Apple iTunes Search API (Free, no key required, country=IN for Indian cinema)
+    // 1. Fetch from Apple iTunes Search API
     const itunesUrl = `https://itunes.apple.com/search?term=${searchQuery}&entity=movie&country=IN&limit=10`;
     const itunesPromise = fetch(itunesUrl)
-      .then((r) => r.json())
-      .then((data) => data?.results || [])
-      .catch(() => []);
+      .then(async (r) => {
+        if (!r.ok) {
+          const body = await r.text();
+          console.error(`[iTunes API Error] Status: ${r.status}, Body: ${body.slice(0, 200)}`);
+          return [];
+        }
+        const data = await r.json();
+        return data?.results || [];
+      })
+      .catch((err) => {
+        console.error(`[iTunes Network Error] ${err?.message}`);
+        return [];
+      });
 
-    // 2. Fetch from Wikipedia REST Search API (Free, no key required)
+    // 2. Fetch from Wikipedia REST Search API
     const wikiSearchUrl = `https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${searchQuery}%20film&format=json&origin=*`;
     const wikiPromise = fetch(wikiSearchUrl)
-      .then((r) => r.json())
-      .then((data) => data?.query?.search || [])
-      .catch(() => []);
+      .then(async (r) => {
+        if (!r.ok) {
+          const body = await r.text();
+          console.error(`[Wikipedia API Error] Status: ${r.status}, Body: ${body.slice(0, 200)}`);
+          return [];
+        }
+        const data = await r.json();
+        return data?.query?.search || [];
+      })
+      .catch((err) => {
+        console.error(`[Wikipedia Network Error] ${err?.message}`);
+        return [];
+      });
 
-    // 3. Fetch from TVMaze API (Free, no key required for Indian web series/movies)
+    // 3. Fetch from TVMaze API
     const tvmazeUrl = `https://api.tvmaze.com/search/shows?q=${searchQuery}`;
     const tvmazePromise = fetch(tvmazeUrl)
-      .then((r) => r.json())
-      .then((data) => data || [])
-      .catch(() => []);
+      .then(async (r) => {
+        if (!r.ok) {
+          const body = await r.text();
+          console.error(`[TVMaze API Error] Status: ${r.status}, Body: ${body.slice(0, 200)}`);
+          return [];
+        }
+        return await r.json();
+      })
+      .catch((err) => {
+        console.error(`[TVMaze Network Error] ${err?.message}`);
+        return [];
+      });
 
     const [itunesResults, wikiResults, tvmazeResults] = await Promise.all([
       itunesPromise,
@@ -343,7 +372,7 @@ app.post("/api/cinema/public-search", async (req, res) => {
     // Transform iTunes Results into CineBharat Movie structure
     const formattedItunes = itunesResults.map((item: any, idx: number) => {
       const highResPoster = item.artworkUrl100
-        ? item.artworkUrl100.replace("100x100bb.jpg", "600x600bb.jpg")
+        ? item.artworkUrl100.replace(/100x100bb.*/, "600x600bb.jpg")
         : "https://images.unsplash.com/photo-1534447677768-be436bb09401?q=80&w=800&auto=format&fit=crop";
 
       const releaseYear = item.releaseDate ? new Date(item.releaseDate).getFullYear() : 2024;

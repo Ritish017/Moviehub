@@ -114,6 +114,8 @@ export interface StreamingPlatform {
   name: string;
   logoUrl: string;
   directUrl: string;
+  dataSource?: "live" | "curated" | string;
+  lastVerified?: string;
 }
 
 export interface Movie {
@@ -165,10 +167,12 @@ export interface Movie {
   criticReviews: CriticReview[];
   fanReviews: FanReview[];
 
-  // Flags
+  // Flags & Data Authenticity Telemetry
   isTrending?: boolean;
   isEditorPick?: boolean;
   apiSource?: string;
+  dataSource?: "live" | "curated" | string;
+  lastVerified?: string;
 }
 
 export interface AiMovieAnalysisResponse {
