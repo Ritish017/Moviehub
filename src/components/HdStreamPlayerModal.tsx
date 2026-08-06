@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { X, Tv, Play, AlertTriangle, ExternalLink } from "lucide-react";
 import { Movie, VideoClip } from "../types";
-import { getYouTubeEmbedUrl, getYouTubeWatchUrl, extractYouTubeVideoId } from "../utils/videoUtils";
+import { getYouTubeEmbedUrl, getYouTubeWatchUrl, extractYouTubeVideoId, isDirectVideoUrl } from "../utils/videoUtils";
 import { FALLBACK_POSTER } from "../utils/imageUtils";
 
 interface HdStreamPlayerModalProps {
@@ -74,7 +74,14 @@ export const HdStreamPlayerModal: React.FC<HdStreamPlayerModalProps> = ({
 
         {/* Video Player Box */}
         <div className="relative aspect-video w-full bg-black flex items-center justify-center overflow-hidden">
-          {!iframeError ? (
+          {isDirectVideoUrl(activeClip.videoUrl) ? (
+            <video
+              src={activeClip.videoUrl}
+              controls
+              autoPlay
+              className="w-full h-full object-contain"
+            />
+          ) : !iframeError ? (
             <iframe
               src={getYouTubeEmbedUrl(activeClip.videoUrl, true, false)}
               title={activeClip.title}

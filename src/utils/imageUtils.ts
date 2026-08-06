@@ -3,7 +3,9 @@
  * Standardized poster/backdrop URL formatters, fallback artwork generators, and CORS color extraction.
  */
 
+export const TMDB_POSTER_BASE_W342 = "https://image.tmdb.org/t/p/w342";
 export const TMDB_POSTER_BASE_W500 = "https://image.tmdb.org/t/p/w500";
+export const TMDB_BACKDROP_BASE_W780 = "https://image.tmdb.org/t/p/w780";
 export const TMDB_BACKDROP_BASE_ORIGINAL = "https://image.tmdb.org/t/p/original";
 
 export const FALLBACK_POSTER = "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?q=80&w=800&auto=format&fit=crop";
@@ -44,6 +46,35 @@ export function getBackdropUrl(pathOrUrl?: string): string {
   }
 
   return `${TMDB_BACKDROP_BASE_ORIGINAL}/${pathOrUrl}`;
+}
+
+/**
+ * Returns a srcset string for poster images (responsive loading)
+ * Example output: "url_w342 1x, url_w500 2x"
+ */
+export function getPosterSrcSet(pathOrUrl?: string): string {
+  if (!pathOrUrl || pathOrUrl.trim() === "" || pathOrUrl === "N/A" || pathOrUrl === "null") {
+    return `${FALLBACK_POSTER} 1x, ${FALLBACK_POSTER} 2x`;
+  }
+  if (pathOrUrl.startsWith("http://") || pathOrUrl.startsWith("https://")) {
+    return `${pathOrUrl} 1x, ${pathOrUrl} 2x`;
+  }
+  const cleanPath = pathOrUrl.startsWith("/") ? pathOrUrl : `/${pathOrUrl}`;
+  return `${TMDB_POSTER_BASE_W342}${cleanPath} 1x, ${TMDB_POSTER_BASE_W500}${cleanPath} 2x`;
+}
+
+/**
+ * Returns a srcset string for backdrop images (responsive loading)
+ */
+export function getBackdropSrcSet(pathOrUrl?: string): string {
+  if (!pathOrUrl || pathOrUrl.trim() === "" || pathOrUrl === "N/A" || pathOrUrl === "null") {
+    return `${FALLBACK_BACKDROP} 1x, ${FALLBACK_BACKDROP} 2x`;
+  }
+  if (pathOrUrl.startsWith("http://") || pathOrUrl.startsWith("https://")) {
+    return `${pathOrUrl} 1x, ${pathOrUrl} 2x`;
+  }
+  const cleanPath = pathOrUrl.startsWith("/") ? pathOrUrl : `/${pathOrUrl}`;
+  return `${TMDB_BACKDROP_BASE_W780}${cleanPath} 1x, ${TMDB_BACKDROP_BASE_ORIGINAL}${cleanPath} 2x`;
 }
 
 /**

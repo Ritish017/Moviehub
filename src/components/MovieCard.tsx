@@ -1,86 +1,195 @@
-import React, { useState } from "react";
-import { Play } from "lucide-react";
-import { Movie } from "../types";
-import { getYouTubeEmbedUrl } from "../utils/videoUtils";
+import React, { useState, useRef, useCallback } from "react";
+import { Play, Bookmark, Check, Info, Star } from "lucide-react";
+import type { Movie, VideoClip } from "../types";
 import { getPosterUrl, FALLBACK_POSTER } from "../utils/imageUtils";
+import { getYouTubeThumbnailUrl } from "../utils/videoUtils";
 
 interface MovieCardProps {
   movie: Movie;
   onSelectMovie: (movie: Movie) => void;
-  onOpenTrailer: (movie: Movie) => void;
+  onOpenTrailer: (movie: Movie, clip?: VideoClip) => void;
   isWatchlisted?: boolean;
   onToggleWatchlist?: (movieId: string) => void;
 }
 
+/**
+ * MovieHub X v2 — Enterprise Movie Card
+ * - NO iframe on hover (critical bug fix — was firing 20+ YouTube requests simultaneously)
+ * - 3D tilt effect via CSS perspective on mouse move
+ * - Ambient poster glow on hover
+ * - Thumbnail preview (static image, not live video) on hover
+ * - Quick-action overlay: Watchlist, Info, Trailer
+ * - AI score + genre pill
+ */
 export const MovieCard: React.FC<MovieCardProps> = ({
   movie,
   onSelectMovie,
   onOpenTrailer,
+  isWatchlisted = false,
+  onToggleWatchlist,
 }) => {
   const [isHovered, setIsHovered] = useState(false);
+  const [tilt, setTilt] = useState({ x: 0, y: 0 });
+  const cardRef = useRef<HTMLDivElement>(null);
+
   const posterSrc = getPosterUrl(movie.posterUrl);
+  const thumbnailSrc = getYouTubeThumbnailUrl(movie.featuredTrailerUrl);
+
+  const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+    const card = cardRef.current;
+    if (!card) return;
+    const { left, top, width, height } = card.getBoundingClientRect();
+    const x = ((e.clientX - left) / width - 0.5) * 14;  // -7 to +7 degrees
+    const y = ((e.clientY - top) / height - 0.5) * -14;
+    setTilt({ x, y });
+  }, []);
+
+  const handleMouseLeave = useCallback(() => {
+    setIsHovered(false);
+    setTilt({ x: 0, y: 0 });
+  }, []);
+
+  const ratingColor =
+    movie.rating >= 8.5 ? "text-emerald-400" :
+    movie.rating >= 7   ? "text-amber-400"   :
+    "text-gray-400";
 
   return (
     <div
+      ref={cardRef}
       onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-      className="group relative flex flex-col cursor-pointer transition-all duration-300 transform hover:-translate-y-1.5"
+      onMouseLeave={handleMouseLeave}
+      onMouseMove={handleMouseMove}
+      className="group relative flex flex-col cursor-pointer select-none"
+      style={{
+        perspective: "800px",
+        transform: `perspective(800px)`,
+      }}
       onClick={() => onSelectMovie(movie)}
+      role="button"
+      tabIndex={0}
+      aria-label={`View ${movie.title}`}
+      onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") onSelectMovie(movie); }}
     >
-      {/* Poster Box */}
-      <div className="relative aspect-[3/4] w-full rounded-2xl overflow-hidden bg-[#121319] border border-white/5 group-hover:border-white/20 transition-all shadow-lg">
-        {isHovered ? (
-          <div className="absolute inset-0 w-full h-full pointer-events-none">
-            <iframe
-              src={getYouTubeEmbedUrl(movie.featuredTrailerUrl, true, true)}
-              title={movie.title}
-              className="w-full h-full border-0 pointer-events-none opacity-90 scale-125"
-              allow="autoplay"
-            />
-          </div>
-        ) : (
-          <img
-            src={posterSrc}
-            alt={movie.title}
-            className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500"
-            loading="lazy"
-            onError={(e) => {
-              (e.target as HTMLImageElement).src = FALLBACK_POSTER;
-            }}
-          />
-        )}
+      {/* Poster Box with 3D tilt */}
+      <div
+        className="relative aspect-[3/4] w-full rounded-2xl overflow-hidden bg-[#121419] border border-white/5 shadow-card transition-all duration-200"
+        style={{
+          transform: isHovered
+            ? `rotateX(${tilt.y}deg) rotateY(${tilt.x}deg) scale(1.04)`
+            : "rotateX(0deg) rotateY(0deg) scale(1)",
+          transition: isHovered ? "transform 100ms ease-out" : "transform 350ms ease-out",
+          boxShadow: isHovered
+            ? `0 24px 48px rgba(0,0,0,0.6), 0 0 40px -10px var(--color-brand-glow)`
+            : "var(--shadow-card)",
+          borderColor: isHovered ? "rgba(249,87,22,0.3)" : "rgba(255,255,255,0.05)",
+        }}
+      >
+        {/* Poster image — always shown (no iframe) */}
+        <img
+          src={isHovered && thumbnailSrc ? thumbnailSrc : posterSrc}
+          alt={movie.title}
+          className="w-full h-full object-cover transition-all duration-500"
+          style={{ transform: isHovered ? "scale(1.06)" : "scale(1)" }}
+          loading="lazy"
+          onError={(e) => {
+            (e.target as HTMLImageElement).src = FALLBACK_POSTER;
+          }}
+        />
 
-        {/* Live Badge top left matching screenshot */}
+        {/* Gradient overlay — appears on hover */}
+        <div
+          className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent transition-opacity duration-300"
+          style={{ opacity: isHovered ? 1 : 0.3 }}
+        />
+
+        {/* Trending badge top-left */}
         {movie.isTrending && (
-          <div className="absolute top-3 left-3 z-10 pointer-events-none">
-            <span className="px-2.5 py-1 rounded-md text-[11px] font-bold bg-[#ea580c] text-white shadow-md lowercase font-sans">
-              live
+          <div className="absolute top-2.5 left-2.5 z-10 pointer-events-none">
+            <span className="px-2 py-0.5 rounded-md text-[10px] font-extrabold bg-[#f95716] text-white shadow tracking-wide uppercase">
+              🔥 Live
             </span>
           </div>
         )}
 
-        {/* Play Icon Hover Overlay */}
-        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              onOpenTrailer(movie);
-            }}
-            className="w-12 h-12 rounded-full bg-[#f95716] text-white flex items-center justify-center shadow-xl transform group-hover:scale-110 transition-transform cursor-pointer"
-          >
-            <Play className="w-5 h-5 fill-current ml-0.5" />
-          </button>
+        {/* Rating badge top-right */}
+        <div className="absolute top-2.5 right-2.5 z-10 pointer-events-none">
+          <span className={`flex items-center gap-0.5 px-1.5 py-0.5 rounded-md text-[10px] font-extrabold bg-black/60 backdrop-blur-sm ${ratingColor}`}>
+            <Star className="w-2.5 h-2.5 fill-current" />
+            {movie.rating}
+          </span>
+        </div>
+
+        {/* Quick Actions Overlay — appears on hover */}
+        <div
+          className="absolute bottom-0 inset-x-0 p-3 flex flex-col gap-2 transition-all duration-300"
+          style={{ opacity: isHovered ? 1 : 0, transform: isHovered ? "translateY(0)" : "translateY(8px)" }}
+        >
+          {/* Genre pill */}
+          <span className="self-start px-2 py-0.5 rounded-md text-[10px] font-bold bg-white/15 text-white backdrop-blur-sm border border-white/10">
+            {movie.genres[0] || movie.language}
+          </span>
+
+          {/* Action row */}
+          <div className="flex items-center gap-2">
+            {/* Play Trailer */}
+            <button
+              onClick={(e) => { e.stopPropagation(); onOpenTrailer(movie); }}
+              className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl bg-[#f95716] hover:bg-[#e04708] text-white text-[11px] font-extrabold shadow-lg shadow-[#f95716]/30 transition-colors cursor-pointer"
+              aria-label={`Play trailer for ${movie.title}`}
+            >
+              <Play className="w-3.5 h-3.5 fill-current" />
+              Trailer
+            </button>
+
+            {/* Info */}
+            <button
+              onClick={(e) => { e.stopPropagation(); onSelectMovie(movie); }}
+              className="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-white border border-white/10 transition-colors cursor-pointer"
+              aria-label={`View details for ${movie.title}`}
+            >
+              <Info className="w-3.5 h-3.5" />
+            </button>
+
+            {/* Watchlist */}
+            {onToggleWatchlist && (
+              <button
+                onClick={(e) => { e.stopPropagation(); onToggleWatchlist(movie.id); }}
+                className={`p-2 rounded-xl border transition-colors cursor-pointer ${
+                  isWatchlisted
+                    ? "bg-[#f95716]/20 border-[#f95716]/40 text-[#f95716]"
+                    : "bg-white/10 hover:bg-white/20 text-white border-white/10"
+                }`}
+                aria-label={isWatchlisted ? `Remove ${movie.title} from watchlist` : `Add ${movie.title} to watchlist`}
+                aria-pressed={isWatchlisted}
+              >
+                {isWatchlisted ? (
+                  <Check className="w-3.5 h-3.5" />
+                ) : (
+                  <Bookmark className="w-3.5 h-3.5" />
+                )}
+              </button>
+            )}
+          </div>
         </div>
       </div>
 
-      {/* Details below poster matching screenshot: title (bold white lowercase) + genre (muted text) */}
+      {/* Details below poster */}
       <div className="mt-2.5 space-y-0.5 px-0.5">
-        <h3 className="text-sm font-bold text-white group-hover:text-[#f95716] transition-colors font-sans lowercase truncate">
+        <h3
+          className="text-sm font-bold text-white group-hover:text-[#f95716] transition-colors truncate leading-tight"
+          title={movie.title}
+        >
           {movie.title}
         </h3>
-        <p className="text-xs text-gray-400 font-sans lowercase truncate">
-          {movie.genres[0] || movie.language}
+        <p className="text-xs text-gray-500 truncate font-mono">
+          {movie.releaseYear} · {movie.duration}
         </p>
+        {movie.boxOfficeGrossCrores > 0 && (
+          <p className="text-[10px] text-emerald-500 font-bold truncate">
+            ₹{movie.boxOfficeGrossCrores.toLocaleString("en-IN")} Cr WW
+          </p>
+        )}
       </div>
     </div>
   );

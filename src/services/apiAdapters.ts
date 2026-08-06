@@ -20,9 +20,20 @@ export interface MasterSearchResponse {
 }
 
 /**
- * Perform multi-source search across iTunes, Wikipedia, TVMaze, TMDb, OMDb
+ * Perform multi-source search across backend endpoints with direct client-side fallback
  */
 export async function searchMoviesMultiApi(query: string): Promise<MasterSearchResponse> {
+  if (!query || !query.trim()) {
+    return {
+      success: true,
+      query: "",
+      counts: { itunes: 0, wikipedia: 0, tvmaze: 0 },
+      itunesMovies: [],
+      wikipediaItems: [],
+      tvmazeShows: [],
+    };
+  }
+
   try {
     const res = await fetch("/api/cinema/public-search", {
       method: "POST",
@@ -30,13 +41,67 @@ export async function searchMoviesMultiApi(query: string): Promise<MasterSearchR
       body: JSON.stringify({ query }),
     });
 
-    if (!res.ok) {
-      throw new Error(`Search API returned status ${res.status}`);
+    const contentType = res.headers.get("content-type");
+    if (res.ok && contentType && contentType.includes("application/json")) {
+      const data = await res.json();
+      if (data.success && Array.isArray(data.itunesMovies)) {
+        return data;
+      }
+    }
+    throw new Error(`Server API status ${res.status}`);
+  } catch (err: any) {
+    console.warn("[API Adapter] Backend search unavailable, performing client public iTunes search fallback:", err?.message);
+    
+    try {
+      const iTunesRes = await fetch(
+        `https://itunes.apple.com/search?media=movie&term=${encodeURIComponent(query)}&limit=12`
+      );
+      if (iTunesRes.ok) {
+        const data = await iTunesRes.json();
+        const results = data?.results || [];
+
+        const normalizedMovies: Movie[] = results.map((item: any) => {
+          const highResPoster = item.artworkUrl100
+            ? item.artworkUrl100.replace("100x100bb", "600x600bb")
+            : "";
+          const releaseYear = item.releaseDate
+            ? new Date(item.releaseDate).getFullYear()
+            : 2024;
+
+          return {
+            id: `itunes-${item.trackId || Math.random()}`,
+            title: item.trackName || item.collectionName || query,
+            originalTitle: item.trackName,
+            language: item.country || "English",
+            releaseYear,
+            director: item.artistName || "Director",
+            cast: [{ name: item.artistName || "Cast Member", role: "Actor", characterName: "Lead" }],
+            genres: item.primaryGenreName ? [item.primaryGenreName] : ["Cinema"],
+            rating: item.trackRentalPrice ? 8.2 : 7.8,
+            boxOffice: "Live Streaming",
+            budget: "N/A",
+            synopsis: item.longDescription || item.shortDescription || `Discover ${item.trackName || query} in high definition.`,
+            posterUrl: highResPoster,
+            backdropUrl: highResPoster,
+            featuredTrailerUrl: item.previewUrl || "https://www.youtube.com/watch?v=1kF_n7Y546Q",
+            aiVerdict: "Recommended via Global Cinema Gateway",
+            aiScore: 88,
+          };
+        });
+
+        return {
+          success: true,
+          query,
+          counts: { itunes: normalizedMovies.length, wikipedia: 0, tvmaze: 0 },
+          itunesMovies: normalizedMovies,
+          wikipediaItems: [],
+          tvmazeShows: [],
+        };
+      }
+    } catch (fallbackErr) {
+      console.error("[API Adapter] Client iTunes fallback failed:", fallbackErr);
     }
 
-    return await res.json();
-  } catch (err: any) {
-    console.error("[API Adapter] Search failed:", err);
     return {
       success: false,
       query,

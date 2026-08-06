@@ -1,12 +1,14 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { MovieCard } from "./MovieCard";
-import { Movie, LanguageType, BoxOfficeStatusType } from "../types";
-import { SlidersHorizontal, Film, ArrowUpDown, Filter } from "lucide-react";
+import type { Movie, LanguageType, VideoClip } from "../types";
+import { ArrowUpDown, Filter } from "lucide-react";
+import { useMovieFilter, useGenreList, type SortKey } from "../hooks/useMovieFilter";
+import { useWindowVirtualizer } from "@tanstack/react-virtual";
 
 interface MovieGridProps {
   movies: Movie[];
   onSelectMovie: (movie: Movie) => void;
-  onOpenTrailer: (movie: Movie) => void;
+  onOpenTrailer: (movie: Movie, clip?: VideoClip) => void;
   watchlist: string[];
   onToggleWatchlist: (movieId: string) => void;
   selectedLanguage: LanguageType;
@@ -24,7 +26,7 @@ export const MovieGrid: React.FC<MovieGridProps> = ({
 }) => {
   const [selectedGenre, setSelectedGenre] = useState<string>("All");
   const [selectedStatus, setSelectedStatus] = useState<string>("All");
-  const [sortBy, setSortBy] = useState<"rating" | "gross" | "roi" | "year">("gross");
+  const [sortBy, setSortBy] = useState<SortKey>("gross");
 
   const languages: LanguageType[] = [
     "All",
@@ -36,38 +38,46 @@ export const MovieGrid: React.FC<MovieGridProps> = ({
     "Pan-India",
   ];
 
-  const genresList = useMemo(() => {
-    const all = new Set<string>();
-    movies.forEach((m) => m.genres.forEach((g) => all.add(g)));
-    return ["All", ...Array.from(all)];
-  }, [movies]);
+  const genresList = useGenreList(movies);
 
-  const filteredMovies = useMemo(() => {
-    return movies
-      .filter((m) => {
-        if (selectedLanguage !== "All" && m.language !== selectedLanguage && !(selectedLanguage === "Pan-India" && m.tags.includes("Pan-India"))) {
-          return false;
-        }
-        if (selectedGenre !== "All" && !m.genres.includes(selectedGenre)) {
-          return false;
-        }
-        if (selectedStatus !== "All" && m.boxOfficeStatus !== selectedStatus) {
-          return false;
-        }
-        return true;
-      })
-      .sort((a, b) => {
-        if (sortBy === "rating") return b.rating - a.rating;
-        if (sortBy === "gross") return b.boxOfficeGrossCrores - a.boxOfficeGrossCrores;
-        if (sortBy === "roi") return b.roiPercentage - a.roiPercentage;
-        if (sortBy === "year") return b.releaseYear - a.releaseYear;
-        return 0;
-      });
-  }, [movies, selectedLanguage, selectedGenre, selectedStatus, sortBy]);
+  const filteredMovies = useMovieFilter(movies, {
+    selectedLanguage,
+    selectedGenre,
+    selectedStatus,
+    sortBy,
+  });
+
+  // Responsive column calculation for virtualization
+  const [columns, setColumns] = useState(5);
+  
+  useEffect(() => {
+    const updateColumns = () => {
+      const width = window.innerWidth;
+      if (width < 640) setColumns(1);
+      else if (width < 768) setColumns(2);
+      else if (width < 1024) setColumns(3);
+      else if (width < 1280) setColumns(4);
+      else setColumns(5);
+    };
+    
+    updateColumns();
+    window.addEventListener("resize", updateColumns);
+    return () => window.removeEventListener("resize", updateColumns);
+  }, []);
+
+  const rowCount = Math.ceil(filteredMovies.length / columns);
+  const cardHeight = 420; // Estimated height of MovieCard + gap
+  const listRef = useRef<HTMLDivElement | null>(null);
+
+  const virtualizer = useWindowVirtualizer({
+    count: rowCount,
+    estimateSize: () => cardHeight,
+    overscan: 2,
+    scrollMargin: listRef.current?.offsetTop ?? 0,
+  });
 
   return (
     <section className="my-8">
-      
       {/* Header & Filter Controls Bar */}
       <div className="bg-[#080A0F] border border-red-500/20 rounded-3xl p-5 sm:p-6 mb-8 shadow-xl">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-white/10">
@@ -77,14 +87,13 @@ export const MovieGrid: React.FC<MovieGridProps> = ({
             </h2>
           </div>
 
-          {/* Sort Selector */}
           <div className="flex items-center gap-2 self-start md:self-auto">
             <span className="text-xs text-gray-400 font-mono flex items-center gap-1">
               <ArrowUpDown className="w-3.5 h-3.5 text-blue-400" /> SORT BY:
             </span>
             <select
               value={sortBy}
-              onChange={(e: any) => setSortBy(e.target.value)}
+              onChange={(e) => setSortBy(e.target.value as SortKey)}
               className="bg-[#0C0E16] border border-white/15 rounded-xl px-3 py-1.5 text-xs text-gray-200 font-bold focus:outline-none focus:border-red-500"
             >
               <option value="gross">Worldwide Gross (₹ Cr)</option>
@@ -95,9 +104,7 @@ export const MovieGrid: React.FC<MovieGridProps> = ({
           </div>
         </div>
 
-        {/* Filter Pills */}
         <div className="space-y-3 pt-4">
-          
           {/* Languages Filter */}
           <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
             <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest shrink-0 mr-1 font-mono">LANGUAGE:</span>
@@ -133,11 +140,10 @@ export const MovieGrid: React.FC<MovieGridProps> = ({
               </button>
             ))}
           </div>
-
         </div>
       </div>
 
-      {/* Grid Display */}
+      {/* Virtualized Grid Display */}
       {filteredMovies.length === 0 ? (
         <div className="text-center py-16 bg-[#14171E] rounded-3xl border border-white/5 p-8">
           <Filter className="w-10 h-10 text-gray-500 mx-auto mb-3" />
@@ -155,20 +161,37 @@ export const MovieGrid: React.FC<MovieGridProps> = ({
           </button>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
-          {filteredMovies.map((movie) => (
-            <MovieCard
-              key={movie.id}
-              movie={movie}
-              onSelectMovie={onSelectMovie}
-              onOpenTrailer={onOpenTrailer}
-              isWatchlisted={watchlist.includes(movie.id)}
-              onToggleWatchlist={onToggleWatchlist}
-            />
+        <div ref={listRef} style={{ height: virtualizer.getTotalSize(), width: '100%', position: 'relative' }}>
+          {virtualizer.getVirtualItems().map((virtualRow) => (
+            <div
+              key={virtualRow.index}
+              style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                width: '100%',
+                height: `${virtualRow.size}px`,
+                transform: `translateY(${virtualRow.start}px)`,
+              }}
+              className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6"
+            >
+              {filteredMovies
+                .slice(virtualRow.index * columns, (virtualRow.index + 1) * columns)
+                .map((movie) => (
+                  <div key={movie.id} className="w-full h-full pb-6">
+                    <MovieCard
+                      movie={movie}
+                      onSelectMovie={onSelectMovie}
+                      onOpenTrailer={onOpenTrailer}
+                      isWatchlisted={watchlist.includes(movie.id)}
+                      onToggleWatchlist={onToggleWatchlist}
+                    />
+                  </div>
+                ))}
+            </div>
           ))}
         </div>
       )}
-
     </section>
   );
 };

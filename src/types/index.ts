@@ -1,12 +1,6 @@
-/**
- * MovieHub X — Legacy Type Compatibility Layer
- * 
- * The types have been reorganized into src/types/ (movie.ts, user.ts, api.ts, cache.ts).
- * This file re-exports everything from the new location so existing imports
- * using "from '../types'" or "from '../../types'" continue to work.
- *
- * New code should import from "../types/index" or "../types" directly.
- */
+// MovieHub X — Unified Type Exports
+// Import from here everywhere in the codebase
+
 export type {
   LanguageType,
   IndustryType,
@@ -24,7 +18,7 @@ export type {
   Movie,
   AiMovieAnalysisResponse,
   AiDeepAnalysisResponse,
-} from "./types/movie";
+} from "./movie";
 
 export type {
   UserRole,
@@ -35,7 +29,7 @@ export type {
   ThreadComment,
   CommunityCategory,
   CommunityThread,
-} from "./types/user";
+} from "./user";
 
 export type {
   TabType,
@@ -46,7 +40,7 @@ export type {
   FeaturedTalent,
   HomepagePayload,
   HeroItem,
-} from "./types/api";
+} from "./api";
 
-export { CACHE_TTL } from "./types/cache";
-export type { CacheEntry, CacheConfig } from "./types/cache";
+export { CACHE_TTL } from "./cache";
+export type { CacheEntry, CacheConfig } from "./cache";

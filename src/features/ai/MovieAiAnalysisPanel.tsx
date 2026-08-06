@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from "react";
-import { Sparkles, HelpCircle, Eye, Layers, Users, RefreshCw, Send, ArrowRight } from "lucide-react";
+import React, { useState } from "react";
+import { Sparkles, RefreshCw, Send } from "lucide-react";
 import { Movie } from "../../types";
+import { useAiAnalysis } from "../../hooks/useAiAnalysis";
 
 interface MovieAiAnalysisPanelProps {
   movie: Movie;
@@ -8,8 +9,13 @@ interface MovieAiAnalysisPanelProps {
 }
 
 export const MovieAiAnalysisPanel: React.FC<MovieAiAnalysisPanelProps> = ({ movie, onOpenCopilotDrawer }) => {
-  const [loading, setLoading] = useState(false);
-  const [deepAnalysis, setDeepAnalysis] = useState<any>(null);
+  const { deepAnalysis, isLoading: loading, refetch, isMock } = useAiAnalysis(
+    movie.title,
+    movie.id,
+    movie.director,
+    movie.synopsis
+  );
+  
   const [activeSubTab, setActiveSubTab] = useState<"summary" | "ending" | "details" | "easter">("summary");
   const [copilotInput, setCopilotInput] = useState("");
   const [copilotMessages, setCopilotMessages] = useState<Array<{ role: "user" | "ai"; text: string; sources?: number[] }>>([
@@ -20,32 +26,7 @@ export const MovieAiAnalysisPanel: React.FC<MovieAiAnalysisPanelProps> = ({ movi
     },
   ]);
 
-  const fetchDeepAnalysis = async () => {
-    setLoading(true);
-    try {
-      const res = await fetch("/api/gemini/analyze-movie-deep", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          movieTitle: movie.title,
-          director: movie.director,
-          synopsis: movie.synopsis,
-        }),
-      });
-      const data = await res.json();
-      if (data.success && data.deepAnalysis) {
-        setDeepAnalysis(data.deepAnalysis);
-      }
-    } catch (err) {
-      console.error("Deep AI Analysis fetch failed:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
 
-  useEffect(() => {
-    fetchDeepAnalysis();
-  }, [movie.id]);
 
   const handleSendCopilot = (e: React.FormEvent) => {
     e.preventDefault();
@@ -117,7 +98,7 @@ export const MovieAiAnalysisPanel: React.FC<MovieAiAnalysisPanelProps> = ({ movi
           </div>
 
           <button
-            onClick={fetchDeepAnalysis}
+            onClick={refetch}
             className="text-xs text-purple-400 hover:text-purple-300 flex items-center gap-1 font-bold cursor-pointer"
           >
             <RefreshCw className={`w-3.5 h-3.5 ${loading ? "animate-spin" : ""}`} /> Refresh

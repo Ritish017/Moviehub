@@ -1062,7 +1062,11 @@ app.get("/api/health", (req, res) => {
   res.json({ status: "ok", app: "CineBharat - Indian Cinema Ecosystem & Analytics" });
 });
 
-// Start Express + Vite dev/production middleware
+// Export Express app for Vercel serverless deployment
+export { app };
+export default app;
+
+// Start Express + Vite dev/production server when run directly
 async function startServer() {
   if (process.env.NODE_ENV !== "production") {
     const vite = await createViteServer({
@@ -1083,4 +1087,7 @@ async function startServer() {
   });
 }
 
-startServer();
+if (process.env.VERCEL !== "1" && !process.env.VERCEL_ENV) {
+  startServer();
+}
+

@@ -1,36 +1,32 @@
 import React, { useState, useEffect } from "react";
 import { Search, Mic, Sparkles, Film, User, Clapperboard, Award, Smile, RefreshCw, AlertCircle } from "lucide-react";
-import { Movie } from "../../types";
+import type { Movie, VideoClip } from "../../types";
 import { searchMoviesMultiApi } from "../../services/apiAdapters";
 import { MovieCard } from "../../components/MovieCard";
+import { useDebounce } from "../../hooks/useDebounce";
 
 interface SearchEngineProps {
   movies: Movie[];
   onSelectMovie: (movie: Movie) => void;
-  onOpenTrailer: (movie: Movie) => void;
+  onOpenTrailer: (movie: Movie, clip?: VideoClip) => void;
+  initialQuery?: string;
 }
 
-export const SearchEngine: React.FC<SearchEngineProps> = ({ movies, onSelectMovie, onOpenTrailer }) => {
-  const [query, setQuery] = useState("");
-  const [debouncedQuery, setDebouncedQuery] = useState("");
+export const SearchEngine: React.FC<SearchEngineProps> = ({ movies, onSelectMovie, onOpenTrailer, initialQuery = "" }) => {
+  const [query, setQuery] = useState(initialQuery);
   const [activeCategory, setActiveCategory] = useState<
     "all" | "movies" | "actors" | "directors" | "awards" | "mood" | "ai"
   >("all");
   const [selectedMood, setSelectedMood] = useState<string>("All");
-  
+
   const [isSearching, setIsSearching] = useState(false);
   const [apiResults, setApiResults] = useState<Movie[]>([]);
   const [searchError, setSearchError] = useState<string | null>(null);
 
   const moods = ["All", "Cyberpunk", "Epic Mythology", "High-Octane Action", "Mind-bending", "Folklore", "Emotional Climax"];
 
-  // Debounce input (300ms)
-  useEffect(() => {
-    const handler = setTimeout(() => {
-      setDebouncedQuery(query.trim());
-    }, 300);
-    return () => clearTimeout(handler);
-  }, [query]);
+  // Debounce input via reusable hook
+  const debouncedQuery = useDebounce(query, 300);
 
   // Execute multi-API backend search when debouncedQuery changes
   useEffect(() => {

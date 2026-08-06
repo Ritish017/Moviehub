@@ -31,7 +31,7 @@ export const DedicatedMovieView: React.FC<DedicatedMovieViewProps> = ({
   onToggleWatchlist,
 }) => {
   const [activeTab, setActiveTab] = useState<
-    "overview" | "ai" | "timeline" | "cast" | "financials" | "reviews"
+    "overview" | "ai" | "timeline" | "cast" | "financials" | "reviews" | "videos" | "gallery" | "awards" | "recommendations"
   >("overview");
 
   const backdropSrc = getBackdropUrl(movie.backdropUrl);
@@ -147,7 +147,7 @@ export const DedicatedMovieView: React.FC<DedicatedMovieViewProps> = ({
         {/* Left 2 Columns: Tabs & Information */}
         <div className="lg:col-span-2 space-y-8">
           {/* Navigation Tabs */}
-          <div className="flex border-b border-white/10 gap-4 text-xs sm:text-sm font-bold overflow-x-auto pb-1">
+          <div className="flex border-b border-white/10 gap-4 text-xs sm:text-sm font-bold overflow-x-auto pb-1 scroll-rail">
             <button
               onClick={() => setActiveTab("overview")}
               className={`pb-3 border-b-2 whitespace-nowrap transition-all cursor-pointer ${
@@ -165,16 +165,7 @@ export const DedicatedMovieView: React.FC<DedicatedMovieViewProps> = ({
             >
               <Sparkles className="w-4 h-4" /> AI Breakdown
             </button>
-
-            <button
-              onClick={() => setActiveTab("timeline")}
-              className={`pb-3 border-b-2 whitespace-nowrap transition-all cursor-pointer flex items-center gap-1.5 ${
-                activeTab === "timeline" ? "border-amber-400 text-amber-400" : "border-transparent text-gray-400 hover:text-white"
-              }`}
-            >
-              <Layers className="w-4 h-4" /> Timeline & Universe
-            </button>
-
+            
             <button
               onClick={() => setActiveTab("cast")}
               className={`pb-3 border-b-2 whitespace-nowrap transition-all cursor-pointer ${
@@ -185,12 +176,39 @@ export const DedicatedMovieView: React.FC<DedicatedMovieViewProps> = ({
             </button>
 
             <button
+              onClick={() => setActiveTab("videos")}
+              className={`pb-3 border-b-2 whitespace-nowrap transition-all cursor-pointer ${
+                activeTab === "videos" ? "border-amber-400 text-amber-400" : "border-transparent text-gray-400 hover:text-white"
+              }`}
+            >
+              Trailers & Videos
+            </button>
+            
+            <button
+              onClick={() => setActiveTab("gallery")}
+              className={`pb-3 border-b-2 whitespace-nowrap transition-all cursor-pointer ${
+                activeTab === "gallery" ? "border-amber-400 text-amber-400" : "border-transparent text-gray-400 hover:text-white"
+              }`}
+            >
+              Photo Gallery
+            </button>
+            
+            <button
               onClick={() => setActiveTab("financials")}
               className={`pb-3 border-b-2 whitespace-nowrap transition-all cursor-pointer ${
                 activeTab === "financials" ? "border-emerald-400 text-emerald-400" : "border-transparent text-gray-400 hover:text-white"
               }`}
             >
               Financial Telemetry
+            </button>
+            
+            <button
+              onClick={() => setActiveTab("timeline")}
+              className={`pb-3 border-b-2 whitespace-nowrap transition-all cursor-pointer flex items-center gap-1.5 ${
+                activeTab === "timeline" ? "border-amber-400 text-amber-400" : "border-transparent text-gray-400 hover:text-white"
+              }`}
+            >
+              <Layers className="w-4 h-4" /> Timeline & Universe
             </button>
 
             <button
@@ -200,6 +218,24 @@ export const DedicatedMovieView: React.FC<DedicatedMovieViewProps> = ({
               }`}
             >
               Reviews & Sentiment
+            </button>
+            
+            <button
+              onClick={() => setActiveTab("awards")}
+              className={`pb-3 border-b-2 whitespace-nowrap transition-all cursor-pointer ${
+                activeTab === "awards" ? "border-amber-400 text-amber-400" : "border-transparent text-gray-400 hover:text-white"
+              }`}
+            >
+              Awards & Honors
+            </button>
+            
+            <button
+              onClick={() => setActiveTab("recommendations")}
+              className={`pb-3 border-b-2 whitespace-nowrap transition-all cursor-pointer flex items-center gap-1.5 ${
+                activeTab === "recommendations" ? "border-amber-400 text-amber-400" : "border-transparent text-gray-400 hover:text-white"
+              }`}
+            >
+              More Like This
             </button>
           </div>
 
@@ -362,6 +398,95 @@ export const DedicatedMovieView: React.FC<DedicatedMovieViewProps> = ({
                   <span className="text-gray-400">😐 {movie.reviewSentiment.neutralPercentage}% Neutral</span>
                   <span className="text-red-400">👎 {movie.reviewSentiment.negativePercentage}% Negative</span>
                 </div>
+              </div>
+            </div>
+          )}
+
+          {/* TAB 7: VIDEOS */}
+          {activeTab === "videos" && (
+            <div className="space-y-6 animate-fadeIn">
+              <h3 className="text-base font-bold text-white font-serif">All Trailers & Clips</h3>
+              {movie.videoClips && movie.videoClips.length > 0 ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {movie.videoClips.map((clip) => (
+                    <div
+                      key={clip.id}
+                      onClick={() => onOpenTrailer(movie, clip)}
+                      className="bg-[#12141d] border border-white/10 rounded-xl overflow-hidden cursor-pointer group hover:border-purple-500/50 transition-all"
+                    >
+                      <div className="relative aspect-video bg-black">
+                        <img
+                          src={getPosterUrl(clip.thumbnailUrl || movie.posterUrl)}
+                          alt={clip.title}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                          onError={(e) => {
+                            (e.target as HTMLImageElement).src = FALLBACK_POSTER;
+                          }}
+                        />
+                        <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+                          <div className="w-10 h-10 rounded-full bg-red-600 text-white flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                            <Play className="w-4 h-4 fill-current ml-0.5" />
+                          </div>
+                        </div>
+                      </div>
+                      <div className="p-3">
+                        <p className="text-xs font-bold text-white truncate">{clip.title}</p>
+                        <p className="text-[11px] text-gray-400 mt-0.5">{clip.type} • {clip.duration}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="p-8 text-center bg-[#12141d] border border-white/10 rounded-xl">
+                  <p className="text-gray-400 text-sm">No videos available for this title yet.</p>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* TAB 8: GALLERY */}
+          {activeTab === "gallery" && (
+            <div className="space-y-6 animate-fadeIn">
+              <h3 className="text-base font-bold text-white font-serif">Photo Gallery</h3>
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                <div className="aspect-square bg-[#12141d] border border-white/10 rounded-xl overflow-hidden cursor-pointer hover:border-white/30 transition-all">
+                  <img src={getPosterUrl(movie.posterUrl)} alt="Poster" className="w-full h-full object-cover hover:scale-110 transition-transform duration-500" />
+                </div>
+                {movie.backdropUrl && (
+                  <div className="aspect-square bg-[#12141d] border border-white/10 rounded-xl overflow-hidden cursor-pointer hover:border-white/30 transition-all">
+                    <img src={getBackdropUrl(movie.backdropUrl)} alt="Backdrop" className="w-full h-full object-cover hover:scale-110 transition-transform duration-500" />
+                  </div>
+                )}
+                {/* Fallback empty slots to show grid layout intent */}
+                {[1, 2, 3, 4].map(i => (
+                   <div key={i} className="aspect-square bg-[#12141d]/50 border border-white/5 rounded-xl flex items-center justify-center text-white/10">
+                     <Tv className="w-8 h-8" />
+                   </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* TAB 9: AWARDS */}
+          {activeTab === "awards" && (
+            <div className="space-y-6 animate-fadeIn">
+              <h3 className="text-base font-bold text-white font-serif">Awards & Honors</h3>
+              <div className="p-8 text-center bg-[#12141d] border border-amber-500/20 rounded-xl space-y-3">
+                <div className="w-12 h-12 rounded-full bg-amber-500/10 flex items-center justify-center mx-auto text-amber-500">
+                  <Sparkles className="w-6 h-6" />
+                </div>
+                <p className="text-amber-400 font-bold text-sm">Awards data pending synchronization.</p>
+                <p className="text-xs text-gray-400">We are currently integrating with external academy databases.</p>
+              </div>
+            </div>
+          )}
+
+          {/* TAB 10: RECOMMENDATIONS */}
+          {activeTab === "recommendations" && (
+            <div className="space-y-6 animate-fadeIn">
+              <h3 className="text-base font-bold text-white font-serif">More Like This</h3>
+              <div className="p-8 text-center bg-[#12141d] border border-white/10 rounded-xl">
+                <p className="text-gray-400 text-sm">Recommendation engine is analyzing similar titles...</p>
               </div>
             </div>
           )}
