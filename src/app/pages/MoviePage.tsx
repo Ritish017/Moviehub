@@ -1,29 +1,65 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { DedicatedMovieView } from "../../features/movies/DedicatedMovieView";
 import { useMovieStore } from "../../store/useMovieStore";
 import { useUserStore } from "../../store/useUserStore";
 import type { Movie, VideoClip } from "../../types";
 import { ArrowLeft } from "lucide-react";
+import { api } from "../../services/apiClient";
 
 const MoviePage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  
+  const [movie, setMovie] = useState<Movie | null>(null);
+  const [loading, setLoading] = useState(true);
+
   const getMovieById = useMovieStore((s) => s.getMovieById);
   const setViewingMovie = useMovieStore((s) => s.setViewingMovie);
   const openStreaming = useMovieStore((s) => s.openStreaming);
   const watchlist = useUserStore((s) => s.userProfile.watchlist);
   const toggleWatchlist = useUserStore((s) => s.toggleWatchlist);
 
-  const movie: Movie | undefined = id ? getMovieById(id) : undefined;
+  useEffect(() => {
+    if (!id) return;
+    setLoading(true);
+    
+    // Check if it's a TMDB ID
+    if (id.startsWith("tmdb-")) {
+      api.getMovie(id).then(res => {
+        if (res.success && res.data) {
+          setMovie(res.data);
+        } else {
+          // fallback to store
+          setMovie(getMovieById(id) || null);
+        }
+        setLoading(false);
+      }).catch(() => {
+        setMovie(getMovieById(id) || null);
+        setLoading(false);
+      });
+    } else {
+      // old format / local data fallback
+      setMovie(getMovieById(id) || null);
+      setLoading(false);
+    }
+  }, [id, getMovieById]);
 
   // Keep viewing movie in store for AmbientBackground
   useEffect(() => {
-    setViewingMovie(movie ?? null);
+    if (movie) setViewingMovie(movie);
     return () => setViewingMovie(null);
   }, [movie, setViewingMovie]);
 
   const handleOpenTrailer = (m: Movie, clip?: VideoClip) => openStreaming(m, clip);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="w-16 h-16 border-4 border-red-500 border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    );
+  }
 
   if (!movie) {
     return (

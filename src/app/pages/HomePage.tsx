@@ -1,13 +1,27 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { HomepageAggregatorView } from "../../features/homepage/HomepageAggregatorView";
 import { useMovieStore } from "../../store/useMovieStore";
+import { useContentStore } from "../../store/useContentStore";
 import { useUserStore } from "../../store/useUserStore";
 import { useNavigate } from "react-router-dom";
 import type { Movie, VideoClip } from "../../types";
 
 const HomePage: React.FC = () => {
   const navigate = useNavigate();
-  const movies = useMovieStore((s) => s.movies);
+  const fetchAllHomeData = useContentStore((s) => s.fetchAllHomeData);
+  
+  // Backwards compatibility for now, combine some rails for the aggregated view
+  const trending = useContentStore((s) => s.trending);
+  const nowPlaying = useContentStore((s) => s.nowPlaying);
+  const popular = useContentStore((s) => s.popular);
+  // combine into a generic "movies" array so old components don't break immediately
+  // while we transition them
+  const movies = [...trending, ...nowPlaying, ...popular].filter((v, i, a) => a.findIndex(t => (t.id === v.id)) === i);
+
+  useEffect(() => {
+    fetchAllHomeData();
+  }, [fetchAllHomeData]);
+
   const openStreaming = useMovieStore((s) => s.openStreaming);
   const selectedLanguage = useMovieStore((s) => s.selectedLanguage);
   const setSelectedLanguage = useMovieStore((s) => s.setSelectedLanguage);

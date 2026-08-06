@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Search, Mic, Sparkles, Film, User, Clapperboard, Award, Smile, RefreshCw, AlertCircle } from "lucide-react";
 import type { Movie, VideoClip } from "../../types";
-import { searchMoviesMultiApi } from "../../services/apiAdapters";
+import { api } from "../../services/apiClient";
 import { MovieCard } from "../../components/MovieCard";
 import { useDebounce } from "../../hooks/useDebounce";
 
@@ -41,12 +41,13 @@ export const SearchEngine: React.FC<SearchEngineProps> = ({ movies, onSelectMovi
     setSearchError(null);
     console.log(`[SearchEngine] Executing search for query: "${debouncedQuery}"`);
 
-    searchMoviesMultiApi(debouncedQuery)
+    api.search(debouncedQuery)
       .then((res) => {
         if (!isSubscribed) return;
         setIsSearching(false);
-        if (res.success && res.itunesMovies.length > 0) {
-          setApiResults(res.itunesMovies);
+        if (res.success && (res.movies?.length > 0 || res.supplementary?.length > 0)) {
+          // Merge TMDB + supplementary
+          setApiResults([...(res.movies || []), ...(res.supplementary || [])]);
         } else if (res.error) {
           setSearchError(res.error);
         } else {

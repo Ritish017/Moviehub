@@ -1408,6 +1408,86 @@ app.get("/api/tmdb/by-genre", async (req, res) => {
   }
 });
 
+app.get("/api/tmdb/movie/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const data = await withCache(`tmdb:movie:${id}`, TTL.MOVIE_DETAIL, async () => {
+      // id might have "tmdb-" prefix or just be a number.
+      const tmdbId = id.replace("tmdb-", "");
+      const raw = await tmdbFetch(`/movie/${tmdbId}`, {
+        append_to_response: "credits,videos,images,recommendations,similar,reviews,release_dates,watch/providers,keywords,external_ids"
+      });
+      const config = await withCache("tmdb:config", TTL.CONFIG, () => tmdbFetch("/configuration"));
+      const imageBase = config.images?.secure_base_url || "https://image.tmdb.org/t/p/";
+      return normalizeTmdbMovie(raw, imageBase);
+    });
+    res.json({ success: true, data });
+  } catch (err: any) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+app.post("/api/cinema/search", async (req, res) => {
+  try {
+    const { query, page = 1 } = req.body;
+    if (!query) return res.status(400).json({ success: false, error: "Query required" });
+
+    // 1. TMDB Search (Primary)
+    const tmdbPromise = tmdbFetch("/search/multi", { query, page, region: "IN" })
+      .then(async (raw) => {
+        const config = await withCache("tmdb:config", TTL.CONFIG, () => tmdbFetch("/configuration"));
+        const imageBase = config.images?.secure_base_url || "https://image.tmdb.org/t/p/";
+        
+        const movies = raw.results
+          .filter((item: any) => item.media_type === "movie" || !item.media_type)
+          .map((m: any) => normalizeTmdbMovie(m, imageBase));
+        
+        return { movies };
+      })
+      .catch((err) => {
+        console.error("TMDB Search Error:", err);
+        return { movies: [] };
+      });
+
+    // 2. iTunes (Supplementary)
+    const itunesUrl = `https://itunes.apple.com/search?term=${encodeURIComponent(query)}&entity=movie&country=IN&limit=5`;
+    const itunesPromise = fetch(itunesUrl)
+      .then(r => r.json())
+      .then(data => data?.results || [])
+      .catch(() => []);
+
+    const [tmdbData, itunesData] = await Promise.all([tmdbPromise, itunesPromise]);
+
+    const supplementary = itunesData.map((item: any) => ({
+      id: `itunes-${item.trackId}`,
+      title: item.trackName,
+      posterUrl: item.artworkUrl100?.replace('100x100bb', '500x500bb') || "",
+      genres: [item.primaryGenreName],
+      releaseYear: new Date(item.releaseDate).getFullYear(),
+      director: item.artistName,
+      synopsis: item.longDescription || item.shortDescription || "",
+      dataSource: "live",
+      apiSource: "iTunes",
+      streamingPlatforms: [{
+        name: "Apple TV",
+        logoUrl: "https://upload.wikimedia.org/wikipedia/commons/2/28/Apple_TV_Plus_Logo.svg",
+        directUrl: item.trackViewUrl,
+        type: "buy"
+      }]
+    }));
+
+    res.json({
+      success: true,
+      query,
+      movies: tmdbData.movies,
+      supplementary: supplementary
+    });
+
+  } catch (err: any) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
 // Health check endpoint
 app.get("/api/health", (req, res) => {
   res.json({ status: "ok", app: "CineBharat - Indian Cinema Ecosystem & Analytics" });
