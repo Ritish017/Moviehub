@@ -9,7 +9,10 @@ import {
   Sparkles,
   Tv,
   Layers,
-  DollarSign
+  DollarSign,
+  Ticket,
+  TrendingUp,
+  ExternalLink
 } from "lucide-react";
 import { Movie, VideoClip } from "../../types";
 import { MovieAiAnalysisPanel } from "../ai/MovieAiAnalysisPanel";
@@ -520,24 +523,66 @@ export const DedicatedMovieView: React.FC<DedicatedMovieViewProps> = ({
             </div>
           </div>
 
-          {/* Streaming Platforms */}
-          <div className="bg-[#12141d] border border-white/10 p-6 rounded-2xl space-y-3">
-            <h3 className="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
-              <Tv className="w-4 h-4 text-purple-400" /> Stream & Watch Online
+          {/* Multi-Platform Availability & Booking Hub */}
+          <div className="bg-[#12141d] border border-white/10 p-6 rounded-2xl space-y-4">
+            <h3 className="text-sm font-bold text-white uppercase tracking-wider flex items-center justify-between">
+              <span className="flex items-center gap-2">
+                <Tv className="w-4 h-4 text-purple-400" /> Platform Availability
+              </span>
+              <span className="text-[10px] text-emerald-400 font-mono font-bold">Synced Live</span>
             </h3>
+
+            {/* OTT Streaming */}
             <div className="space-y-2">
-              {movie.streamingPlatforms.map((platform) => (
-                <a
-                  key={platform.name}
-                  href={platform.directUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center justify-between p-3 rounded-xl bg-white/5 hover:bg-white/10 transition-colors text-xs font-bold text-white"
-                >
-                  <span>{platform.name}</span>
-                  <span className="text-purple-400">Stream ↗</span>
-                </a>
-              ))}
+              <p className="text-[11px] font-bold text-gray-400 uppercase tracking-wider font-mono">OTT Streaming Services</p>
+              {movie.streamingPlatforms && movie.streamingPlatforms.length > 0 ? (
+                movie.streamingPlatforms.map((platform) => (
+                  <a
+                    key={platform.name}
+                    href={platform.directUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-between p-3 rounded-xl bg-white/5 hover:bg-white/10 transition-all text-xs font-bold text-white border border-white/5 hover:border-purple-500/30"
+                  >
+                    <span className="flex items-center gap-2">
+                      <Tv className="w-3.5 h-3.5 text-purple-400" />
+                      {platform.name}
+                    </span>
+                    <span className="text-purple-400 text-[11px] flex items-center gap-1">Stream <ExternalLink className="w-3 h-3" /></span>
+                  </a>
+                ))
+              ) : (
+                <div className="p-3 rounded-xl bg-white/5 text-xs text-gray-400 font-mono">
+                  Streaming rights announced post-theatrical window.
+                </div>
+              )}
+            </div>
+
+            {/* BookMyShow Theatrical Ticket Link */}
+            <div className="space-y-2 pt-2 border-t border-white/5">
+              <p className="text-[11px] font-bold text-gray-400 uppercase tracking-wider font-mono">Theatrical Booking</p>
+              <a
+                href={`https://in.bookmyshow.com/explore/movies`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-between p-3 rounded-xl bg-gradient-to-r from-pink-600 to-red-600 hover:from-pink-500 hover:to-red-500 transition-all text-xs font-bold text-white shadow-lg shadow-pink-600/20"
+              >
+                <span className="flex items-center gap-2">
+                  <Ticket className="w-4 h-4" /> BookMyShow Live Tickets
+                </span>
+                <span className="text-[11px] underline flex items-center gap-1">Book Now <ExternalLink className="w-3 h-3" /></span>
+              </a>
+            </div>
+
+            {/* District24 Box Office Telemetry Badge */}
+            <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 space-y-1">
+              <div className="flex items-center justify-between text-emerald-400 font-mono text-[11px] font-bold">
+                <span className="flex items-center gap-1.5"><TrendingUp className="w-3.5 h-3.5" /> District24 Telemetry</span>
+                <span>Active</span>
+              </div>
+              <p className="text-xs text-gray-300">
+                Tracked across <span className="font-bold text-white">{movie.screenCount.toLocaleString()} screens</span> in all 28 states & 8 Union Territories.
+              </p>
             </div>
           </div>
         </div>

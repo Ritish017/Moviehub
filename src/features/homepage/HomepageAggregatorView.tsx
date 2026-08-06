@@ -1,6 +1,7 @@
 import React, { Suspense } from "react";
 import { CinematicHero } from "../hero/CinematicHero";
 import { MovieGrid } from "../../components/MovieGrid";
+import { StreamingAndPlatformHub } from "../../components/StreamingAndPlatformHub";
 import { ComingSoonRail } from "./ComingSoonRail";
 import { AiPicksRail } from "./AiPicksRail";
 import { CollectionsRail } from "./CollectionsRail";
@@ -54,6 +55,17 @@ export const HomepageAggregatorView: React.FC<HomepageAggregatorViewProps> = ({
             onToggleWatchlist={onToggleWatchlist}
             selectedLanguage={selectedLanguage}
             setSelectedLanguage={setSelectedLanguage}
+          />
+        </Suspense>
+      </ErrorBoundary>
+
+      {/* 2.5 Multi-Platform Cinema Aggregator Hub (Netflix, Amazon Prime, BookMyShow, District24) */}
+      <ErrorBoundary>
+        <Suspense fallback={<SectionSkeleton rows={4} />}>
+          <StreamingAndPlatformHub
+            movies={movies}
+            onSelectMovie={onSelectMovie}
+            onOpenTrailer={onOpenTrailer}
           />
         </Suspense>
       </ErrorBoundary>
