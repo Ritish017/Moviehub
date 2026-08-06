@@ -1,17 +1,12 @@
 import React, { Suspense } from "react";
 import { CinematicHero } from "../hero/CinematicHero";
-import { MovieGrid } from "../../components/MovieGrid";
-import { StreamingAndPlatformHub } from "../../components/StreamingAndPlatformHub";
-import { ComingSoonRail } from "./ComingSoonRail";
-import { AiPicksRail } from "./AiPicksRail";
-import { CollectionsRail } from "./CollectionsRail";
-import { IndianCinemaRail } from "./IndianCinemaRail";
-import { BoxOfficeAnalyticsDashboard } from "../../components/BoxOfficeAnalyticsDashboard";
-import { CommunityForum } from "../../components/CommunityForum";
+import { HorizontalMovieRail } from "../../components/HorizontalMovieRail";
 import { ErrorBoundary } from "../../components/ui/ErrorBoundary";
 import { SectionSkeleton, HeroSkeleton } from "../../components/ui/Skeleton";
-import { useUserStore } from "../../store/useUserStore";
+import { useContentStore } from "../../store/useContentStore";
 import type { Movie, VideoClip, LanguageType } from "../../types";
+import { Sparkles, BrainCircuit } from "lucide-react";
+import { motion } from "framer-motion";
 
 interface HomepageAggregatorViewProps {
   movies: Movie[];
@@ -24,97 +19,113 @@ interface HomepageAggregatorViewProps {
 }
 
 export const HomepageAggregatorView: React.FC<HomepageAggregatorViewProps> = ({
-  movies,
   onSelectMovie,
   onOpenTrailer,
-  watchlist,
-  onToggleWatchlist,
-  selectedLanguage,
-  setSelectedLanguage,
 }) => {
-  const userProfile = useUserStore((s) => s.userProfile);
+  const trending = useContentStore((s) => s.trending);
+  const nowPlaying = useContentStore((s) => s.nowPlaying);
+  const popular = useContentStore((s) => s.popular);
+  const bollywood = useContentStore((s) => s.bollywood);
+  const netflix = useContentStore((s) => s.netflix);
 
   return (
-    <div className="space-y-14 animate-fadeIn pb-8">
-
-      {/* 1. Full-Viewport Cinematic Hero */}
+    <div className="flex flex-col gap-12 pb-24">
+      {/* 1. Cinematic Hero */}
       <ErrorBoundary>
         <Suspense fallback={<HeroSkeleton />}>
           <CinematicHero />
         </Suspense>
       </ErrorBoundary>
 
-      {/* 2. Trending Now Catalog Grid */}
+      {/* 2. Trending Now (Carousel) */}
       <ErrorBoundary>
-        <Suspense fallback={<SectionSkeleton rows={5} />}>
-          <MovieGrid
-            movies={movies}
+        <Suspense fallback={<SectionSkeleton rows={1} />}>
+          <HorizontalMovieRail
+            title="Trending This Week"
+            movies={trending}
             onSelectMovie={onSelectMovie}
             onOpenTrailer={onOpenTrailer}
-            watchlist={watchlist}
-            onToggleWatchlist={onToggleWatchlist}
-            selectedLanguage={selectedLanguage}
-            setSelectedLanguage={setSelectedLanguage}
+            isLarge={true}
           />
         </Suspense>
       </ErrorBoundary>
 
-      {/* 2.5 Multi-Platform Cinema Aggregator Hub (Netflix, Amazon Prime, BookMyShow, District24) */}
+      {/* 3. Now in Cinemas (Carousel) */}
       <ErrorBoundary>
-        <Suspense fallback={<SectionSkeleton rows={4} />}>
-          <StreamingAndPlatformHub
-            movies={movies}
+        <Suspense fallback={<SectionSkeleton rows={1} />}>
+          <HorizontalMovieRail
+            title="Now In Cinemas"
+            movies={nowPlaying}
             onSelectMovie={onSelectMovie}
             onOpenTrailer={onOpenTrailer}
           />
         </Suspense>
       </ErrorBoundary>
 
-      {/* 3. Indian Cinema Industry Rail */}
+      {/* 4. AI Collections (Cinematic Banner Engine) */}
       <ErrorBoundary>
-        <Suspense fallback={<SectionSkeleton rows={4} />}>
-          <IndianCinemaRail movies={movies} onSelectMovie={onSelectMovie} />
-        </Suspense>
+        <div className="px-10 lg:px-20 py-8">
+          <div className="flex items-center gap-3 mb-8">
+            <Sparkles className="w-8 h-8 text-purple-400" />
+            <h2 className="text-3xl font-black text-white">AI Collections</h2>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Mind Bending */}
+            <motion.div 
+              whileHover={{ scale: 1.02 }}
+              className="relative h-80 rounded-3xl overflow-hidden cursor-pointer group"
+            >
+              <img src="https://image.tmdb.org/t/p/original/8ZTVqvKdQ8QL0t0e6U1P60oA0d9.jpg" alt="Mind Bending" className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent" />
+              <div className="absolute inset-0 p-8 flex flex-col justify-end">
+                <BrainCircuit className="w-8 h-8 text-blue-400 mb-4" />
+                <h3 className="text-3xl font-bold text-white mb-2 font-serif">Mind-Bending Thrillers</h3>
+                <p className="text-gray-300 text-sm">Films that will make you question reality, curated by CineAI.</p>
+              </div>
+            </motion.div>
+
+            {/* Weekend Binge */}
+            <motion.div 
+              whileHover={{ scale: 1.02 }}
+              className="relative h-80 rounded-3xl overflow-hidden cursor-pointer group"
+            >
+              <img src="https://image.tmdb.org/t/p/original/mBaXZ95R2OxueZhvQbcEWy2DqyO.jpg" alt="Weekend Binge" className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent" />
+              <div className="absolute inset-0 p-8 flex flex-col justify-end">
+                <Sparkles className="w-8 h-8 text-red-500 mb-4" />
+                <h3 className="text-3xl font-bold text-white mb-2 font-serif">The Weekend Binge</h3>
+                <p className="text-gray-300 text-sm">High-octane action and epic blockbusters for your weekend.</p>
+              </div>
+            </motion.div>
+          </div>
+        </div>
       </ErrorBoundary>
 
-      {/* 4. Coming Soon Countdown Cards */}
+      {/* 5. Top on Netflix (Carousel) */}
       <ErrorBoundary>
-        <Suspense fallback={<SectionSkeleton rows={3} />}>
-          <ComingSoonRail />
-        </Suspense>
-      </ErrorBoundary>
-
-      {/* 5. AI Picks — Gemini Curated Rows */}
-      <ErrorBoundary>
-        <Suspense fallback={<SectionSkeleton rows={4} />}>
-          <AiPicksRail movies={movies} onSelectMovie={onSelectMovie} />
-        </Suspense>
-      </ErrorBoundary>
-
-      {/* 6. Collections & Franchise Universes */}
-      <ErrorBoundary>
-        <Suspense fallback={<SectionSkeleton rows={3} />}>
-          <CollectionsRail />
-        </Suspense>
-      </ErrorBoundary>
-
-      {/* 7. Box Office Analytics Mini-Dashboard */}
-      <ErrorBoundary>
-        <Suspense fallback={<SectionSkeleton rows={2} />}>
-          <BoxOfficeAnalyticsDashboard />
-        </Suspense>
-      </ErrorBoundary>
-
-      {/* 8. Community Forum Preview */}
-      <ErrorBoundary>
-        <Suspense fallback={<SectionSkeleton rows={2} />}>
-          <CommunityForum
-            userRole={userProfile.role}
-            userName={userProfile.name}
+        <Suspense fallback={<SectionSkeleton rows={1} />}>
+          <HorizontalMovieRail
+            title="Top on Netflix"
+            movies={netflix}
+            onSelectMovie={onSelectMovie}
+            onOpenTrailer={onOpenTrailer}
           />
         </Suspense>
       </ErrorBoundary>
 
+      {/* 6. Popular Masterpieces */}
+      <ErrorBoundary>
+        <Suspense fallback={<SectionSkeleton rows={1} />}>
+          <HorizontalMovieRail
+            title="Critically Acclaimed"
+            movies={popular}
+            onSelectMovie={onSelectMovie}
+            onOpenTrailer={onOpenTrailer}
+          />
+        </Suspense>
+      </ErrorBoundary>
+      
     </div>
   );
 };

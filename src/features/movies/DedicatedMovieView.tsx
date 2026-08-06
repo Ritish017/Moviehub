@@ -14,8 +14,13 @@ import {
   TrendingUp,
   ExternalLink,
   Zap,
-  Archive
+  ExternalLink,
+  Zap,
+  Archive,
+  Info
 } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { cn } from "../../utils/cn";
 import { Movie, VideoClip } from "../../types";
 import { MovieAiAnalysisPanel } from "../ai/MovieAiAnalysisPanel";
 import { getPosterUrl, getBackdropUrl, FALLBACK_POSTER, FALLBACK_BACKDROP } from "../../utils/imageUtils";
@@ -43,119 +48,131 @@ export const DedicatedMovieView: React.FC<DedicatedMovieViewProps> = ({
   const posterSrc = getPosterUrl(movie.posterUrl);
 
   return (
-    <div className="min-h-screen text-gray-100 font-sans pb-20 animate-fadeIn">
+    <div className="min-h-screen text-gray-100 font-sans pb-20 bg-black">
       {/* Sticky Top Back Navigation Bar */}
-      <div className="sticky top-16 z-30 bg-[#07080c]/80 backdrop-blur-xl border-b border-white/10 px-4 sm:px-8 py-3 flex items-center justify-between">
+      <div className="sticky top-0 z-40 bg-black/50 backdrop-blur-2xl border-b border-white/5 px-6 py-4 flex items-center justify-between">
         <button
           onClick={onBack}
-          className="flex items-center gap-2 text-sm font-bold text-gray-300 hover:text-white hover:bg-white/10 px-3.5 py-1.5 rounded-xl transition-all cursor-pointer"
+          className="flex items-center gap-2 text-sm font-bold text-gray-300 hover:text-white hover:bg-white/10 px-4 py-2 rounded-full transition-all cursor-pointer"
         >
-          <ArrowLeft className="w-4 h-4" /> Back to Explore
+          <ArrowLeft className="w-5 h-5" /> Back
         </button>
 
-        <div className="flex items-center gap-3 text-xs font-mono">
-          <span className="px-2.5 py-1 rounded-full bg-amber-400/20 text-amber-300 font-bold border border-amber-400/30">
-            ★ {movie.rating} / 10
+        <div className="flex items-center gap-4 text-xs font-bold tracking-wider">
+          <span className="flex items-center gap-1.5 text-yellow-500">
+            <Star className="w-4 h-4 fill-current" /> {movie.rating} / 10
           </span>
-          <span className="px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-300 font-bold border border-emerald-500/30">
-            ₹{movie.boxOfficeGrossCrores} Cr WW
-          </span>
+          {movie.boxOfficeGrossCrores && (
+            <span className="text-emerald-400">
+              ₹{movie.boxOfficeGrossCrores} Cr WW
+            </span>
+          )}
         </div>
       </div>
 
       {/* Hero Backdrop Spotlight */}
-      <div className="relative w-full h-[65vh] min-h-[480px] max-h-[700px] overflow-hidden">
-        <img
-          src={backdropSrc}
-          alt={movie.title}
-          className="w-full h-full object-cover object-center filter brightness-[0.7] transform scale-105"
-          onError={(e) => {
-            (e.target as HTMLImageElement).src = FALLBACK_BACKDROP;
-          }}
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#07080c] via-[#07080c]/60 to-transparent" />
-        <div className="absolute inset-0 bg-gradient-to-r from-[#07080c] via-transparent to-[#07080c]/80" />
-
-        {/* Dynamic Ambient Poster Aura */}
-        <div className="absolute top-10 left-10 w-96 h-96 bg-purple-600/20 rounded-full blur-[130px] pointer-events-none" />
+      <div className="relative w-full min-h-[70vh] lg:h-[80vh] flex flex-col justify-end">
+        {/* Backdrop Image */}
+        <div className="absolute inset-0 z-0">
+          <img
+            src={backdropSrc}
+            alt={movie.title}
+            className="w-full h-full object-cover object-top"
+            onError={(e) => { (e.target as HTMLImageElement).src = FALLBACK_BACKDROP; }}
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-r from-black via-black/40 to-transparent" />
+        </div>
 
         {/* Floating Hero Details */}
-        <div className="absolute bottom-0 inset-x-0 max-w-7xl mx-auto px-4 sm:px-8 pb-10 flex flex-col md:flex-row items-end gap-8">
+        <motion.div 
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: "easeOut" }}
+          className="relative z-10 w-full max-w-[1600px] mx-auto px-6 lg:px-12 pb-16 flex flex-col md:flex-row items-end gap-12"
+        >
           {/* Poster Box */}
-          <div className="hidden md:block w-52 aspect-[2/3] rounded-2xl overflow-hidden shadow-2xl border-2 border-white/20 shrink-0 transform -translate-y-4 hover:scale-105 transition-transform duration-300">
+          <motion.div 
+            whileHover={{ scale: 1.05, rotateY: 5 }}
+            className="hidden md:block w-64 lg:w-80 aspect-[2/3] rounded-2xl overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.8)] border border-white/10 shrink-0 transform translate-y-8"
+          >
             <img
               src={posterSrc}
               alt={movie.title}
               className="w-full h-full object-cover"
-              onError={(e) => {
-                (e.target as HTMLImageElement).src = FALLBACK_POSTER;
-              }}
+              onError={(e) => { (e.target as HTMLImageElement).src = FALLBACK_POSTER; }}
             />
-          </div>
+          </motion.div>
 
           {/* Details & Actions */}
-          <div className="flex-1 space-y-4">
-            <div className="flex flex-wrap items-center gap-2 text-xs font-bold text-amber-400">
-              <span className="px-2.5 py-1 rounded-md bg-white/10 text-white backdrop-blur-md">
-                {movie.industry}
-              </span>
+          <div className="flex-1 space-y-6">
+            
+            {/* Badges */}
+            <div className="flex flex-wrap items-center gap-3 text-xs font-bold uppercase tracking-wider text-gray-300">
               {movie.apiSource || movie.dataSource === "live" ? (
-                <span className="flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-semibold bg-[#e2571c]/20 text-[#e2571c] border border-[#e2571c]/30 font-mono">
-                  <Zap className="w-3 h-3 fill-current flex-shrink-0" />
-                  {movie.apiSource ? movie.apiSource : "Live verified"}
+                <span className="flex items-center gap-1.5 px-3 py-1 bg-blue-500/20 text-blue-400 rounded-full border border-blue-500/20">
+                  <Zap className="w-3.5 h-3.5 fill-current" /> Live API
                 </span>
               ) : (
-                <span className="flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-semibold bg-white/10 text-white/50 border border-white/10 font-mono">
-                  <Archive className="w-3 h-3 flex-shrink-0" />
-                  Curated index
+                <span className="flex items-center gap-1.5 px-3 py-1 bg-white/10 text-gray-400 rounded-full border border-white/10">
+                  <Archive className="w-3.5 h-3.5" /> Curated
                 </span>
               )}
-              <span>•</span>
-              <span>{movie.language}</span>
-              <span>•</span>
-              <span className="flex items-center gap-1"><Clock className="w-3.5 h-3.5" /> {movie.duration}</span>
-              <span>•</span>
-              <span className="flex items-center gap-1"><Calendar className="w-3.5 h-3.5" /> {movie.releaseYear}</span>
             </div>
 
-            <h1 className="text-4xl sm:text-6xl font-black text-white font-serif tracking-tight drop-shadow-2xl">
-              {movie.title}
-            </h1>
-            {movie.originalTitle && (
-              <p className="text-lg text-amber-400 font-serif italic -mt-2">{movie.originalTitle}</p>
-            )}
-
-            <div className="flex flex-wrap gap-2 text-xs">
-              {movie.genres.map((g) => (
-                <span key={g} className="px-3 py-1 rounded-full bg-white/10 text-gray-200 backdrop-blur-md border border-white/10 font-semibold">
-                  {g}
-                </span>
-              ))}
+            {/* Title */}
+            <div>
+              <h1 className="text-5xl lg:text-7xl font-black text-white font-serif tracking-tight leading-[1.1] drop-shadow-2xl">
+                {movie.title}
+              </h1>
+              {movie.originalTitle && movie.originalTitle !== movie.title && (
+                <p className="text-xl lg:text-2xl text-gray-400 font-serif italic mt-2">{movie.originalTitle}</p>
+              )}
             </div>
 
-            {/* Handcrafted Action Buttons */}
-            <div className="flex flex-wrap items-center gap-4 pt-2">
+            {/* Meta */}
+            <div className="flex flex-wrap items-center gap-4 text-sm font-semibold text-gray-300">
+              <span className="px-2 py-1 bg-white/10 rounded-md text-white border border-white/10">{movie.industry || movie.language}</span>
+              <span className="flex items-center gap-1.5"><Clock className="w-4 h-4 text-gray-400" /> {movie.duration || "N/A"}</span>
+              <span className="flex items-center gap-1.5"><Calendar className="w-4 h-4 text-gray-400" /> {movie.releaseYear}</span>
+              <span className="flex items-center gap-2">
+                {movie.genres.map(g => (
+                  <span key={g} className="text-gray-400">{g}</span>
+                ))}
+              </span>
+            </div>
+
+            {/* Synopsis */}
+            <p className="text-base text-gray-300 max-w-3xl leading-relaxed">
+              {movie.synopsis}
+            </p>
+
+            {/* Action Buttons */}
+            <div className="flex flex-wrap items-center gap-4 pt-4">
               <button
                 onClick={() => onOpenTrailer(movie)}
-                className="px-6 py-3.5 rounded-2xl bg-[#e50914] hover:bg-red-700 text-white font-bold text-sm flex items-center gap-2 shadow-2xl shadow-red-900/40 hover:scale-105 transition-all cursor-pointer"
+                className="flex items-center gap-3 px-8 py-4 rounded-full bg-white text-black font-bold text-lg hover:scale-105 transition-transform shadow-xl shadow-white/10 cursor-pointer"
               >
-                <Play className="w-4 h-4 fill-current" /> Watch Official 4K Trailer
+                <Play className="w-6 h-6 fill-current" /> Watch Trailer
+              </button>
+
+              <button
+                onClick={() => setActiveTab("ai")}
+                className="flex items-center gap-3 px-8 py-4 rounded-full bg-white/10 backdrop-blur-md text-white font-bold text-lg border border-white/20 hover:bg-white/20 hover:scale-105 transition-all cursor-pointer"
+              >
+                <Sparkles className="w-6 h-6 text-purple-400" /> AI Review
               </button>
 
               <button
                 onClick={() => onToggleWatchlist(movie.id)}
-                className={`px-5 py-3.5 rounded-2xl font-bold text-sm flex items-center gap-2 border backdrop-blur-md transition-all cursor-pointer ${
-                  isWatchlisted
-                    ? "bg-emerald-500/20 text-emerald-300 border-emerald-500/40"
-                    : "bg-white/10 hover:bg-white/20 text-white border-white/20"
-                }`}
+                className="flex items-center justify-center w-14 h-14 rounded-full bg-white/10 backdrop-blur-md border border-white/20 hover:bg-white/20 hover:scale-105 transition-all cursor-pointer text-white"
+                title={isWatchlisted ? "Remove from Watchlist" : "Add to Watchlist"}
               >
-                {isWatchlisted ? <Check className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
-                {isWatchlisted ? "In Watchlist" : "Add to Watchlist"}
+                {isWatchlisted ? <Check className="w-6 h-6 text-green-400" /> : <Plus className="w-6 h-6" />}
               </button>
             </div>
           </div>
-        </div>
+        </motion.div>
       </div>
 
       {/* Main Body Content */}

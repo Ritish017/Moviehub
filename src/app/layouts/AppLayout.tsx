@@ -92,14 +92,14 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
       />
 
       {/* Main body */}
-      <div className="flex-1 flex w-full relative z-10">
+      <div className="flex-1 flex w-full relative z-10 lg:pl-[80px]">
         <LeftSidebar
           activeTab={activeTab}
           onNavigate={handleNavigate}
           onOpenAiCopilot={openAiCopilot}
         />
 
-        <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 pb-12 min-w-0">
+        <main className="flex-1 max-w-[1600px] w-full mx-auto px-4 sm:px-6 lg:px-12 pb-24 min-w-0">
           {children}
         </main>
       </div>

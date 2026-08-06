@@ -1,16 +1,9 @@
-import React from "react";
+import React, { useState } from "react";
 import {
-  Home,
-  Film,
-  Tv,
-  Users,
-  Layers,
-  Award,
-  Bookmark,
-  Clock,
-  Settings,
-  Sparkles
+  Home, Film, Tv, Users, Layers, Award, Bookmark, Clock, Settings, Sparkles, ChevronRight
 } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { cn } from "../utils/cn";
 
 interface LeftSidebarProps {
   activeTab: string;
@@ -19,6 +12,8 @@ interface LeftSidebarProps {
 }
 
 export const LeftSidebar: React.FC<LeftSidebarProps> = ({ activeTab, onNavigate, onOpenAiCopilot }) => {
+  const [isExpanded, setIsExpanded] = useState(false);
+
   const navItems = [
     { id: "explore", label: "Home", icon: Home },
     { id: "explore", label: "Movies", icon: Film },
@@ -28,51 +23,120 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({ activeTab, onNavigate,
     { id: "analytics", label: "Awards", icon: Award },
     { id: "dashboard", label: "Watchlist", icon: Bookmark },
     { id: "dashboard", label: "History", icon: Clock },
-    { id: "dashboard", label: "Settings", icon: Settings },
   ];
 
   return (
-    <aside className="hidden lg:flex flex-col items-center w-16 py-6 bg-[#07080c] border-r border-white/10 shrink-0 sticky top-16 h-[calc(100vh-4rem)] z-30 space-y-6">
-      {/* Top Shortcuts */}
-      <div className="flex flex-col items-center space-y-4 w-full px-2">
+    <motion.aside
+      initial={{ width: 80 }}
+      animate={{ width: isExpanded ? 240 : 80 }}
+      transition={{ duration: 0.3, ease: "easeInOut" }}
+      onMouseEnter={() => setIsExpanded(true)}
+      onMouseLeave={() => setIsExpanded(false)}
+      className="hidden lg:flex flex-col items-start py-8 bg-black/40 backdrop-blur-2xl border-r border-white/10 shrink-0 fixed left-0 top-0 h-screen z-50 shadow-2xl"
+    >
+      {/* Logo Area */}
+      <div className="flex items-center w-full px-6 mb-8 h-10">
+        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-red-600 to-red-900 flex items-center justify-center shrink-0 shadow-lg shadow-red-500/20">
+          <Film className="w-4 h-4 text-white" />
+        </div>
+        <AnimatePresence>
+          {isExpanded && (
+            <motion.span
+              initial={{ opacity: 0, x: -10 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -10 }}
+              className="ml-4 font-serif font-black text-xl tracking-tight text-white"
+            >
+              ReelVerse
+            </motion.span>
+          )}
+        </AnimatePresence>
+      </div>
+
+      {/* Nav Items */}
+      <div className="flex flex-col space-y-2 w-full px-4 flex-1">
         {navItems.map((item, idx) => {
           const Icon = item.icon;
           const isActive = (item.id === "explore" && activeTab === "explore" && idx === 0) || (item.id === activeTab && idx > 0);
+          
           return (
             <button
               key={`${item.label}-${idx}`}
               onClick={() => onNavigate(item.id as any)}
-              className={`group relative p-2.5 rounded-xl flex items-center justify-center transition-all cursor-pointer ${
-                isActive
-                  ? "bg-[#e50914] text-white shadow-lg shadow-red-600/40"
-                  : "text-gray-400 hover:text-white hover:bg-white/10"
-              }`}
-              title={item.label}
+              className={cn(
+                "group relative flex items-center p-3 rounded-2xl transition-all cursor-pointer w-full overflow-hidden",
+                isActive 
+                  ? "bg-white/10 text-white shadow-inner" 
+                  : "text-gray-400 hover:text-white hover:bg-white/5"
+              )}
             >
-              <Icon className="w-4 h-4" />
-
-              {/* Hover Tooltip */}
-              <span className="absolute left-14 px-2.5 py-1 bg-[#12141d] text-white text-[11px] font-bold rounded-lg opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity shadow-xl whitespace-nowrap z-50 border border-white/10">
-                {item.label}
-              </span>
+              {isActive && (
+                <motion.div layoutId="active-nav-indicator" className="absolute left-0 w-1 h-1/2 bg-red-500 rounded-r-full" />
+              )}
+              <div className="w-6 h-6 flex items-center justify-center shrink-0 ml-1">
+                <Icon className={cn("w-5 h-5 transition-transform group-hover:scale-110", isActive && "text-red-500")} />
+              </div>
+              <AnimatePresence>
+                {isExpanded && (
+                  <motion.span
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: -10 }}
+                    className="ml-4 font-semibold text-sm whitespace-nowrap"
+                  >
+                    {item.label}
+                  </motion.span>
+                )}
+              </AnimatePresence>
             </button>
           );
         })}
       </div>
 
-      {/* Floating AI Copilot Icon */}
-      <div className="mt-auto pt-4 border-t border-white/10 w-full px-2 flex justify-center">
+      {/* Bottom Actions */}
+      <div className="w-full px-4 pb-4 space-y-2">
+        <button
+          onClick={() => onNavigate("dashboard")}
+          className="group relative flex items-center p-3 rounded-2xl transition-all cursor-pointer w-full overflow-hidden text-gray-400 hover:text-white hover:bg-white/5"
+        >
+          <div className="w-6 h-6 flex items-center justify-center shrink-0 ml-1">
+            <Settings className="w-5 h-5 transition-transform group-hover:rotate-45" />
+          </div>
+          <AnimatePresence>
+            {isExpanded && (
+              <motion.span
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -10 }}
+                className="ml-4 font-semibold text-sm whitespace-nowrap"
+              >
+                Settings
+              </motion.span>
+            )}
+          </AnimatePresence>
+        </button>
+
         <button
           onClick={onOpenAiCopilot}
-          className="p-2.5 rounded-xl bg-gradient-to-tr from-purple-600 to-pink-600 text-white shadow-lg shadow-purple-900/50 hover:scale-110 transition-transform cursor-pointer group relative"
-          title="Ask CineAI Copilot"
+          className="group relative flex items-center p-3 rounded-2xl transition-all cursor-pointer w-full overflow-hidden bg-gradient-to-r from-purple-900/40 to-pink-900/40 border border-purple-500/20 hover:border-purple-500/50"
         >
-          <Sparkles className="w-4 h-4 animate-pulse" />
-          <span className="absolute left-14 px-2.5 py-1 bg-[#12141d] text-purple-300 text-[11px] font-bold rounded-lg opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity shadow-xl whitespace-nowrap z-50 border border-purple-500/30">
-            CineAI Copilot
-          </span>
+          <div className="w-6 h-6 flex items-center justify-center shrink-0 ml-1">
+            <Sparkles className="w-5 h-5 text-purple-400 group-hover:animate-spin" />
+          </div>
+          <AnimatePresence>
+            {isExpanded && (
+              <motion.span
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -10 }}
+                className="ml-4 font-bold text-sm text-purple-100 whitespace-nowrap bg-clip-text text-transparent bg-gradient-to-r from-purple-200 to-pink-200"
+              >
+                AI Copilot
+              </motion.span>
+            )}
+          </AnimatePresence>
         </button>
       </div>
-    </aside>
+    </motion.aside>
   );
 };

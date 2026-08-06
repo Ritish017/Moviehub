@@ -1,47 +1,39 @@
 import React, { useState } from "react";
-import { BarChart3, TrendingUp, DollarSign, Film, Globe, PieChart, ArrowUpRight } from "lucide-react";
+import { BarChart3, TrendingUp, DollarSign, Film, ArrowUpRight, Activity } from "lucide-react";
+import { motion } from "framer-motion";
 
 export const BoxOfficeAnalyticsDashboard: React.FC = () => {
   const [timeFilter, setTimeFilter] = useState<"overview" | "daily" | "weekly" | "monthly" | "yearly">("overview");
 
-  const topGrossers = [
-    { rank: 1, title: "Kalki 2898 AD", gross: "₹1100 Cr+" },
-    { rank: 2, title: "Pushpa 2: The Rule", gross: "₹970 Cr+" },
-    { rank: 3, title: "Jawan", gross: "₹950 Cr+" },
-    { rank: 4, title: "Animal", gross: "₹840 Cr+" },
-    { rank: 5, title: "Salaar: Part 1", gross: "₹630 Cr+" },
-  ];
-
-  const industryShares = [
-    { name: "Bollywood", percentage: 45, color: "bg-red-500" },
-    { name: "Tollywood", percentage: 25, color: "bg-amber-400" },
-    { name: "Kollywood", percentage: 15, color: "bg-purple-500" },
-    { name: "Sandalwood", percentage: 10, color: "bg-emerald-400" },
-    { name: "Mollywood", percentage: 5, color: "bg-blue-400" },
+  const kpis = [
+    { label: "Total Gross", value: "₹12,432 Cr", trend: "+14%", icon: DollarSign, color: "text-emerald-400" },
+    { label: "Active Releases", value: "128", trend: "+5%", icon: Film, color: "text-blue-400" },
+    { label: "Avg ROI", value: "245%", trend: "+12%", icon: TrendingUp, color: "text-purple-400" },
+    { label: "Peak Velocity", value: "₹45 Cr/hr", trend: "+8%", icon: Activity, color: "text-red-400" },
   ];
 
   return (
-    <div className="space-y-6 my-6 animate-fadeIn">
-      {/* Header Bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div className="px-10 lg:px-20 py-12 space-y-8">
+      {/* Header */}
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-black text-white font-serif flex items-center gap-2">
-            <BarChart3 className="w-7 h-7 text-red-500" /> Box Office Analytics
-          </h1>
-          <p className="text-xs text-gray-400">
-            Real-time collection updates, collection trends, and industry analytics
+          <h2 className="text-3xl md:text-4xl font-black text-white font-serif flex items-center gap-3">
+            <BarChart3 className="w-8 h-8 text-red-500" /> Box Office Analytics
+          </h2>
+          <p className="text-gray-400 mt-2 font-medium">
+            Real-time global cinematic performance metrics.
           </p>
         </div>
 
-        {/* Time Filters matching Screen 05 */}
-        <div className="flex gap-1.5 bg-[#12141d] p-1.5 rounded-xl border border-white/10 text-xs font-bold self-start sm:self-auto">
-          {["overview", "daily", "weekly", "monthly", "yearly"].map((t) => (
+        {/* Time Filters */}
+        <div className="flex bg-white/5 p-1 rounded-full border border-white/10 backdrop-blur-md">
+          {["overview", "weekly", "monthly", "yearly"].map((t) => (
             <button
               key={t}
               onClick={() => setTimeFilter(t as any)}
-              className={`px-3 py-1.5 rounded-lg capitalize transition-all cursor-pointer ${
+              className={`px-5 py-2 rounded-full text-sm font-bold capitalize transition-all cursor-pointer ${
                 timeFilter === t
-                  ? "bg-[#e50914] text-white shadow"
+                  ? "bg-white text-black shadow-lg"
                   : "text-gray-400 hover:text-white"
               }`}
             >
@@ -51,118 +43,33 @@ export const BoxOfficeAnalyticsDashboard: React.FC = () => {
         </div>
       </div>
 
-      {/* Top 4 KPI Summary Cards matching Screenshot UI */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-[#121319] border border-white/5 p-6 rounded-2xl space-y-2">
-          <p className="text-xs text-gray-400 font-sans lowercase">total collection</p>
-          <p className="text-3xl font-extrabold text-white font-sans tracking-tight">₹12,432 cr</p>
-        </div>
-
-        <div className="bg-[#121319] border border-white/5 p-6 rounded-2xl space-y-2">
-          <p className="text-xs text-gray-400 font-sans lowercase">india net</p>
-          <p className="text-3xl font-extrabold text-white font-sans tracking-tight">₹7,842 cr</p>
-        </div>
-
-        <div className="bg-[#121319] border border-white/5 p-6 rounded-2xl space-y-2">
-          <p className="text-xs text-gray-400 font-sans lowercase">overseas</p>
-          <p className="text-3xl font-extrabold text-white font-sans tracking-tight">₹4,590 cr</p>
-        </div>
-
-        <div className="bg-[#121319] border border-white/5 p-6 rounded-2xl space-y-2">
-          <p className="text-xs text-gray-400 font-sans lowercase">releases</p>
-          <p className="text-3xl font-extrabold text-white font-sans tracking-tight">128</p>
-        </div>
-      </div>
-
-      {/* Main Collection Trend Chart matching Screen 05 */}
-      <div className="bg-[#12141d] border border-white/10 p-6 rounded-3xl space-y-4 shadow-2xl">
-        <div className="flex items-center justify-between">
-          <h3 className="text-base font-bold text-white font-serif">Collection Trend (Last 12 Months)</h3>
-          <span className="text-xs text-gray-400 font-mono">in ₹ Crores</span>
-        </div>
-
-        {/* Visual Line Chart Graphic matching Screen 05 */}
-        <div className="relative h-56 w-full flex items-end justify-between pt-6 px-2 gap-2">
-          {/* Background Grid Lines */}
-          <div className="absolute inset-0 flex flex-col justify-between pointer-events-none opacity-10">
-            <div className="border-b border-white w-full" />
-            <div className="border-b border-white w-full" />
-            <div className="border-b border-white w-full" />
-            <div className="border-b border-white w-full" />
-          </div>
-
-          {[
-            { month: "Jan", val: 65 },
-            { month: "Feb", val: 80 },
-            { month: "Mar", val: 55 },
-            { month: "Apr", val: 90 },
-            { month: "May", val: 110 },
-            { month: "Jun", val: 140 },
-            { month: "Jul", val: 160 },
-            { month: "Aug", val: 125 },
-            { month: "Sep", val: 95 },
-            { month: "Oct", val: 130 },
-            { month: "Nov", val: 175 },
-            { month: "Dec", val: 200 },
-          ].map((bar, idx) => (
-            <div key={idx} className="flex-1 flex flex-col items-center gap-2 group z-10">
-              <div
-                className="w-full max-w-[28px] rounded-t-lg bg-gradient-to-t from-red-800 to-red-500 group-hover:from-red-600 group-hover:to-rose-400 transition-all shadow-lg shadow-red-900/30"
-                style={{ height: `${(bar.val / 200) * 100}%` }}
-              />
-              <span className="text-[10px] text-gray-400 font-mono group-hover:text-white transition-colors">{bar.month}</span>
+      {/* KPI Cards (Apple Style) */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {kpis.map((kpi, idx) => (
+          <motion.div
+            key={kpi.label}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: idx * 0.1 }}
+            className="bg-[#121212] border border-white/5 p-6 rounded-[2rem] shadow-xl relative overflow-hidden group hover:border-white/20 transition-colors cursor-default"
+          >
+            <div className="absolute top-0 right-0 p-6 opacity-10 group-hover:opacity-20 transition-opacity">
+              <kpi.icon className={`w-24 h-24 ${kpi.color} transform translate-x-4 -translate-y-4`} />
             </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Bottom Grid: Top Grossers & Industry Share Donut matching Screen 05 */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        
-        {/* Left: Top Grossers */}
-        <div className="bg-[#12141d] border border-white/10 p-6 rounded-3xl space-y-4 shadow-2xl">
-          <h3 className="text-base font-bold text-white font-serif flex items-center justify-between">
-            <span>Top Grossers</span>
-            <span className="text-xs text-red-500 font-mono">2024 Benchmark</span>
-          </h3>
-
-          <div className="space-y-2.5">
-            {topGrossers.map((g) => (
-              <div key={g.rank} className="flex items-center justify-between p-3 rounded-2xl bg-[#07080c] border border-white/5 text-xs font-mono">
-                <div className="flex items-center gap-3">
-                  <span className="w-6 h-6 rounded-full bg-red-600/20 text-red-400 font-bold flex items-center justify-center text-xs">
-                    {g.rank}
-                  </span>
-                  <span className="font-bold text-white font-sans">{g.title}</span>
-                </div>
-                <span className="text-emerald-400 font-bold">{g.gross}</span>
+            
+            <div className="relative z-10 flex flex-col h-full justify-between gap-6">
+              <div className="flex items-center justify-between">
+                <span className="text-gray-400 font-medium">{kpi.label}</span>
+                <span className="flex items-center gap-1 text-xs font-bold text-emerald-400 bg-emerald-400/10 px-2 py-1 rounded-full border border-emerald-400/20">
+                  <ArrowUpRight className="w-3 h-3" /> {kpi.trend}
+                </span>
               </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Right: Industry Share Donut Breakdown */}
-        <div className="bg-[#12141d] border border-white/10 p-6 rounded-3xl space-y-4 shadow-2xl">
-          <div className="flex items-center justify-between">
-            <h3 className="text-base font-bold text-white font-serif">Industry Share</h3>
-            <span className="text-xs text-gray-400 font-mono">Total: ₹12,432 Cr</span>
-          </div>
-
-          <div className="space-y-3">
-            {industryShares.map((ind) => (
-              <div key={ind.name} className="space-y-1">
-                <div className="flex items-center justify-between text-xs font-mono">
-                  <span className="text-gray-300 font-sans">{ind.name}</span>
-                  <span className="text-white font-bold">{ind.percentage}%</span>
-                </div>
-                <div className="w-full h-2 bg-[#07080c] rounded-full overflow-hidden">
-                  <div className={`h-full ${ind.color} rounded-full`} style={{ width: `${ind.percentage}%` }} />
-                </div>
+              <div className="text-4xl lg:text-5xl font-black text-white tracking-tight font-serif">
+                {kpi.value}
               </div>
-            ))}
-          </div>
-        </div>
-
+            </div>
+          </motion.div>
+        ))}
       </div>
     </div>
   );
