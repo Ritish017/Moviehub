@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { Search, Film, Sparkles, BarChart3, Tv, MessageSquare, User, Clapperboard, X, ArrowRight } from "lucide-react";
+import { Search, Film, Sparkles, BarChart3, Tv, MessageSquare, User, X, ArrowRight, Play } from "lucide-react";
 import { Movie } from "../../types";
+import { motion, AnimatePresence } from "framer-motion";
+import { cn } from "../../utils/cn";
 
 interface CommandPaletteProps {
   isOpen: boolean;
@@ -20,17 +22,12 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
   onOpenAiCopilot,
 }) => {
   const [query, setQuery] = useState("");
-  const [selectedIndex, setSelectedIndex] = useState(0);
 
-  // Close on Escape & handle global Ctrl+K / Cmd+K
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key === "k") {
         e.preventDefault();
         if (isOpen) onClose();
-        else {
-          // Open triggered from parent or global state
-        }
       }
       if (e.key === "Escape" && isOpen) {
         onClose();
@@ -42,7 +39,6 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
 
   if (!isOpen) return null;
 
-  // Filter items
   const filteredMovies = query.trim()
     ? movies.filter(
         (m) =>
@@ -50,124 +46,152 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
           m.director.toLowerCase().includes(query.toLowerCase()) ||
           m.genres.some((g) => g.toLowerCase().includes(query.toLowerCase()))
       )
-    : movies.slice(0, 5);
+    : [];
 
   const navigationCommands = [
     { id: "explore", label: "Explore Main Catalog", icon: Film, action: () => { onNavigateTab("explore"); onClose(); } },
-    { id: "analytics", label: "Box Office Telemetry & ROI Charts", icon: BarChart3, action: () => { onNavigateTab("analytics"); onClose(); } },
-    { id: "streaming", label: "HD Footage & Video Studio", icon: Tv, action: () => { onNavigateTab("streaming"); onClose(); } },
-    { id: "community", label: "Cinephile Community Forum", icon: MessageSquare, action: () => { onNavigateTab("community"); onClose(); } },
-    { id: "dashboard", label: "My Profile & Watchlist Portal", icon: User, action: () => { onNavigateTab("dashboard"); onClose(); } },
-    { id: "copilot", label: "Launch CineAI Copilot Assistant", icon: Sparkles, action: () => { onOpenAiCopilot(); onClose(); } },
+    { id: "analytics", label: "Box Office Analytics", icon: BarChart3, action: () => { onNavigateTab("analytics"); onClose(); } },
+    { id: "community", label: "Community Forum", icon: MessageSquare, action: () => { onNavigateTab("community"); onClose(); } },
+    { id: "copilot", label: "Launch CineAI Copilot", icon: Sparkles, action: () => { onOpenAiCopilot(); onClose(); } },
   ].filter((cmd) => cmd.label.toLowerCase().includes(query.toLowerCase()));
 
+  const aiExamples = [
+    "Best psychological thrillers after 2015",
+    "Movies similar to Interstellar",
+    "Best Nolan movies",
+    "Movies where hero becomes villain"
+  ];
+
   return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center pt-20 px-4 bg-black/75 backdrop-blur-xl animate-fadeIn">
-      {/* Container */}
-      <div 
-        className="w-full max-w-2xl bg-[#11131c] border border-white/15 rounded-2xl shadow-2xl overflow-hidden flex flex-col transform transition-all duration-200"
-        onClick={(e) => e.stopPropagation()}
+    <div className="fixed inset-0 z-[100] flex items-start justify-center pt-[15vh] px-4 bg-black/60 backdrop-blur-sm">
+      <div className="absolute inset-0" onClick={onClose} />
+      
+      <motion.div 
+        initial={{ opacity: 0, scale: 0.95, y: -20 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.95, y: -20 }}
+        transition={{ duration: 0.2, ease: "easeOut" }}
+        className="w-full max-w-3xl bg-[#121212]/90 backdrop-blur-3xl border border-white/10 rounded-2xl shadow-[0_0_100px_rgba(0,0,0,0.8)] overflow-hidden relative flex flex-col"
       >
-        {/* Search Input Bar */}
-        <div className="flex items-center px-4 py-3.5 border-b border-white/10 bg-[#0d0e15]">
-          <Search className="w-5 h-5 text-amber-400 mr-3 shrink-0" />
+        {/* Search Input */}
+        <div className="flex items-center px-6 py-5 border-b border-white/10">
+          <Search className="w-6 h-6 text-gray-400 mr-4" />
           <input
             type="text"
             value={query}
-            onChange={(e) => { setQuery(e.target.value); setSelectedIndex(0); }}
-            placeholder="Search movies, directors, genres, or launch CineAI..."
-            className="w-full bg-transparent text-white text-base placeholder-gray-400 focus:outline-none font-sans"
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Search movies, people, or ask CineAI..."
+            className="w-full bg-transparent text-white text-xl placeholder-gray-500 focus:outline-none font-sans"
             autoFocus
           />
-          <button
-            onClick={onClose}
-            className="p-1 rounded-lg text-gray-400 hover:text-white hover:bg-white/10 transition-colors"
-          >
-            <X className="w-5 h-5" />
-          </button>
+          {query && (
+            <button onClick={() => setQuery("")} className="p-1 text-gray-500 hover:text-white transition-colors">
+              <X className="w-5 h-5" />
+            </button>
+          )}
         </div>
 
-        {/* Results Body */}
-        <div className="max-h-[60vh] overflow-y-auto p-3 space-y-4 divide-y divide-white/5">
-          {/* Quick Actions */}
-          {navigationCommands.length > 0 && (
-            <div>
-              <p className="px-3 py-1.5 text-[11px] font-bold tracking-wider text-gray-400 uppercase">
-                Platform Shortcuts
-              </p>
-              <div className="space-y-1">
-                {navigationCommands.map((cmd) => {
-                  const Icon = cmd.icon;
-                  return (
+        {/* Body */}
+        <div className="max-h-[60vh] overflow-y-auto p-4 space-y-6 scrollbar-none">
+          
+          {/* Default State: AI Examples + Shortcuts */}
+          {!query.trim() && (
+            <div className="space-y-6">
+              {/* AI Natural Language */}
+              <div>
+                <p className="px-3 mb-2 text-xs font-bold text-gray-500 uppercase tracking-widest flex items-center gap-2">
+                  <Sparkles className="w-3.5 h-3.5 text-purple-400" /> AI Semantic Search
+                </p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  {aiExamples.map((ex, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => setQuery(ex)}
+                      className="text-left px-4 py-3 rounded-xl bg-white/5 hover:bg-purple-500/10 border border-transparent hover:border-purple-500/30 transition-all group"
+                    >
+                      <p className="text-sm font-medium text-gray-300 group-hover:text-purple-300 transition-colors">
+                        "{ex}"
+                      </p>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Shortcuts */}
+              <div>
+                <p className="px-3 mb-2 text-xs font-bold text-gray-500 uppercase tracking-widest">
+                  Quick Actions
+                </p>
+                <div className="space-y-1">
+                  {navigationCommands.map((cmd) => (
                     <button
                       key={cmd.id}
                       onClick={cmd.action}
-                      className="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-left text-sm text-gray-200 hover:bg-gradient-to-r hover:from-purple-950/40 hover:to-transparent hover:text-white transition-all group"
+                      className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left text-sm text-gray-300 hover:bg-white/10 hover:text-white transition-all group"
                     >
-                      <div className="flex items-center gap-3">
-                        <div className="p-1.5 rounded-lg bg-white/5 text-amber-400 group-hover:bg-amber-400/20 group-hover:text-amber-300 transition-colors">
-                          <Icon className="w-4 h-4" />
-                        </div>
-                        <span className="font-medium">{cmd.label}</span>
-                      </div>
-                      <ArrowRight className="w-4 h-4 text-gray-500 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
+                      <cmd.icon className="w-5 h-5 text-gray-500 group-hover:text-white transition-colors" />
+                      <span className="font-semibold">{cmd.label}</span>
                     </button>
-                  );
-                })}
+                  ))}
+                </div>
               </div>
             </div>
           )}
 
-          {/* Movies Section */}
-          <div>
-            <p className="px-3 py-1.5 text-[11px] font-bold tracking-wider text-gray-400 uppercase mt-2">
-              Movies & Feature Titles ({filteredMovies.length})
-            </p>
-            {filteredMovies.length === 0 ? (
-              <p className="px-3 py-4 text-xs text-gray-500 text-center">No movies matching "{query}"</p>
-            ) : (
-              <div className="space-y-1">
-                {filteredMovies.map((movie) => (
-                  <button
-                    key={movie.id}
-                    onClick={() => { onSelectMovie(movie); onClose(); }}
-                    className="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-left hover:bg-white/5 transition-colors group"
-                  >
-                    <div className="flex items-center gap-3 overflow-hidden">
-                      <img
-                        src={movie.posterUrl}
-                        alt={movie.title}
-                        className="w-9 h-12 rounded object-cover shadow border border-white/10 shrink-0"
-                      />
-                      <div className="truncate">
-                        <p className="text-sm font-bold text-white group-hover:text-amber-300 transition-colors truncate">
-                          {movie.title}
-                        </p>
-                        <p className="text-xs text-gray-400 truncate">
-                          {movie.releaseYear} • {movie.director} • <span className="text-amber-400 font-semibold">★ {movie.rating}</span>
-                        </p>
+          {/* Search Results */}
+          {query.trim() && (
+            <div>
+              <p className="px-3 mb-2 text-xs font-bold text-gray-500 uppercase tracking-widest">
+                Movies ({filteredMovies.length})
+              </p>
+              {filteredMovies.length === 0 ? (
+                <div className="py-12 text-center flex flex-col items-center">
+                  <Sparkles className="w-10 h-10 text-purple-500 mb-4 animate-pulse" />
+                  <p className="text-lg font-bold text-white mb-2">Ask CineAI</p>
+                  <p className="text-sm text-gray-400">Press Enter to search for "{query}" using semantic AI</p>
+                </div>
+              ) : (
+                <div className="space-y-1">
+                  {filteredMovies.map((movie) => (
+                    <button
+                      key={movie.id}
+                      onClick={() => { onSelectMovie(movie); onClose(); }}
+                      className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-left hover:bg-white/10 transition-colors group"
+                    >
+                      <div className="flex items-center gap-4">
+                        <img
+                          src={movie.posterUrl}
+                          alt={movie.title}
+                          className="w-12 h-16 rounded object-cover shadow-lg border border-white/10"
+                        />
+                        <div>
+                          <p className="text-base font-bold text-white group-hover:text-blue-400 transition-colors">
+                            {movie.title}
+                          </p>
+                          <p className="text-sm text-gray-400">
+                            {movie.releaseYear} • {movie.director} • ★ {movie.rating}
+                          </p>
+                        </div>
                       </div>
-                    </div>
-                    <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-white/10 text-gray-300 group-hover:bg-amber-400/20 group-hover:text-amber-300 shrink-0">
-                      ₹{movie.boxOfficeGrossCrores} Cr
-                    </span>
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
+                      <ArrowRight className="w-5 h-5 text-gray-500 opacity-0 group-hover:opacity-100 group-hover:translate-x-2 transition-all" />
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
         </div>
 
-        {/* Footer info */}
-        <div className="px-4 py-2.5 bg-[#090a0f] border-t border-white/10 flex items-center justify-between text-[11px] text-gray-400">
-          <div className="flex items-center gap-3">
-            <span><kbd className="px-1.5 py-0.5 bg-white/10 rounded text-gray-300 font-mono">↑↓</kbd> Navigate</span>
-            <span><kbd className="px-1.5 py-0.5 bg-white/10 rounded text-gray-300 font-mono">Enter</kbd> Select</span>
-            <span><kbd className="px-1.5 py-0.5 bg-white/10 rounded text-gray-300 font-mono">Esc</kbd> Close</span>
+        {/* Footer */}
+        <div className="px-6 py-3 bg-black/50 border-t border-white/10 flex items-center justify-between text-xs text-gray-500">
+          <div className="flex items-center gap-4">
+            <span className="flex items-center gap-1"><kbd className="font-mono bg-white/10 px-1.5 rounded">↑↓</kbd> Navigate</span>
+            <span className="flex items-center gap-1"><kbd className="font-mono bg-white/10 px-1.5 rounded">↵</kbd> Select</span>
+            <span className="flex items-center gap-1"><kbd className="font-mono bg-white/10 px-1.5 rounded">Esc</kbd> Close</span>
           </div>
-          <span className="text-amber-400 font-bold">MovieHub X OS</span>
+          <span className="font-bold">ReelVerse AI</span>
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 };

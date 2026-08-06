@@ -1,5 +1,6 @@
 import React, { Suspense, lazy } from "react";
-import { createBrowserRouter, RouterProvider, Outlet } from "react-router-dom";
+import { createBrowserRouter, RouterProvider, Outlet, useLocation } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
 import { AppLayout } from "./layouts/AppLayout";
 
 // Lazy-load all page components for code splitting
@@ -23,13 +24,28 @@ const PageSkeleton: React.FC = () => (
 );
 
 // Layout wrapper that renders Navbar + Sidebar + <Outlet> + Footer
-const LayoutWithOutlet: React.FC = () => (
-  <AppLayout>
-    <Suspense fallback={<PageSkeleton />}>
-      <Outlet />
-    </Suspense>
-  </AppLayout>
-);
+const LayoutWithOutlet: React.FC = () => {
+  const location = useLocation();
+  
+  return (
+    <AppLayout>
+      <Suspense fallback={<PageSkeleton />}>
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={location.pathname}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.3, ease: "easeOut" }}
+            className="w-full h-full"
+          >
+            <Outlet />
+          </motion.div>
+        </AnimatePresence>
+      </Suspense>
+    </AppLayout>
+  );
+};
 
 export const router = createBrowserRouter([
   {

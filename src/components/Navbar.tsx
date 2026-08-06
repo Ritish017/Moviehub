@@ -1,6 +1,8 @@
-import React from "react";
-import { Search, Film, Sparkles } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { Search, Film, Sparkles, Bell, User } from "lucide-react";
 import { LanguageType, Movie, UserRole } from "../types";
+import { motion, useScroll, useTransform } from "framer-motion";
+import { cn } from "../utils/cn";
 
 interface NavbarProps {
   activeTab: "explore" | "analytics" | "streaming" | "community" | "dashboard" | "live-api";
@@ -20,119 +22,110 @@ interface NavbarProps {
 export const Navbar: React.FC<NavbarProps> = ({
   activeTab,
   setActiveTab,
-  searchQuery,
-  setSearchQuery,
-  moviesList,
-  onSelectMovie,
   onOpenAiAssistant,
+  onOpenCommandPalette,
 }) => {
-  const filteredSearchResults = searchQuery.trim()
-    ? moviesList.filter(
-        (m) =>
-          m.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          m.director.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          m.language.toLowerCase().includes(searchQuery.toLowerCase())
-      )
-    : [];
+  const { scrollY } = useScroll();
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  // Shrink the navbar when scrolled
+  const paddingY = useTransform(scrollY, [0, 100], ["1.5rem", "0.75rem"]);
+
+  useEffect(() => {
+    return scrollY.onChange((latest) => {
+      setIsScrolled(latest > 50);
+    });
+  }, [scrollY]);
 
   return (
-    <header className="sticky top-0 z-40 bg-[#08080a]/95 backdrop-blur-xl border-b border-white/5 py-4 px-4 sm:px-8">
-      <div className="max-w-7xl mx-auto flex items-center justify-between">
-        
-        {/* Logo matching screenshot: Orange Square Badge + lowercase "moviehub" */}
+    <motion.header
+      style={{ paddingTop: paddingY, paddingBottom: paddingY }}
+      className="fixed top-0 left-0 right-0 z-50 px-4 sm:px-8 transition-all flex justify-center w-full lg:pl-[80px]"
+    >
+      <motion.div
+        className={cn(
+          "max-w-5xl w-full flex items-center justify-between px-6 rounded-full transition-all duration-300 border",
+          isScrolled 
+            ? "bg-black/60 backdrop-blur-2xl shadow-2xl border-white/10" 
+            : "bg-transparent border-transparent"
+        )}
+        style={{ minHeight: "64px" }}
+      >
+        {/* Logo */}
         <div 
-          className="flex items-center gap-2.5 cursor-pointer group" 
+          className="flex items-center gap-3 cursor-pointer group shrink-0" 
           onClick={() => setActiveTab("explore")}
         >
-          <div className="w-8 h-8 rounded-lg bg-[#f95716] text-white flex items-center justify-center font-black shadow-lg shadow-[#f95716]/30">
+          <div className="w-9 h-9 rounded-full bg-gradient-to-br from-red-600 to-red-900 text-white flex items-center justify-center shadow-lg shadow-red-500/20 group-hover:scale-105 transition-transform">
             <Film className="w-4 h-4" />
           </div>
-          <span className="text-xl font-bold text-white font-sans tracking-tight lowercase">
-            moviehub
+          <span className="text-xl font-bold text-white font-serif tracking-tight hidden sm:block">
+            ReelVerse
           </span>
         </div>
 
-        {/* Center Nav Links matching screenshot: home, movies, community, analytics */}
-        <nav className="hidden md:flex items-center gap-8 text-sm font-medium">
-          <button
-            onClick={() => setActiveTab("explore")}
-            className={`transition-colors cursor-pointer lowercase ${
-              activeTab === "explore" ? "text-white font-bold" : "text-gray-400 hover:text-white"
-            }`}
-          >
-            home
-          </button>
-
-          <button
-            onClick={() => setActiveTab("explore")}
-            className="text-gray-400 hover:text-white transition-colors cursor-pointer lowercase"
-          >
-            movies
-          </button>
-
-          <button
-            onClick={() => setActiveTab("community")}
-            className={`transition-colors cursor-pointer lowercase ${
-              activeTab === "community" ? "text-white font-bold" : "text-gray-400 hover:text-white"
-            }`}
-          >
-            community
-          </button>
-
-          <button
-            onClick={() => setActiveTab("analytics")}
-            className={`transition-colors cursor-pointer lowercase ${
-              activeTab === "analytics" ? "text-white font-bold" : "text-gray-400 hover:text-white"
-            }`}
-          >
-            analytics
-          </button>
+        {/* Center Navigation */}
+        <nav className="hidden md:flex items-center gap-8 text-sm font-semibold">
+          {[
+            { id: "explore", label: "Home" },
+            { id: "movies", label: "Movies" },
+            { id: "community", label: "Community" },
+            { id: "analytics", label: "Analytics" },
+          ].map((item) => (
+            <button
+              key={item.id}
+              onClick={() => setActiveTab(item.id as any)}
+              className={cn(
+                "relative transition-colors hover:text-white px-2 py-1",
+                activeTab === item.id ? "text-white" : "text-gray-400"
+              )}
+            >
+              {item.label}
+              {activeTab === item.id && (
+                <motion.div
+                  layoutId="navbar-indicator"
+                  className="absolute -bottom-1 left-0 right-0 h-0.5 bg-red-500 rounded-full"
+                />
+              )}
+            </button>
+          ))}
         </nav>
 
-        {/* Right Search Button & CineAI */}
-        <div className="flex items-center gap-3">
-          <div className="relative">
-            <div className="flex items-center bg-[#13141a] border border-white/10 rounded-xl px-3.5 py-1.5 text-xs text-gray-400 focus-within:border-white/30 transition-all">
-              <Search className="w-3.5 h-3.5 mr-2 text-gray-400" />
-              <input
-                type="text"
-                placeholder="search"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="bg-transparent text-white placeholder-gray-500 focus:outline-none w-20 sm:w-28 text-xs font-sans lowercase"
-              />
-            </div>
+        {/* Right Actions */}
+        <div className="flex items-center gap-3 shrink-0">
+          {/* AI Search (CTRL+K) */}
+          <button
+            onClick={onOpenCommandPalette}
+            className="hidden sm:flex items-center gap-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-full px-4 py-2 text-xs font-medium text-gray-400 hover:text-white transition-all backdrop-blur-md group"
+          >
+            <Search className="w-3.5 h-3.5 group-hover:text-white" />
+            <span>Search</span>
+            <kbd className="hidden lg:inline-block ml-2 px-1.5 py-0.5 rounded bg-black/50 border border-white/10 font-mono text-[10px] text-gray-500">
+              ⌘K
+            </kbd>
+          </button>
 
-            {/* Autocomplete Dropdown */}
-            {filteredSearchResults.length > 0 && (
-              <div className="absolute right-0 mt-2 w-80 bg-[#121319] border border-white/10 rounded-2xl shadow-2xl overflow-hidden z-50 divide-y divide-white/5">
-                {filteredSearchResults.map((m) => (
-                  <div
-                    key={m.id}
-                    onClick={() => { onSelectMovie(m); setSearchQuery(""); }}
-                    className="p-3 hover:bg-white/5 cursor-pointer flex items-center gap-3 transition-colors"
-                  >
-                    <img src={m.posterUrl} alt={m.title} className="w-8 h-12 object-cover rounded border border-white/10" />
-                    <div>
-                      <p className="text-xs font-bold text-white lowercase">{m.title}</p>
-                      <p className="text-[11px] text-gray-400 font-mono">{m.releaseYear} • ★ {m.rating}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-
+          {/* AI Copilot Button */}
           <button
             onClick={onOpenAiAssistant}
-            className="p-2 rounded-xl bg-gradient-to-tr from-[#f95716] to-purple-600 text-white font-bold text-xs shadow-lg hover:scale-105 transition-all cursor-pointer"
+            className="w-10 h-10 rounded-full bg-gradient-to-r from-purple-900/50 to-pink-900/50 hover:from-purple-800/60 hover:to-pink-800/60 border border-purple-500/30 flex items-center justify-center text-purple-300 hover:text-white hover:scale-105 transition-all shadow-lg shadow-purple-900/20"
             title="CineAI Copilot"
           >
             <Sparkles className="w-4 h-4" />
           </button>
-        </div>
 
-      </div>
-    </header>
+          {/* Notifications */}
+          <button className="w-10 h-10 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 flex items-center justify-center text-gray-400 hover:text-white transition-all backdrop-blur-md relative">
+            <Bell className="w-4 h-4" />
+            <span className="absolute top-2 right-2.5 w-1.5 h-1.5 bg-red-500 rounded-full" />
+          </button>
+
+          {/* Profile */}
+          <button className="w-10 h-10 rounded-full bg-white/10 border border-white/20 flex items-center justify-center overflow-hidden hover:scale-105 transition-all ml-1">
+            <User className="w-4 h-4 text-gray-300" />
+          </button>
+        </div>
+      </motion.div>
+    </motion.header>
   );
 };
