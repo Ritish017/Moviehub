@@ -97,6 +97,9 @@ export const DedicatedMovieView: React.FC<DedicatedMovieViewProps> = ({
               <span className="px-2.5 py-1 rounded-md bg-white/10 text-white backdrop-blur-md">
                 {movie.industry}
               </span>
+              <span className="px-2.5 py-1 rounded-md bg-[#e2571c]/20 text-[#e2571c] border border-[#e2571c]/30 font-mono text-[11px]">
+                {movie.apiSource ? `⚡ ${movie.apiSource}` : movie.dataSource === "live" ? "⚡ Live Verified Stream" : "📌 Curated Database Index"}
+              </span>
               <span>•</span>
               <span>{movie.language}</span>
               <span>•</span>

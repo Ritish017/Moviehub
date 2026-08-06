@@ -103,14 +103,18 @@ export const MovieCard: React.FC<MovieCardProps> = ({
           style={{ opacity: isHovered ? 1 : 0.3 }}
         />
 
-        {/* Trending badge top-left */}
-        {movie.isTrending && (
-          <div className="absolute top-2.5 left-2.5 z-10 pointer-events-none">
-            <span className="px-2 py-0.5 rounded-md text-[10px] font-extrabold bg-[#f95716] text-white shadow tracking-wide uppercase">
-              🔥 Live
+        {/* Data Provenance Badge top-left */}
+        <div className="absolute top-2.5 left-2.5 z-10 pointer-events-none flex flex-col gap-1">
+          {movie.apiSource || movie.dataSource === "live" ? (
+            <span className="px-2 py-0.5 rounded-md text-[9px] font-extrabold bg-[#e2571c] text-white shadow tracking-wider uppercase border border-white/20">
+              ⚡ {movie.apiSource ? movie.apiSource.split(" ")[0] : "LIVE"}
             </span>
-          </div>
-        )}
+          ) : (
+            <span className="px-2 py-0.5 rounded-md text-[9px] font-extrabold bg-white/20 text-gray-200 backdrop-blur-md shadow tracking-wider uppercase border border-white/10">
+              📌 CURATED
+            </span>
+          )}
+        </div>
 
         {/* Rating badge top-right */}
         <div className="absolute top-2.5 right-2.5 z-10 pointer-events-none">
