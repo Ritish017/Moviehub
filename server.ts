@@ -1356,6 +1356,58 @@ app.get("/api/tmdb/now-playing", async (req, res) => {
   }
 });
 
+// --- TMDB Integration Phase 2 Routes (Regional & OTT) ---
+const buildDiscoverRoute = (path: string, tmdbParams: Record<string, string | number>, cacheTtl: number) => {
+  app.get(path, async (req, res) => {
+    try {
+      const page = req.query.page || 1;
+      const data = await withCache(`tmdb:${path}:p${page}`, cacheTtl, async () => {
+        const raw = await tmdbFetch("/discover/movie", { ...tmdbParams, page: Number(page) });
+        const config = await withCache("tmdb:config", TTL.CONFIG, () => tmdbFetch("/configuration"));
+        const imageBase = config.images?.secure_base_url || "https://image.tmdb.org/t/p/";
+        return raw.results.map((m: any) => normalizeTmdbMovie(m, imageBase));
+      });
+      res.json({ success: true, data });
+    } catch (err: any) {
+      res.status(500).json({ success: false, error: err.message });
+    }
+  });
+};
+
+// Regional Cinema
+buildDiscoverRoute("/api/tmdb/bollywood", { with_original_language: "hi" }, TTL.LANGUAGE);
+buildDiscoverRoute("/api/tmdb/tollywood", { with_original_language: "te" }, TTL.LANGUAGE);
+buildDiscoverRoute("/api/tmdb/kollywood", { with_original_language: "ta" }, TTL.LANGUAGE);
+buildDiscoverRoute("/api/tmdb/mollywood", { with_original_language: "ml" }, TTL.LANGUAGE);
+buildDiscoverRoute("/api/tmdb/sandalwood", { with_original_language: "kn" }, TTL.LANGUAGE);
+
+// OTT Catalogs
+buildDiscoverRoute("/api/tmdb/netflix", { with_watch_providers: 8, watch_region: "IN" }, TTL.PROVIDER);
+buildDiscoverRoute("/api/tmdb/prime", { with_watch_providers: 119, watch_region: "IN" }, TTL.PROVIDER);
+buildDiscoverRoute("/api/tmdb/hotstar", { with_watch_providers: 122, watch_region: "IN" }, TTL.PROVIDER);
+buildDiscoverRoute("/api/tmdb/zee5", { with_watch_providers: 237, watch_region: "IN" }, TTL.PROVIDER);
+buildDiscoverRoute("/api/tmdb/sonyliv", { with_watch_providers: 220, watch_region: "IN" }, TTL.PROVIDER);
+
+// Other
+buildDiscoverRoute("/api/tmdb/box-office", { sort_by: "revenue.desc" }, TTL.BOX_OFFICE);
+
+app.get("/api/tmdb/by-genre", async (req, res) => {
+  try {
+    const page = req.query.page || 1;
+    const genreId = req.query.genreId;
+    if (!genreId) return res.status(400).json({ success: false, error: "genreId required" });
+    const data = await withCache(`tmdb:genre:${genreId}:p${page}`, TTL.LANGUAGE, async () => {
+      const raw = await tmdbFetch("/discover/movie", { with_genres: String(genreId), sort_by: "popularity.desc", page: Number(page) });
+      const config = await withCache("tmdb:config", TTL.CONFIG, () => tmdbFetch("/configuration"));
+      const imageBase = config.images?.secure_base_url || "https://image.tmdb.org/t/p/";
+      return raw.results.map((m: any) => normalizeTmdbMovie(m, imageBase));
+    });
+    res.json({ success: true, data });
+  } catch (err: any) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
 // Health check endpoint
 app.get("/api/health", (req, res) => {
   res.json({ status: "ok", app: "CineBharat - Indian Cinema Ecosystem & Analytics" });
