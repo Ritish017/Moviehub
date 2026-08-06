@@ -1,9 +1,9 @@
 import React, { useRef } from "react";
 import { ChevronLeft, ChevronRight, Play, Plus, Info } from "lucide-react";
-import type { Movie } from "../../types";
-import { getPosterUrl } from "../../utils/imageUtils";
+import type { Movie } from "../types";
+import { getPosterUrl } from "../utils/imageUtils";
 import { motion } from "framer-motion";
-import { cn } from "../../utils/cn";
+import { cn } from "../utils/cn";
 
 interface HorizontalMovieRailProps {
   title: string;
