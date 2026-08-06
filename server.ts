@@ -303,7 +303,7 @@ Provide insightful, articulate, passionate, and structured answers tailored to a
   }
 });
 
-// Real Public API Integration Endpoint 1: Search Apple iTunes & Wikipedia & TVMaze
+// Real Public API Integration Endpoint 1: Search Apple iTunes + OMDb + Wikipedia + TVMaze
 app.post("/api/cinema/public-search", async (req, res) => {
   try {
     const { query } = req.body;
@@ -312,6 +312,7 @@ app.post("/api/cinema/public-search", async (req, res) => {
     }
 
     const searchQuery = encodeURIComponent(query.trim());
+    const omdbKey = process.env.OMDB_API_KEY;
 
     // 1. Fetch from Apple iTunes Search API
     const itunesUrl = `https://itunes.apple.com/search?term=${searchQuery}&entity=movie&country=IN&limit=10`;
@@ -363,10 +364,45 @@ app.post("/api/cinema/public-search", async (req, res) => {
         return [];
       });
 
-    const [itunesResults, wikiResults, tvmazeResults] = await Promise.all([
+    // 4. Fetch from OMDb API (runs in parallel, optional — only if key is set)
+    const omdbPromise: Promise<any[]> = omdbKey
+      ? (async () => {
+          try {
+            // Try exact title first
+            const exactUrl = `https://www.omdbapi.com/?t=${searchQuery}&plot=short&apikey=${omdbKey}`;
+            const exactRes = await fetch(exactUrl);
+            const exactData = await exactRes.json();
+            if (exactData.Response !== "False") {
+              return [omdbToMovie(exactData, 0)];
+            }
+            // Fallback: search listing, enrich top 5
+            const searchUrl = `https://www.omdbapi.com/?s=${searchQuery}&type=movie&apikey=${omdbKey}`;
+            const searchRes = await fetch(searchUrl);
+            const searchData = await searchRes.json();
+            if (searchData.Response === "False") return [];
+            const enriched = await Promise.all(
+              (searchData.Search || []).slice(0, 5).map(async (item: any, idx: number) => {
+                try {
+                  const dUrl = `https://www.omdbapi.com/?i=${item.imdbID}&plot=short&apikey=${omdbKey}`;
+                  const dRes = await fetch(dUrl);
+                  const dData = await dRes.json();
+                  return dData.Response !== "False" ? omdbToMovie(dData, idx) : null;
+                } catch { return null; }
+              })
+            );
+            return enriched.filter(Boolean);
+          } catch (err: any) {
+            console.error(`[OMDb Search Error] ${err?.message}`);
+            return [];
+          }
+        })()
+      : Promise.resolve([]);
+
+    const [itunesResults, wikiResults, tvmazeResults, omdbMovies] = await Promise.all([
       itunesPromise,
       wikiPromise,
       tvmazePromise,
+      omdbPromise,
     ]);
 
     // Transform iTunes Results into CineBharat Movie structure
@@ -461,15 +497,27 @@ app.post("/api/cinema/public-search", async (req, res) => {
       };
     });
 
+    // OMDb results take priority (real IMDb data), iTunes are supplementary
+    // Merge: if OMDb has results, they lead; iTunes fill gaps for titles OMDb missed
+    const omdbTitlesLower = new Set(omdbMovies.map((m: any) => m.title?.toLowerCase()));
+    const nonDuplicateItunes = formattedItunes.filter(
+      (m: any) => !omdbTitlesLower.has(m.title?.toLowerCase())
+    );
+    const allMovies = [...omdbMovies, ...nonDuplicateItunes];
+
     res.json({
       success: true,
       query: query,
+      omdbActive: !!omdbKey,
       counts: {
+        omdb: omdbMovies.length,
         itunes: itunesResults.length,
         wikipedia: wikiResults.length,
         tvmaze: tvmazeResults.length,
+        total: allMovies.length
       },
-      itunesMovies: formattedItunes,
+      movies: allMovies,          // Primary merged result list
+      itunesMovies: formattedItunes,  // Raw iTunes results (for backward compat)
       wikipediaItems: wikiResults.slice(0, 5),
       tvmazeShows: tvmazeResults.slice(0, 5)
     });
@@ -557,72 +605,221 @@ app.get("/api/cinema/wikipedia-summary", async (req, res) => {
   }
 });
 
-// Real Public API Endpoint 4: OMDB API Integration
+// ─── OMDb Helper ────────────────────────────────────────────────────────────
+// Converts a raw OMDb API response object into a CineBharat Movie structure.
+function omdbToMovie(omdbData: any, idx: number = 0): any {
+  const poster = omdbData.Poster && omdbData.Poster !== "N/A" ? omdbData.Poster : null;
+  const imdbRating = omdbData.imdbRating && omdbData.imdbRating !== "N/A"
+    ? parseFloat(omdbData.imdbRating)
+    : 8.0;
+  const runtimeMatch = omdbData.Runtime ? omdbData.Runtime.match(/(\d+)/) : null;
+  const runtimeMins = runtimeMatch ? parseInt(runtimeMatch[1]) : 150;
+  const hours = Math.floor(runtimeMins / 60);
+  const mins = runtimeMins % 60;
+  const actors = omdbData.Actors && omdbData.Actors !== "N/A" ? omdbData.Actors.split(",").map((a: string) => a.trim()) : [];
+  const genres = omdbData.Genre && omdbData.Genre !== "N/A" ? omdbData.Genre.split(",").map((g: string) => g.trim()) : ["Cinema"];
+  const releaseYear = omdbData.Year ? parseInt(omdbData.Year.replace(/[^0-9]/g, "")) : 2024;
+
+  return {
+    id: `omdb-${omdbData.imdbID || idx}`,
+    title: omdbData.Title || "Unknown Title",
+    originalTitle: omdbData.Title || "Unknown Title",
+    language: omdbData.Language && omdbData.Language !== "N/A" ? omdbData.Language.split(",")[0].trim() : "Hindi",
+    industry: omdbData.Country?.includes("India") ? "Indian Cinema" : "International",
+    releaseYear,
+    releaseDate: omdbData.Released && omdbData.Released !== "N/A" ? omdbData.Released : `${releaseYear}-01-01`,
+    posterUrl: poster || `https://images.unsplash.com/photo-1536440136628-849c177e76a1?q=80&w=500&auto=format&fit=crop`,
+    backdropUrl: poster || `https://images.unsplash.com/photo-1517604931442-7e0c8ed2963c?q=80&w=1600&auto=format&fit=crop`,
+    genres,
+    rating: imdbRating,
+    userRatingCount: omdbData.imdbVotes && omdbData.imdbVotes !== "N/A"
+      ? parseInt(omdbData.imdbVotes.replace(/,/g, ""))
+      : 50000,
+    synopsis: omdbData.Plot && omdbData.Plot !== "N/A"
+      ? omdbData.Plot
+      : `${omdbData.Title} — official data sourced from OMDb / IMDb.`,
+    duration: `${hours}h ${mins}m`,
+    budgetCrores: 0,
+    boxOfficeGrossCrores: omdbData.BoxOffice && omdbData.BoxOffice !== "N/A"
+      ? Math.round(parseFloat(omdbData.BoxOffice.replace(/[$,]/g, "")) / 8500000)
+      : 0,
+    indiaNetGrossCrores: 0,
+    overseasGrossCrores: 0,
+    roiPercentage: 0,
+    boxOfficeStatus: omdbData.Awards && omdbData.Awards !== "N/A" ? omdbData.Awards.split(".")[0] : "Official Release",
+    screenCount: 0,
+    director: omdbData.Director && omdbData.Director !== "N/A" ? omdbData.Director : "N/A",
+    directorPhotoUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=300&auto=format&fit=crop",
+    musicDirector: omdbData.Writer && omdbData.Writer !== "N/A" ? omdbData.Writer.split(",")[0].trim() : "N/A",
+    productionHouse: omdbData.Production && omdbData.Production !== "N/A" ? omdbData.Production : "N/A",
+    cinematographer: "N/A",
+    featuredTrailerUrl: "",
+    videoClips: [],
+    cast: actors.slice(0, 4).map((name: string, i: number) => ({
+      id: `omdb-c${i}`,
+      name,
+      characterName: "Featured Role",
+      photoUrl: `https://images.unsplash.com/photo-${i % 2 === 0 ? "1500648767791-00dcc994a43e" : "1534528741775-53994a69daeb"}?q=80&w=300&auto=format&fit=crop`,
+      impactScore: 90 - i * 3,
+      roleType: i === 0 ? "Lead Actor" : i === 1 ? "Lead Actress" : "Supporting"
+    })),
+    reviewSentiment: {
+      positivePercentage: Math.min(99, Math.round(imdbRating * 10)),
+      neutralPercentage: Math.max(0, Math.round((10 - imdbRating) * 5)),
+      negativePercentage: Math.max(0, Math.round((10 - imdbRating) * 5)),
+      consensusSummary: omdbData.Awards && omdbData.Awards !== "N/A"
+        ? omdbData.Awards
+        : `IMDb rating: ${omdbData.imdbRating}/10 based on ${omdbData.imdbVotes} votes.`,
+      emotionalArc: "Story Arc → Climax"
+    },
+    demographicBreakdown: {
+      age18To24: 38, age25To34: 44, age35Plus: 18,
+      malePercentage: 58, femalePercentage: 42,
+      topRegions: [{ region: "Global", footfallsPercentage: 100 }]
+    },
+    directorStyleRadar: {
+      visualGrandeur: Math.round(imdbRating * 10),
+      storyPacing: Math.round(imdbRating * 9.5),
+      emotionalResonance: Math.round(imdbRating * 10),
+      commercialAppeal: Math.round(imdbRating * 10),
+      soundtrackIntegration: Math.round(imdbRating * 9)
+    },
+    streamingPlatforms: [],
+    awards: omdbData.Awards && omdbData.Awards !== "N/A" ? [omdbData.Awards] : [],
+    tags: ["OMDb Verified", "IMDb Data", ...genres.slice(0, 2)],
+    criticReviews: omdbData.Ratings
+      ? omdbData.Ratings.map((r: any, i: number) => ({
+          id: `omdb-cr${i}`,
+          criticName: r.Source,
+          publication: r.Source,
+          rating: r.Source === "Internet Movie Database"
+            ? parseFloat(r.Value.split("/")[0])
+            : parseFloat(r.Value) / (r.Value.includes("%") ? 10 : 20),
+          quote: `Rated ${r.Value} by ${r.Source}.`,
+          verified: true,
+          date: omdbData.Released || "2024-01-01"
+        }))
+      : [],
+    fanReviews: [],
+    isTrending: false,
+    isEditorPick: false,
+    apiSource: "OMDb / IMDb",
+    dataSource: "live" as const,
+    lastVerified: new Date().toISOString()
+  };
+}
+
+// Real Public API Endpoint 4: OMDb Search + Movie Detail
 app.get("/api/cinema/omdb", async (req, res) => {
   try {
-    const query = req.query.query as string || req.query.title as string || "RRR";
+    const query = (req.query.query as string) || (req.query.title as string) || "";
     const imdbId = req.query.imdbId as string;
-    const userApiKey = (req.query.apiKey as string) || process.env.OMDB_API_KEY || "trilogy";
+    const apiKey = process.env.OMDB_API_KEY;
 
-    let omdbUrl = "";
-    if (imdbId) {
-      omdbUrl = `https://www.omdbapi.com/?i=${encodeURIComponent(imdbId)}&plot=full&apikey=${userApiKey}`;
-    } else {
-      omdbUrl = `https://www.omdbapi.com/?t=${encodeURIComponent(query)}&plot=full&apikey=${userApiKey}`;
+    if (!apiKey) {
+      return res.json({
+        success: false,
+        requiresKey: true,
+        message: "OMDB_API_KEY is not configured. Register free at https://www.omdbapi.com/apikey.aspx and add to Vercel env vars."
+      });
     }
 
-    const omdbRes = await fetch(omdbUrl);
-    const omdbData = await omdbRes.json();
+    if (imdbId) {
+      // Fetch by IMDb ID (most accurate)
+      const url = `https://www.omdbapi.com/?i=${encodeURIComponent(imdbId)}&plot=full&apikey=${apiKey}`;
+      const r = await fetch(url);
+      const data = await r.json();
+      if (data.Response === "False") {
+        return res.status(404).json({ success: false, error: data.Error });
+      }
+      return res.json({ success: true, movie: omdbToMovie(data), raw: data, apiSource: "OMDb / IMDb" });
+    }
 
-    if (omdbData.Response === "False") {
-      // Try search listing fallback
-      const searchUrl = `https://www.omdbapi.com/?s=${encodeURIComponent(query)}&apikey=${userApiKey}`;
-      const searchRes = await fetch(searchUrl);
-      const searchData = await searchRes.json();
+    if (!query) {
+      return res.status(400).json({ success: false, error: "Provide query or imdbId parameter" });
+    }
 
-      return res.json({
-        success: searchData.Response !== "False",
-        error: omdbData.Error,
-        searchResults: searchData.Search || [],
-        totalResults: searchData.totalResults || 0,
-        apiSource: "OMDB API"
-      });
+    // Try exact title match first
+    const exactUrl = `https://www.omdbapi.com/?t=${encodeURIComponent(query)}&plot=full&apikey=${apiKey}`;
+    const exactRes = await fetch(exactUrl);
+    const exactData = await exactRes.json();
+
+    if (exactData.Response !== "False") {
+      return res.json({ success: true, movie: omdbToMovie(exactData), raw: exactData, apiSource: "OMDb / IMDb" });
+    }
+
+    // Fallback: search listing
+    const searchUrl = `https://www.omdbapi.com/?s=${encodeURIComponent(query)}&type=movie&apikey=${apiKey}`;
+    const searchRes = await fetch(searchUrl);
+    const searchData = await searchRes.json();
+
+    if (searchData.Response === "False") {
+      return res.json({ success: false, error: searchData.Error || "No results found", searchResults: [] });
+    }
+
+    // Enrich top 5 search results with full detail
+    const enriched = await Promise.all(
+      (searchData.Search || []).slice(0, 5).map(async (item: any, idx: number) => {
+        try {
+          const detailUrl = `https://www.omdbapi.com/?i=${item.imdbID}&plot=full&apikey=${apiKey}`;
+          const detailRes = await fetch(detailUrl);
+          const detailData = await detailRes.json();
+          return detailData.Response !== "False" ? omdbToMovie(detailData, idx) : null;
+        } catch { return null; }
+      })
+    );
+
+    return res.json({
+      success: true,
+      movies: enriched.filter(Boolean),
+      totalResults: searchData.totalResults,
+      apiSource: "OMDb / IMDb"
+    });
+  } catch (err: any) {
+    console.error("[OMDb API Error]", err?.message);
+    res.status(500).json({ success: false, error: err?.message || "OMDb API request failed" });
+  }
+});
+
+// Endpoint: Enrich a single known title with live OMDb data (poster, rating, cast, plot)
+app.get("/api/cinema/omdb-enrich", async (req, res) => {
+  try {
+    const title = req.query.title as string;
+    const year = req.query.year as string;
+    const apiKey = process.env.OMDB_API_KEY;
+
+    if (!title) return res.status(400).json({ success: false, error: "title param required" });
+    if (!apiKey) return res.json({ success: false, requiresKey: true, message: "OMDB_API_KEY not set" });
+
+    const params = new URLSearchParams({ t: title, plot: "short", apikey: apiKey });
+    if (year) params.set("y", year);
+
+    const url = `https://www.omdbapi.com/?${params.toString()}`;
+    const r = await fetch(url);
+    const data = await r.json();
+
+    if (data.Response === "False") {
+      return res.json({ success: false, error: data.Error, title });
     }
 
     res.json({
       success: true,
-      movie: {
-        title: omdbData.Title,
-        year: omdbData.Year,
-        rated: omdbData.Rated,
-        released: omdbData.Released,
-        runtime: omdbData.Runtime,
-        genre: omdbData.Genre,
-        director: omdbData.Director,
-        writer: omdbData.Writer,
-        actors: omdbData.Actors,
-        plot: omdbData.Plot,
-        language: omdbData.Language,
-        country: omdbData.Country,
-        awards: omdbData.Awards,
-        poster: omdbData.Poster !== "N/A" ? omdbData.Poster : null,
-        ratings: omdbData.Ratings || [],
-        metascore: omdbData.Metascore,
-        imdbRating: omdbData.imdbRating,
-        imdbVotes: omdbData.imdbVotes,
-        imdbID: omdbData.imdbID,
-        type: omdbData.Type,
-        dvd: omdbData.DVD,
-        boxOffice: omdbData.BoxOffice,
-        production: omdbData.Production,
-        website: omdbData.Website,
-        rawPayload: omdbData
-      },
-      apiSource: "OMDB (Open Movie Database) API"
+      title: data.Title,
+      imdbRating: data.imdbRating,
+      poster: data.Poster !== "N/A" ? data.Poster : null,
+      plot: data.Plot,
+      director: data.Director,
+      actors: data.Actors,
+      genre: data.Genre,
+      runtime: data.Runtime,
+      awards: data.Awards,
+      imdbID: data.imdbID,
+      ratings: data.Ratings,
+      apiSource: "OMDb / IMDb"
     });
   } catch (err: any) {
-    console.error("OMDB API Error:", err);
-    res.status(500).json({ success: false, error: err?.message || "Failed to call OMDB API" });
+    console.error("[OMDb Enrich Error]", err?.message);
+    res.status(500).json({ success: false, error: err?.message });
   }
 });
 
