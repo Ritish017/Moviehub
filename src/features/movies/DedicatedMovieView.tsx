@@ -12,7 +12,9 @@ import {
   DollarSign,
   Ticket,
   TrendingUp,
-  ExternalLink
+  ExternalLink,
+  Zap,
+  Archive
 } from "lucide-react";
 import { Movie, VideoClip } from "../../types";
 import { MovieAiAnalysisPanel } from "../ai/MovieAiAnalysisPanel";
@@ -97,9 +99,17 @@ export const DedicatedMovieView: React.FC<DedicatedMovieViewProps> = ({
               <span className="px-2.5 py-1 rounded-md bg-white/10 text-white backdrop-blur-md">
                 {movie.industry}
               </span>
-              <span className="px-2.5 py-1 rounded-md bg-[#e2571c]/20 text-[#e2571c] border border-[#e2571c]/30 font-mono text-[11px]">
-                {movie.apiSource ? `⚡ ${movie.apiSource}` : movie.dataSource === "live" ? "⚡ Live Verified Stream" : "📌 Curated Database Index"}
-              </span>
+              {movie.apiSource || movie.dataSource === "live" ? (
+                <span className="flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-semibold bg-[#e2571c]/20 text-[#e2571c] border border-[#e2571c]/30 font-mono">
+                  <Zap className="w-3 h-3 fill-current flex-shrink-0" />
+                  {movie.apiSource ? movie.apiSource : "Live verified"}
+                </span>
+              ) : (
+                <span className="flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-semibold bg-white/10 text-white/50 border border-white/10 font-mono">
+                  <Archive className="w-3 h-3 flex-shrink-0" />
+                  Curated index
+                </span>
+              )}
               <span>•</span>
               <span>{movie.language}</span>
               <span>•</span>

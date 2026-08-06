@@ -1,5 +1,5 @@
 import React, { useState, useRef, useCallback } from "react";
-import { Play, Bookmark, Check, Info, Star } from "lucide-react";
+import { Play, Bookmark, Check, Info, Star, Zap, Archive } from "lucide-react";
 import type { Movie, VideoClip } from "../types";
 import { getPosterUrl, FALLBACK_POSTER } from "../utils/imageUtils";
 import { getYouTubeThumbnailUrl } from "../utils/videoUtils";
@@ -104,14 +104,16 @@ export const MovieCard: React.FC<MovieCardProps> = ({
         />
 
         {/* Data Provenance Badge top-left */}
-        <div className="absolute top-2.5 left-2.5 z-10 pointer-events-none flex flex-col gap-1">
+        <div className="absolute top-2.5 left-2.5 z-10 pointer-events-none">
           {movie.apiSource || movie.dataSource === "live" ? (
-            <span className="px-2 py-0.5 rounded-md text-[9px] font-extrabold bg-[#e2571c] text-white shadow tracking-wider uppercase border border-white/20">
-              ⚡ {movie.apiSource ? movie.apiSource.split(" ")[0] : "LIVE"}
+            <span className="flex items-center gap-1 px-1.5 py-0.5 rounded-md text-[9px] font-bold bg-[#e2571c] text-white shadow-md tracking-wide border border-white/10">
+              <Zap className="w-2.5 h-2.5 fill-current flex-shrink-0" />
+              {movie.apiSource ? movie.apiSource.split(" ")[0] : "Live"}
             </span>
           ) : (
-            <span className="px-2 py-0.5 rounded-md text-[9px] font-extrabold bg-white/20 text-gray-200 backdrop-blur-md shadow tracking-wider uppercase border border-white/10">
-              📌 CURATED
+            <span className="flex items-center gap-1 px-1.5 py-0.5 rounded-md text-[9px] font-bold bg-white/15 text-white/70 backdrop-blur-md shadow tracking-wide border border-white/10">
+              <Archive className="w-2.5 h-2.5 flex-shrink-0" />
+              Curated
             </span>
           )}
         </div>
