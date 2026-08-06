@@ -3,6 +3,9 @@ import path from "path";
 import { createServer as createViteServer } from "vite";
 import { GoogleGenAI } from "@google/genai";
 import dotenv from "dotenv";
+import { withCache, TTL } from "./src/server/cache.js";
+import { tmdbFetch } from "./src/server/tmdbService.js";
+import { normalizeTmdbMovie } from "./src/server/tmdbNormalizer.js";
 
 dotenv.config();
 
@@ -1280,6 +1283,76 @@ app.get("/api/cinema/bfilmy-live-boxoffice", async (req, res) => {
       movies: [],
       apiSource: "District24 Fallback"
     });
+  }
+});
+
+// --- TMDB Integration Phase 1 Routes ---
+app.get("/api/tmdb/config", async (req, res) => {
+  try {
+    const data = await withCache("tmdb:config", TTL.CONFIG, () => tmdbFetch("/configuration"));
+    res.json({ success: true, data });
+  } catch (err: any) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+app.get("/api/tmdb/genres", async (req, res) => {
+  try {
+    const data = await withCache("tmdb:genres", TTL.CONFIG, async () => {
+      const [movie, tv] = await Promise.all([
+        tmdbFetch("/genre/movie/list", { language: "en" }),
+        tmdbFetch("/genre/tv/list", { language: "en" }),
+      ]);
+      return [...(movie.genres || []), ...(tv.genres || [])];
+    });
+    res.json({ success: true, data });
+  } catch (err: any) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+app.get("/api/tmdb/trending", async (req, res) => {
+  try {
+    const page = req.query.page || 1;
+    const data = await withCache(`tmdb:trending:week:p${page}`, TTL.TRENDING, async () => {
+      const raw = await tmdbFetch("/trending/movie/week", { region: "IN", page: Number(page) });
+      const config = await withCache("tmdb:config", TTL.CONFIG, () => tmdbFetch("/configuration"));
+      const imageBase = config.images?.secure_base_url || "https://image.tmdb.org/t/p/";
+      return raw.results.map((m: any) => normalizeTmdbMovie(m, imageBase));
+    });
+    res.json({ success: true, data });
+  } catch (err: any) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+app.get("/api/tmdb/popular", async (req, res) => {
+  try {
+    const page = req.query.page || 1;
+    const data = await withCache(`tmdb:popular:p${page}`, TTL.POPULAR, async () => {
+      const raw = await tmdbFetch("/movie/popular", { region: "IN", page: Number(page) });
+      const config = await withCache("tmdb:config", TTL.CONFIG, () => tmdbFetch("/configuration"));
+      const imageBase = config.images?.secure_base_url || "https://image.tmdb.org/t/p/";
+      return raw.results.map((m: any) => normalizeTmdbMovie(m, imageBase));
+    });
+    res.json({ success: true, data });
+  } catch (err: any) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+app.get("/api/tmdb/now-playing", async (req, res) => {
+  try {
+    const page = req.query.page || 1;
+    const data = await withCache(`tmdb:now-playing:p${page}`, TTL.NOW_PLAYING, async () => {
+      const raw = await tmdbFetch("/movie/now_playing", { region: "IN", page: Number(page) });
+      const config = await withCache("tmdb:config", TTL.CONFIG, () => tmdbFetch("/configuration"));
+      const imageBase = config.images?.secure_base_url || "https://image.tmdb.org/t/p/";
+      return raw.results.map((m: any) => normalizeTmdbMovie(m, imageBase));
+    });
+    res.json({ success: true, data });
+  } catch (err: any) {
+    res.status(500).json({ success: false, error: err.message });
   }
 });
 
