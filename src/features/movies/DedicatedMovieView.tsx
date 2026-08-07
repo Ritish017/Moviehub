@@ -14,8 +14,7 @@ import {
   TrendingUp,
   ExternalLink,
   Zap,
-  ExternalLink,
-  Zap,
+  Star,
   Archive,
   Info
 } from "lucide-react";

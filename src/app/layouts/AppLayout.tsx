@@ -99,7 +99,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
           onOpenAiCopilot={openAiCopilot}
         />
 
-        <main className="flex-1 max-w-[1600px] w-full mx-auto px-4 sm:px-6 lg:px-12 pb-24 min-w-0">
+        <main className="flex-1 max-w-[1600px] w-full mx-auto px-4 sm:px-6 lg:px-12 pt-20 sm:pt-24 pb-24 min-w-0">
           {children}
         </main>
       </div>

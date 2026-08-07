@@ -9,6 +9,8 @@ import { useContentStore } from "../../store/useContentStore";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "../../utils/cn";
 
+import { HeroSkeleton } from "../../components/ui/Skeleton";
+
 const AUTOPLAY_INTERVAL = 8000;
 
 export const CinematicHero: React.FC = () => {
@@ -28,10 +30,12 @@ export const CinematicHero: React.FC = () => {
   const activeMovie = heroMovies[activeIndex];
 
   const goNext = useCallback(() => {
+    if (heroMovies.length === 0) return;
     setActiveIndex((prev) => (prev + 1) % heroMovies.length);
   }, [heroMovies.length]);
 
   const goPrev = useCallback(() => {
+    if (heroMovies.length === 0) return;
     setActiveIndex((prev) => (prev - 1 + heroMovies.length) % heroMovies.length);
   }, [heroMovies.length]);
 
@@ -46,7 +50,7 @@ export const CinematicHero: React.FC = () => {
     };
   }, [isPaused, goNext, heroMovies.length]);
 
-  if (!activeMovie) return null;
+  if (!activeMovie) return <HeroSkeleton />;
 
   const isWatchlisted = watchlist.includes(activeMovie.id);
   const backdropSrc = getBackdropUrl(activeMovie.backdropUrl);
@@ -130,7 +134,7 @@ export const CinematicHero: React.FC = () => {
 
               {/* AI Tagline */}
               <p className="text-xl md:text-2xl text-gray-300 font-medium italic drop-shadow-md">
-                "{activeMovie.synopsis.split('.')[0]}."
+                "{activeMovie.synopsis ? activeMovie.synopsis.split('.')[0] : activeMovie.title}."
               </p>
 
               {/* Meta Stats */}
@@ -149,7 +153,7 @@ export const CinematicHero: React.FC = () => {
               {/* Action Buttons */}
               <div className="flex flex-wrap items-center gap-4 pt-4">
                 <button
-                  onClick={() => openStreaming(activeMovie)}
+                  onClick={() => openStreaming(activeMovie as any)}
                   className="flex items-center gap-3 px-8 py-4 rounded-full bg-white text-black font-bold text-lg hover:scale-105 transition-transform shadow-xl shadow-white/10 cursor-pointer"
                 >
                   <Play className="w-6 h-6 fill-current" /> Watch Trailer

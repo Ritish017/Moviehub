@@ -52,9 +52,13 @@ export function getYouTubeEmbedUrl(input?: string, autoplay = true, mute = false
   const params = new URLSearchParams({
     autoplay: autoplay ? "1" : "0",
     mute: mute ? "1" : "0",
-    playsinline: "1",
-    rel: "0",
+    controls: "0",
     modestbranding: "1",
+    rel: "0",
+    iv_load_policy: "3",
+    disablekb: "1",
+    fs: "0",
+    playsinline: "1",
     enablejsapi: "1"
   });
 

@@ -112,7 +112,7 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({
                 {userProfile.role}
               </span>
             </div>
-            <p className="text-xs text-gray-500 mt-1 font-mono">{userProfile.email} • Member of CineBharat Ecosystem</p>
+            <p className="text-xs text-gray-500 mt-1 font-mono">{userProfile.email} • Member of MovieHub X Ecosystem</p>
           </div>
         </div>
 

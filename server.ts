@@ -1432,31 +1432,78 @@ app.post("/api/cinema/search", async (req, res) => {
     const { query, page = 1 } = req.body;
     if (!query) return res.status(400).json({ success: false, error: "Query required" });
 
-    // 1. TMDB Search (Primary)
-    const tmdbPromise = tmdbFetch("/search/multi", { query, page, region: "IN" })
-      .then(async (raw) => {
+    console.log(`[Search Endpoint] Received query: "${query}", page: ${page}`);
+
+    // 1. TMDB Search (Primary: /search/movie first, then fallback to /search/multi)
+    const tmdbPromise = (async () => {
+      try {
+        let raw = await tmdbFetch("/search/movie", { query, page });
+        if (!raw.results || raw.results.length === 0) {
+          console.log(`[Search Endpoint] /search/movie returned 0 results for "${query}", trying /search/multi...`);
+          raw = await tmdbFetch("/search/multi", { query, page });
+        }
+        
         const config = await withCache("tmdb:config", TTL.CONFIG, () => tmdbFetch("/configuration"));
         const imageBase = config.images?.secure_base_url || "https://image.tmdb.org/t/p/";
         
-        const movies = raw.results
+        const movies = (raw.results || [])
           .filter((item: any) => item.media_type === "movie" || !item.media_type)
           .map((m: any) => normalizeTmdbMovie(m, imageBase));
         
+        console.log(`[Search Endpoint] TMDB returned ${movies.length} movies for "${query}"`);
         return { movies };
-      })
-      .catch((err) => {
-        console.error("TMDB Search Error:", err);
+      } catch (err: any) {
+        console.error(`[Search Endpoint TMDB Error] ${err?.message}`);
         return { movies: [] };
-      });
+      }
+    })();
 
-    // 2. iTunes (Supplementary)
+    // 2. OMDb Search (Secondary fallback if key configured)
+    const omdbKey = process.env.OMDB_API_KEY;
+    const omdbPromise = omdbKey
+      ? (async () => {
+          try {
+            const omdbUrl = `https://www.omdbapi.com/?s=${encodeURIComponent(query)}&type=movie&apikey=${omdbKey}`;
+            console.log(`[Search Endpoint OMDb Request] ${omdbUrl}`);
+            const omdbRes = await fetch(omdbUrl);
+            const omdbData = await omdbRes.json();
+            if (omdbData.Response === "True" && omdbData.Search) {
+              const movies = omdbData.Search.map((m: any, idx: number) => ({
+                id: `omdb-${m.imdbID || idx}`,
+                title: m.Title,
+                posterUrl: m.Poster && m.Poster !== "N/A" ? m.Poster : "",
+                genres: ["Cinema"],
+                releaseYear: parseInt(m.Year) || 2024,
+                director: "Unknown",
+                synopsis: `OMDb listed title ${m.Title} (${m.Year}).`,
+                dataSource: "live",
+                apiSource: "OMDb",
+                rating: 8.0,
+              }));
+              console.log(`[Search Endpoint] OMDb returned ${movies.length} movies for "${query}"`);
+              return movies;
+            }
+            return [];
+          } catch (err: any) {
+            console.error(`[Search Endpoint OMDb Error] ${err?.message}`);
+            return [];
+          }
+        })()
+      : Promise.resolve([]);
+
+    // 3. iTunes (Supplementary)
     const itunesUrl = `https://itunes.apple.com/search?term=${encodeURIComponent(query)}&entity=movie&country=IN&limit=5`;
     const itunesPromise = fetch(itunesUrl)
       .then(r => r.json())
       .then(data => data?.results || [])
       .catch(() => []);
 
-    const [tmdbData, itunesData] = await Promise.all([tmdbPromise, itunesPromise]);
+    const [tmdbData, omdbDataResults, itunesData] = await Promise.all([tmdbPromise, omdbPromise, itunesPromise]);
+
+    // Merge TMDB + OMDb
+    const mergedMovies = [...(tmdbData.movies || []), ...(omdbDataResults || [])].filter(
+      (m, idx, self) => self.findIndex(t => t.id === m.id || t.title.toLowerCase() === m.title.toLowerCase()) === idx
+    );
 
     const supplementary = itunesData.map((item: any) => ({
       id: `itunes-${item.trackId}`,
@@ -1479,7 +1526,7 @@ app.post("/api/cinema/search", async (req, res) => {
     res.json({
       success: true,
       query,
-      movies: tmdbData.movies,
+      movies: mergedMovies,
       supplementary: supplementary
     });
 
@@ -1490,12 +1537,11 @@ app.post("/api/cinema/search", async (req, res) => {
 
 // Health check endpoint
 app.get("/api/health", (req, res) => {
-  res.json({ status: "ok", app: "CineBharat - Indian Cinema Ecosystem & Analytics" });
+  res.json({ status: "ok", app: "MovieHub X — Cinema Ecosystem & AI Analytics" });
 });
 
 // Export Express app for Vercel serverless deployment
 export { app };
-export default app;
 
 // Start Express + Vite dev/production server when run directly
 async function startServer() {
@@ -1514,7 +1560,7 @@ async function startServer() {
   }
 
   app.listen(PORT, "0.0.0.0", () => {
-    console.log(`CineBharat server running on http://0.0.0.0:${PORT}`);
+    console.log(`MovieHub X server running on http://0.0.0.0:${PORT}`);
   });
 }
 

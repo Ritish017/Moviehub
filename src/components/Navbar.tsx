@@ -60,7 +60,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             <Film className="w-4 h-4" />
           </div>
           <span className="text-xl font-bold text-white font-serif tracking-tight hidden sm:block">
-            ReelVerse
+            MovieHub X
           </span>
         </div>
 

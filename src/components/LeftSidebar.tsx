@@ -47,7 +47,7 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({ activeTab, onNavigate,
               exit={{ opacity: 0, x: -10 }}
               className="ml-4 font-serif font-black text-xl tracking-tight text-white"
             >
-              ReelVerse
+              MovieHub X
             </motion.span>
           )}
         </AnimatePresence>
